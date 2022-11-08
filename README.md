@@ -101,7 +101,7 @@ We again remind you that running will need a considerable disk space as it depen
 
 #### To plot different weather diagnostics
 
-> If you want to plot different statistics at different temporal resolutions, this section is for you
+> If you want to plot different statistics, this section is for you
 
 Finally, you can run the diganostic function `Programs/functions.for.figures/plot.statistics.full.diagnostics.long.R` to assess the performance of the WGEN through a set of selected statistics for precipitation (e.g., floods, droughts, monthly/yearly distributions, inter-annual variability, long-term dry/wet spells)
 
