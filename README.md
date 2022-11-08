@@ -99,6 +99,10 @@ In order to run, you will need to do two things to access required data.
 
 We again remind you that running will need a considerable disk space as it depends to the spatiotemporal dimensions of the input files and the length of outputs (e.g., *how many years of weather simulations to generate?*).
 
+#### To plot different weather diagnostics
+
+> If you want to plot different statistics at different temporal resolutions, this section is for you
+
 Finally, you can run the diganostic function `Programs/functions.for.figures/plot.statistics.full.diagnostics.long.R` to assess the performance of the WGEN through a set of selected statistics for precipitation (e.g., floods, droughts, monthly/yearly distributions, inter-annual variability, long-term dry/wet spells)
 
 
