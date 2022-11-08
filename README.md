@@ -110,3 +110,7 @@ A similar diagnostics can be produced for other variables (e.g., temperature, wi
 
 - If you have issues related to the software/packages, please raise an issue in the Issues tab.
 - If you have comments, please contact the correspondence of this repository [Nasser Najibi](https://nassernajibi.com) directly.
+
+
+
+![Screenshot](https://brand.cornell.edu/assets/images/examples/trademarks/brand_registered.svg)
