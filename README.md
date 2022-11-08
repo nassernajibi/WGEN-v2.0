@@ -76,7 +76,7 @@ You will find R scripts/functions in `Programs/`.
 You can open them and they will render in GitHub.
 This will show you how we developed different modules of the WGEN, and produced the output files in `Data/`, along with some additional commentary.
 
-If you want to dig deeper, but not to run our codes, then you may want to look at the Python scripts in `scripts/` and/or the module in `codebase/`.
+If you want to dig deeper, but not to run our codes, then you may want to look at the R functions in `Programs/functions/` and/or the three modules as `Programs/config.__.R`.
 
 #### To run WGEN
 
