@@ -1,13 +1,10 @@
 Link to download the input/ouput sample data on Box:
 
 ~ 535 MB
-
 https://cornell.box.com/s/tfkwmnhqfmwwbzs2f0xu5o7jyv7bfe16
 
 Original data repositories:
-
 1. NCEP/NCAR Reanalysis 1 (daily, 2.5-by-2.5 degrees resolution) (https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.html)
 Kalnay et al. (1996) The NCEP/NCAR 40-year reanalysis project, Bull. Amer. Meteor. Soc., 77, 437-470. https://doi.org/10.1175/1520-0477(1996)077%3C0437:TNYRP%3E2.0.CO;2
-
 2. Livneh et al. (2015) (daily, 0.0625-by-0.0625 degress, 6-by-6 km resolution).
 Livneh, B., Bohn, T.J., Pierce, D.W., Munoz-Arriola, F., Nijssen, B., Vose, R., Cayan, D.R. and Brekke, L. (2015) A spatially comprehensive, hydrometeorological data set for Mexico, the U.S., and southern Canada 1950-2013. Scientific Data, 2, 2. https://doi.org/10.1038/sdata.2015.42
