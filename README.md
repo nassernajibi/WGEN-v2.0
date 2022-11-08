@@ -97,7 +97,7 @@ In order to run, you will need to do two things to access the required data.
 
 **Now you can run `config.simulations.R`!**
 
-We again remind you that running will need a considerable disk space as it depends on the spatiotemporal dimensions of the input files and the length of outputs (e.g., *how many years of weather simulations to generate?*).
+We again remind you that running will need a considerable disk space as it depends on the spatiotemporal dimensions of the input files and the length of outputs, e.g., *how many years of weather simulations to generate?*
 
 #### To plot different weather diagnostics
 
