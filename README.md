@@ -45,12 +45,12 @@ or its results/methods, please cite the references below.
 }
 ```
 
-## For the public
+## For the Public
 
 Summaries of this package in a plain language will be available soon. If you'd like a high-level overview of its components, please visit us again at a later time. 
 
 
-## For researchers
+## For Researchers
 
 We are committed to making our work findable, accessible, interoperable and reusable ([FAIR principles](https://www.nature.com/articles/sdata201618)) by the scientific community and the society at large.
 The programming language/platform (i.e., [R](https://www.r-project.org/)) and data used here are publicly available via the the public preservation repositories without any charges.
@@ -82,7 +82,7 @@ If you want to dig deeper, but not to run our codes, then you may want to look a
 
 > If you want to reproduce or modify our results, this section is for you
 
-Please note: **running this will require ~ 0.5-1 GB of disk space, depending on the length of the data records**.
+Please note: **running this will require 0.5-1 GB of disk space, depending on the length of the input/output data**.
 *All commands here assume standard Windows terminal; UNIX may be subtly different*.
 
 First, you will need to install R and `Rstudio`.
@@ -97,12 +97,12 @@ In order to run, you will need to do two things to access required data.
 
 **Now you can run `config.simulations.R`!**
 
-We again remind you that running will need a considerable disk space as it depends to the spatiotemporal dimensions of the input files and the length of outputs (e.g., *how many years of weather simulations?*).
+We again remind you that running will need a considerable disk space as it depends to the spatiotemporal dimensions of the input files and the length of outputs (e.g., *how many years of weather simulations to generate?*).
 
 Finally, you can run the diganostic function `Programs/functions.for.figures/plot.statistics.full.diagnostics.long.R` to assess the performance of the WGEN through a set of selected statistics for precipitation (e.g., floods, droughts, monthly/yearly distributions, inter-annual variability, long-term dry/wet spells)
 
 
-### Issues and comments
+### Issues and Comments
 
 - If you have issues related to the software/packages, please raise an issue in the Issues tab.
 - If you have comments, please contact the correspondence of this repository [Nasser Najibi](https://nassernajibi.com) directly.
