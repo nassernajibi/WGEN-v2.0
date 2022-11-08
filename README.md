@@ -53,7 +53,7 @@ Summaries of this package in a plain language will be available soon. If you'd l
 ## For Researchers
 
 We are committed to making our work findable, accessible, interoperable and reusable ([FAIR principles](https://www.nature.com/articles/sdata201618)) by the scientific community and the society at large.
-The programming language/platform (i.e., [R](https://www.r-project.org/)) and data used here are publicly available via the the public preservation repositories without any charges.
+The programming language/platform (i.e., [R](https://www.r-project.org/)) and data used here are publicly available via the public preservation repositories without any charges.
 All code is posted on this repository.
 
 The following sections outline the steps you can take to run the WGEN.
@@ -61,11 +61,11 @@ The following sections outline the steps you can take to run the WGEN.
 #### Repository organization
 
 - `README.md` is what you are looking at now.
-- `LICENSE` describes the terms of the GNU GENERAL PUBLIC LICENSE under which our code is licensed. This is a "free, copyleft license for software and other kinds of works, that guarantee end users the four freedoms to run, study, share, and modify the software".
-- `docs/` contains the articles (PDF format) published in the peer-reviewed journals.
+- `LICENSE` describes the terms of the GNU GENERAL PUBLIC LICENSE under which our code is licensed. This is a "free, copyleft license for software and other kinds of works, that guarantees end users the four freedoms to run, study, share, and modify the software".
+- `docs/` contains the articles (PDF format) published in peer-reviewed journals.
 - `Programs/` contains the scripts required to run the WGEN, from identifying the weather regimes (`Programs/config.WRs.param.NHMM.R` or `Programs/config.WRs.non_param.R`), to simulating the weather information (`Programs/config.simulations.R`), providing the output files, and plotting the diagnostics (`Programs/functions.for.figures/`).
-- `Data/` contains a link to a permanent repository to download a sample data/format to run the WGEN. The raw inputs are stored in `Data/processed.data.files/` for the large-scale atmospheric circulations and observational weather records. The final output files are located in `Data/simulated.data.files/WGEN.out`
-- `Figures/` contains a list of diagnostics and statistics to examine the perfomance of WGEN outputs. _If you want to use these figures, you are responsible for complying with the policies of the journals our papers have been published, or going to be published, but we mainly ask that you cite our papers when you do so._
+- `Data/` contains a link to a permanent repository to download sample data/format to run the WGEN. The raw inputs are stored in `Data/processed.data.files/` for the large-scale atmospheric circulations and observational weather records. The final output files are located in `Data/simulated.data.files/WGEN.out`
+- `Figures/` contains a list of diagnostics and statistics to examine the performance of WGEN outputs. _If you want to use these figures, you are responsible for complying with the policies of the journals our papers have been published, or going to be published, but we mainly ask that you cite our papers when you do so._
 
 
 #### To browse the codes
@@ -90,20 +90,20 @@ First, you will need to install R and `Rstudio`.
 Next, you will need to `git clone` the repository to your machine, or download `Programs`.
 
 
-In order to run, you will need to do two things to access required data.
+In order to run, you will need to do two things to access the required data.
 
-1. Download the the files from `Data/` and store them in a folder titled as `Data` next to the `Programs` and `Figures` in your directory.
+1. Download the files from `Data/` and store them in a folder titled `Data` next to the `Programs` and `Figures` in your directory.
 1. Start with `config.WRs.non_param.R` or `config.WRs.param.NHMM.R` to identify/simulate the weather regimes.
 
 **Now you can run `config.simulations.R`!**
 
-We again remind you that running will need a considerable disk space as it depends to the spatiotemporal dimensions of the input files and the length of outputs (e.g., *how many years of weather simulations to generate?*).
+We again remind you that running will need a considerable disk space as it depends on the spatiotemporal dimensions of the input files and the length of outputs (e.g., *how many years of weather simulations to generate?*).
 
 #### To plot different weather diagnostics
 
 > If you want to plot different statistics, this section is for you
 
-Finally, you can run the diganostic function `Programs/functions.for.figures/plot.statistics.full.diagnostics.long.R` to assess the performance of the WGEN through a set of selected statistics for precipitation (e.g., floods, droughts, monthly/yearly distributions, inter-annual variability, long-term dry/wet spells)
+Finally, you can run the diagnostic function `Programs/functions.for.figures/plot.statistics.full.diagnostics.long.R` to assess the performance of the WGEN through a set of selected statistics for precipitation (e.g., floods, droughts, monthly/yearly distributions, inter-annual variability, long-term dry/wet spells)
 
 
 ### Issues and Comments
