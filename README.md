@@ -72,9 +72,9 @@ The following sections outline the steps you can take to run the WGEN.
 
 > If you want to browse our code, this section is for you.
 
-You will find four Jupyter notebooks in `scripts/`.
+You will find R scripts/functions in `Programs/`.
 You can open them and they will render in GitHub.
-This will show you how we produced all figures in our paper, along with some additional commentary.
+This will show you how we developed different modules of the WGEN, and produced the output files in `Data/`, along with some additional commentary.
 
 If you want to dig deeper, but not to run our codes, then you may want to look at the Python scripts in `scripts/` and/or the module in `codebase/`.
 
