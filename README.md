@@ -70,7 +70,7 @@ The following sections outline the steps you can take to run the WGEN.
 
 #### To browse the codes
 
-> If you want to browse our code, this section is for you.
+> If you want to browse our code, this section is for you
 
 You will find R scripts/functions in `Programs/`.
 You can open them and they will render in GitHub.
@@ -82,41 +82,18 @@ If you want to dig deeper, but not to run our codes, then you may want to look a
 
 > If you want to reproduce or modify our results, this section is for you
 
-Please note: **running this will require approximately 60GB of disk space**.
-*All commands here assume standard UNIX terminal; Windows may be subtly different*.
+Please note: **running this will require ~ 0.5-1 GB of disk space, depending on the length of the data records**.
+*All commands here assume standard Windows terminal; UNIX may be subtly different*.
 
-First, `git clone` the repository to your machine.
+First, you will need to install R and `Rstudio`.
 
-Next, you will need to install conda (we recommend miniconda) and `wget`.
+Next, you will need to `git clone` the repository to your machine, or download `Programs`.
 
-Next, you need to create th conda environment:
-
-```shell
-conda env create --file environment.yml
-```
-
-*If this gives you any trouble, you can use the exact version of packages that we did (this worked on an Apple M1 Macbook emulating OSX-64 but your mileage may vary on other systems):*
-
-```shell
-conda create --name txtreme --file conda.txt
-```
-
-Once you have created the environment, then activate it:
-
-```shell
-conda activate txtreme
-```
-
-You will also need to install our custom module in `codebase`
-
-```shell
-pip install -e .
-```
 
 In order to run, you will need to do two things to access required data.
 
-1. Download the GPWV4 data. See instructions in [`data/raw/gpwv4/README.md`](data/raw/gpwv4/README.md).
-1. Register for [a CDSAPI key](https://cds.climate.copernicus.eu/api-how-to) with the ECMWF. This key is **required** for you to access this data. If you do not properly install the CDSAPI key, you will not be able to download the ERA-5 reanalysis data.
+1. Download the the files from `Data/` and store them in a folder titled as `Data` next to the `Programs` and `Figures` in your directory.
+1. Start with `config.simulations.R` and run the script.
 
 Now you can run!
 
@@ -125,7 +102,7 @@ snakemake --n <some number>
 ```
 
 where `<some number>` specifies the number of cores to use (if you have no idea what this means, try 3: `snakemake --n 3`.
-We again remind you that running will use nearly 60GB of disk space; a fast internet connection will be helpful.
+We again remind you that running will need a considerable disk space as it depends to the spatiotemporal dimensions of the input files and the length of outputs (e.g., how many years of weather simulations?) .
 
 ### Issues and comments
 
