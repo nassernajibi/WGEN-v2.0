@@ -9,7 +9,7 @@ The WGEN is designed to be a flexible tool that can facilitate computationally f
 It is well suited for risk-based simulation studies of system-of-systems that span large regions and multiple sectors (e.g., food, energy, and water).
 The tool is useful in expediting the adoption of bottom-up vulnerability assessments across water, food, and energy sectors, by providing a regional set of scenarios that can be tailored for individual locations and analyses.
 
-WGEN-v2.0 scripts are developed in the R Foundation for Statistical Computing Platform Desktop System Type x64-based PC with Intel(R) Core(TM) i7-9700 CPU 3.00 GHz 8 Cores 8 Logical Processors 64.0 GB RAM (64-bit) R version 4.2.0 (RStudio 2022-04-22 ucrt).
+WGEN-v2.0 scripts were developed in the R Foundation for Statistical Computing Platform Desktop System Type x64-based PC with Intel(R) Core(TM) i7-9700 CPU 3.00 GHz 8 Cores 8 Logical Processors 64.0 GB RAM (64-bit) R version 4.2.0 (RStudio 2022-04-22 ucrt).
 
 ### How to cite
 
