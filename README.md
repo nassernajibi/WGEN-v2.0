@@ -63,7 +63,7 @@ The following sections outline the steps you can take to run the WGEN.
 - `README.md` is what you are looking at now.
 - `LICENSE` describes the terms of the GNU GENERAL PUBLIC LICENSE under which our code is licensed. This is a "free, copyleft license for software and other kinds of works, that guarantee end users the four freedoms to run, study, share, and modify the software".
 - `docs/` contains the articles (PDf format) published in the peer-reviewed journals.
-- `Programs/` contains the scripts required to run the WGEN, from identifying the weather regimes, to simulating the weather information, providing the output files, and plotting the diagnostics.
+- `Programs/` contains the scripts required to run the WGEN, from identifying the weather regimes (`Programs/config.WRs.param.NHMM.R` or `Programs/config.WRs.non_param.R`), to simulating the weather information (`Programs/config.simulations.R`), providing the output files, and plotting the diagnostics (`Programs/functions.for.figures/`).
 - `Data/` contains a link to a permanent repository to download a sample data/format to run the WGEN. The raw inputs are stored in `Data/processed.data.files/` for the large-scale atmospheric circulations and observational weather records. The final output files are located in `Data/simulated.data.files/WGEN.out`
 - `Figures/` contains a list of diagnostics and statistics to examine the perfomance of WGEN outputs. _If you want to use these figures, you are responsible for complying with the policies of the journals our papers have been published, or going to be published, but we mainly ask that you cite our papers when you do so._
 
