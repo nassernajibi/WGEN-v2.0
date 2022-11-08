@@ -9,6 +9,8 @@ The WGEN is designed to be a flexible tool that can facilitate computationally f
 It is well suited for risk-based simulation studies of system-of-systems that span large regions and multiple sectors (e.g., food, energy, and water).
 The tool is useful in expediting the adoption of bottom-up vulnerability assessments across water, food, and energy sectors, by providing a regional set of scenarios that can be tailored for individual locations and analyses.
 
+The WGEN-v2.0 scripts are developed in the R Foundation for Statistical Computing Platform x86_64-w64-mingw32/x64 (64-bit) R version 4.2.0 (2022-04-22 ucrt) -- "Vigorous Calisthenics".
+
 ### How to cite
 
 If you use the WGEN scripts (as a whole, or partially, and/or as a template for your research work), 
