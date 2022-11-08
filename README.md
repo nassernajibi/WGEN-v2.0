@@ -93,16 +93,14 @@ Next, you will need to `git clone` the repository to your machine, or download `
 In order to run, you will need to do two things to access required data.
 
 1. Download the the files from `Data/` and store them in a folder titled as `Data` next to the `Programs` and `Figures` in your directory.
-1. Start with `config.simulations.R` and run the script.
+1. Start with `config.WRs.non_param.R` or `config.WRs.param.NHMM.R` to identify/simulate the weather regimes.
 
-Now you can run!
+Now you can run `config.simulations.R`!
 
-```shell
-snakemake --n <some number>
-```
-
-where `<some number>` specifies the number of cores to use (if you have no idea what this means, try 3: `snakemake --n 3`.
 We again remind you that running will need a considerable disk space as it depends to the spatiotemporal dimensions of the input files and the length of outputs (e.g., how many years of weather simulations?) .
+
+Finally, you can run the diganostic function `Programs/functions.for.figures/plot.statistics.full.diagnostics.long.R` to assess the performance of the WGEN for a list of selected statistics for precipitation (e.g., floods, droughts, monthly/yearly distributions, inter-annual variability, long-term dry/wet spells)
+
 
 ### Issues and comments
 
