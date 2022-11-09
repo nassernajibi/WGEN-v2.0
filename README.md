@@ -85,14 +85,14 @@ If you want to dig deeper, but not to run our codes, then you may want to look a
 Please note: **running this will require 0.5-1 GB of disk space, depending on the length of the input/output data**.
 *All commands here assume standard Windows terminal; UNIX may be subtly different*.
 
-First, you will need to install R and `Rstudio`.
+First, you will need to install `R` and `Rstudio`.
 
 Next, you will need to `git clone` the repository to your machine, or download `Programs`.
 
 
-In order to run, you will need to do two things to access the required data.
+In order to run, you will need to do two things to access the required data:
 
-1. Download the files from `Data/` and store them in a folder titled `Data` next to the `Programs` and `Figures` in your directory.
+1. Download the files from `Data/` and store them in a folder titled `Data` next to the `Programs` and `Figures` in your directory. *Note that you need to provide a similar input data (format, structure) for your particular case*.
 1. Start with `config.WRs.non_param.R` or `config.WRs.param.NHMM.R` to identify/simulate the weather regimes.
 
 **Now you can run `config.simulations.R`!**
