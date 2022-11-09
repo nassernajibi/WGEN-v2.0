@@ -115,9 +115,8 @@ A similar diagnostics can be produced for other variables (e.g., temperature, wi
 
 You are running the scripts/functions that means you will not blame the author(s)/developer(s) if they break your stuff.
 The scripts/functions are provided AS IS without warranty of any kind. Author(s) disclaim all implied warranties including, without limitation, any implied warranties of merchantability or of fitness for a particular purpose. 
-The entire risk arising out of the use or performance of the scripts (functions, sample data, sample plots) and documentation remains with you.
 In no event shall author(s) be held liable for any damages whatsoever (including, without limitation, any sorts of damages or loss) arising out of the use of or inability to use the script or documentation.
-Neither the scripts/functions, nor any part of them other than those parts that are available in the R packages, may be republished without author(s) permission. Author(s) retain the right to alter this disclaimer at any time.
+Author(s) retain the right to alter this disclaimer at any time.
 The contents contained in this repository or within the articles are not the opinions of the funding agencies, affiliated institutions, or the U.S. Government but reflect the authors' opinions.
 
 ![Screenshot](https://brand.cornell.edu/assets/images/examples/trademarks/brand_registered.svg)
