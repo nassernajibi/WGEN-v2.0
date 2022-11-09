@@ -114,7 +114,7 @@ A similar diagnostics can be produced for other variables (e.g., temperature, wi
 **Disclaimer:**
 You are running the scripts/functions that means you will not blame the author(s)/developer(s) if they break your stuff.
 The scripts/functions are provided AS IS without warranty of any kind. Author(s) disclaim all implied warranties including, without limitation, any implied warranties of merchantability or of fitness for a particular purpose. 
-In no event shall author(s) be held liable for any damages whatsoever (including, without limitation, any sorts of damages or loss) arising out of the use of or inability to use the script or documentation.
+In no event shall author(s) be held liable for any damages whatsoever (including, without limitation, any sorts of damages or loss) arising out of the use of or inability to use the scripts or documentations.
 Author(s) retain the right to alter this disclaimer at any time.
 The contents contained in this repository or within the articles are not the opinions of the funding agencies, affiliated university, or the U.S. Government but reflect the authors' opinions.
 
