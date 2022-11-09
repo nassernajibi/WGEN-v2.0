@@ -111,7 +111,7 @@ A similar diagnostics can be produced for other variables (e.g., temperature, wi
 - If you have issues related to the software/packages, please raise an issue in the Issues tab.
 - If you have comments, please contact the correspondence of this repository [Nasser Najibi](https://nassernajibi.com) directly.
 
-#### Code Disclaimer
+Code Disclaimer:
 You are running the scripts/functions that means you will not blame the author(s)/developer(s) if they break your stuff.
 The scripts/functions are provided AS IS without warranty of any kind. Author(s) disclaim all implied warranties including, without limitation, any implied warranties of merchantability or of fitness for a particular purpose. 
 In no event shall author(s) be held liable for any damages whatsoever (including, without limitation, any sorts of damages or loss) arising out of the use of or inability to use the script or documentation.
