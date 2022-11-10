@@ -92,7 +92,9 @@ Next, you will need to `git clone` the repository to your machine, or download `
 
 In order to run, you will need to do two things to access the required data:
 
-1. Download the files from `Data/` and store them in a folder titled `Data` next to the `Programs` and `Figures` in your directory. *Note that you need to provide a similar input data (format, structure) for your particular case*.
+1. Download the files from `Data/` and store them in a folder titled `Data` next to the `Programs` and `Figures` in your directory. *Note that you need to provide a similar input data (format, structure) for your particular case*. A permanent repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311769.svg)](https://doi.org/10.5281/zenodo.7311769)
+
+
 1. Start with `config.WRs.non_param.R` or `config.WRs.param.NHMM.R` to identify/simulate the weather regimes.
 
 **Now you can run `config.simulations.R`!**
