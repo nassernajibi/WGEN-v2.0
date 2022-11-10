@@ -63,6 +63,7 @@ The following sections outline the steps you can take to run the WGEN.
 #### Repository organization
 
 - `README.md` is what you are looking at now.
+-`R_sessionInfo.txt` contains list of packages in `R` (attached base packages, attached packages, and loaded via a namespace) with their release version. 
 - `LICENSE` describes the terms of the GNU GENERAL PUBLIC LICENSE under which our code is licensed. This is a "free, copyleft license for software and other kinds of works, that guarantees end users the four freedoms to run, study, share, and modify the software".
 - `docs/` contains the articles (PDF format) published in peer-reviewed journals.
 - `Programs/` contains the scripts required to run the WGEN, from identifying the weather regimes (`Programs/config.WRs.param.NHMM.R` or `Programs/config.WRs.non_param.R`), to simulating the weather information (`Programs/config.simulations.R`), providing the output files, and plotting the diagnostics (`Programs/functions.for.figures/`).
