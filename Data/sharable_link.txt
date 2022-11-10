@@ -1,8 +1,13 @@
-Link to download the input/ouput sample data on Box:
+// Sharable links (permanent) to download the input/ouput sample data //
 
-link:
+link on Box:
 https://cornell.box.com/s/tfkwmnhqfmwwbzs2f0xu5o7jyv7bfe16
 ~ 535 MB
+
+link on Sync:
+https://ln5.sync.com/dl/8fc0abc00/m3egptbc-hdpesjw4-qmyn22aq-i93g2crf
+~ 535 MB
+
 
 Original data repositories:
 1. NCEP/NCAR Reanalysis 1 (daily, 2.5-by-2.5 degrees resolution) (https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.html)
