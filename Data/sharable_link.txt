@@ -10,6 +10,12 @@ Sync folder:
 https://ln5.sync.com/dl/8fc0abc00/m3egptbc-hdpesjw4-qmyn22aq-i93g2crf
 ~ 535 MB
 
+or
+
+Zenodo repository:
+https://doi.org/10.5281/zenodo.7311768
+~ 583 MB
+
 Original data sources:
 1. NCEP/NCAR Reanalysis 1 (daily, 2.5-by-2.5 degrees resolution) (https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.html)
 Kalnay et al. (1996) The NCEP/NCAR 40-year reanalysis project, Bull. Amer. Meteor. Soc., 77, 437-470. https://doi.org/10.1175/1520-0477(1996)077%3C0437:TNYRP%3E2.0.CO;2
