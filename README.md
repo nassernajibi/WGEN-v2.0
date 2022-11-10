@@ -13,6 +13,7 @@ WGEN-v2.0 scripts were developed in the R Foundation for Statistical Computing P
 
 ### How to cite
 
+A permanent and archived version of this repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311769.svg)](https://doi.org/10.5281/zenodo.7311769).
 If you use the WGEN scripts (as a whole, or partially, and/or as a template for your research work), 
 or its results/methods, please cite the references below.
 
@@ -92,8 +93,7 @@ Next, you will need to `git clone` the repository to your machine, or download `
 
 In order to run, you will need to do two things to access the required data:
 
-1. Download the files from `Data/` and store them in a folder titled `Data` next to the `Programs` and `Figures` in your directory. *Note that you need to provide a similar input data (format, structure) for your particular case*. A permanent repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311769.svg)](https://doi.org/10.5281/zenodo.7311769)
-
+1. Download the files from `Data/` and store them in a folder titled `Data` next to the `Programs` and `Figures` in your directory. *Note that you need to provide a similar input data (format, structure) for your particular case*. A permanent `Data` repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311769.svg)](https://doi.org/10.5281/zenodo.7311769).
 
 1. Start with `config.WRs.non_param.R` or `config.WRs.param.NHMM.R` to identify/simulate the weather regimes.
 
