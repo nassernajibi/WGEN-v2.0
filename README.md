@@ -2,7 +2,7 @@
 
 ## Welcome to the code repository of the weather regime based stochastic weather generator: WR-SWG, or for simplicity, WGEN! ##
 
-The WGEN was first developed by [Prof. Scott Steinschneider](https://cals.cornell.edu/scott-steinschneider) (Cornell University) (see *Steinschneider et al., 2019*). 
+The WGEN was first developed by [Prof. Scott Steinschneider](https://github.com/SteinschneiderLab) (Cornell University) (see *Steinschneider et al., 2019*). 
 Since then, it has been upgraded, applied to different locations, and used for varying purposes by [the Steinschneider Research Group]( https://blogs.cornell.edu/steinschneider/) and their collaborators.
 
 The WGEN is designed to be a flexible tool that can facilitate computationally fast, internally consistent scenario generation to support climate vulnerability assessments of water systems in a way that is more easily connected to advances in climate science. 
