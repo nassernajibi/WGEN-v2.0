@@ -35,7 +35,7 @@ use.non_param.WRs <- TRUE #TRUE for non-parametric, FALSE for parametric simulat
 ####### Choose A (FALSE) or B (TRUE) below for the simulated WRs #################
 #-- A) load in NHMM with WRs (parametric)
 tmp.list <- readRDS(paste0("./Data/simulated.data.files/WRs.out/final.NHMM.output.rds"))
-weather.state.assignments <- tmp.list$WR.historical # this is only for the parametric approach of simulating WRs
+weather.state.assignments <- tmp.list$WR.historical # this is only for the parametric and non-parametric approach 
 sim.weather.state.assignments <- tmp.list$WR.simulation[,1:num.iter] # this is only for the parametric approach of simulating WRs
 num.states <- length(unique(as.vector(weather.state.assignments)))    #number of WRs in the model
 rm(tmp.list) # for memory
