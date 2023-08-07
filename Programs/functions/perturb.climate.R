@@ -3,7 +3,7 @@ perturb.climate <- function(prcp.site.sim,
                             tmin.site.sim,
                             tmax.site.sim,
                             emission.fits.site,months,dates.sim,n.sites,
-                            qq,perc.mu,perc.q,S,cur.jitter,cur.tc,num.iter,thshd.prcp,qq.month) {
+                            qq,perc.mu,perc.q,Sbasin,cur.jitter,cur.tc,num.iter,thshd.prcp,qq.month) {
   
   #this function takes the simulated prcp, tmax, and tmin from the daily weather generator and perturbs the data to 
   #1) impose thermodynamic climate changes
@@ -20,7 +20,7 @@ perturb.climate <- function(prcp.site.sim,
   #qq = quantile to anchor the CC-scaling
   #perc.mu = percent change in the mean for each month of non-zero prcp for CC-scaling
   #perc.q = percent change in the qqth quantile for each month of non-zero prcp for CC-scaling
-  #S = the spearman correlation matrix (n.site+1 x nsite+1) between basin averaged precipitation and site precipitation
+  #Sbasin = the spearman correlation matrix (n.site x nsite) between the precipitation sites
   #cur.jitter = TRUE/FALSE indicating whether we randomly perturb the non-exceedance probabilities at each site conditional on the basin average value?
   #cur.tc = a step change to apply to all temperatures (tmax and tmin)
   #num.iter = the number of iterations for the simulation
@@ -38,7 +38,7 @@ perturb.climate <- function(prcp.site.sim,
     my.systime <- Sys.time()
     #perturb the simulated time series of precipitation at each site
     prcp.site.sim[[j]] <- quantile.mapping(prcp.site=prcp.site.sim[[j]],
-                                           S=S,thshd.prcp=thshd.prcp,perc.q=perc.q,
+                                           Sbasin=Sbasin,thshd.prcp=thshd.prcp,perc.q=perc.q,
                                            emission.old1=emission.old1,
                                            emission.old2=emission.old2,
                                            emission.new1=emission.new1,

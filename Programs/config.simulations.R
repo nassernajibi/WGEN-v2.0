@@ -76,9 +76,8 @@ window.size <- rep(3,length(months))   #the size of the window (in days) from wh
 trace <- 0.25     #trace prcp threshold. 0.25 mm (for Livneh dataset); or 0.01 inches
 
 
-#The spearman correlation between basin and site precipitation, used in the copula-based jitters
-prcp.basin.site <- cbind(prcp.basin,prcp.site)
-S <- cor(prcp.basin.site,method="spearman")
+#The spearman correlation between the precipitation sites, used in the copula-based jitters
+Sbasin <- cor(prcp.site,method="spearman")
 n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
 
 
@@ -158,7 +157,7 @@ for (change in 1:nrow(change.list)) {
                                     tmax.site.sim=tmax.site.sim,
                                     emission.fits.site=emission.fits.site,
                                     months=months,dates.sim=dates.sim,n.sites=n.sites,
-                                    qq=qq,perc.mu=perc.mu,perc.q=perc.q,S=S,cur.jitter=cur.jitter,cur.tc=cur.tc,
+                                    qq=qq,perc.mu=perc.mu,perc.q=perc.q,S=S,Sbasin=Sbasin,cur.jitter=cur.jitter,cur.tc=cur.tc,
                                     num.iter=num.iter,thshd.prcp=thshd.prcp,qq.month=qq.month)
   set.seed(NULL)
   prcp.site.sim.perturbed <- perturbed.sim[[1]]

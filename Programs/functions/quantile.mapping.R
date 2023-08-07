@@ -1,13 +1,13 @@
-quantile.mapping <- function(prcp.site,S,thshd.prcp,perc.q,emission.old1,emission.old2,emission.new1,n.sites,months,dates.sim,cur.jitter) {
+quantile.mapping <- function(prcp.site,Sbasin,thshd.prcp,perc.q,emission.old1,emission.old2,emission.new1,n.sites,months,dates.sim,cur.jitter) {
   
   #this function takes simulated precipitation at n.sites sites, and then adjusts the values through quantile mapping.
-  #in the mapping "new" (i.e., adjusted) gamma distriubtions for each site are used (these could be CC-scaled from original).
+  #in the mapping "new" (i.e., adjusted) gamma distributions for each site are used (these could be CC-scaled from original).
   #also, there is an option to adjust the non-exeedance probabilities using the conditional variance of the sites based on the basin average
   
   #Arguments:
   #(1): gamma; (2): gpd
-  #prcp.site =  a matrix (n.sim x n.sites) of simluated prcp values for the sites 
-  #S = the (n.sites+1 x n.sites+1) Spearman correlation matrix between cbind(prcp.basin,prcp.site)
+  #prcp.site =  a matrix (n.sim x n.sites) of simulated prcp values for the sites 
+  #Sbasin = the spearman correlation matrix (n.site x nsite) between the precipitation sites
   #thshd.prcp = threshold for gpd fit
   #perc.q = the percentage to scale the upper tail of the distributions
   #emission.old1 = 'gamma', an (n.sim x n.sites x n.parameters) matrix containing time series of original emission parameters for each site
@@ -19,13 +19,11 @@ quantile.mapping <- function(prcp.site,S,thshd.prcp,perc.q,emission.old1,emissio
   #cur.jitter = TRUE/FALSE indicating whether to perturb the non-exceedance probabilities
   
   months.sim <- as.numeric(format(dates.sim,"%m")) # t-by-1
-  #create the conditional correlation matrix for the sites based on the basin average
-  S11 <- S[1,1]
-  S22 <- S[2:(n.sites+1),2:(n.sites+1)]
-  S21 <- S[2:(n.sites+1),1]
-  S12 <- S[1,2:(n.sites+1)]
-  S11.inv <- solve(S11)
-  S.cond <- S22 - S21%*%S11.inv%*%S12
+  
+  #create the conditional correlation matrix for the sites
+  std.S.cond <- diag(rep(0.4,n.sites)) # lambda == 0.1,...,0.9 etc here (0.4)
+  SIGMA <- std.S.cond%*%Sbasin%*%t(std.S.cond)
+  S.cond <- SIGMA
   
   n <- dim(prcp.site)[1]
   
@@ -76,8 +74,9 @@ quantile.mapping <- function(prcp.site,S,thshd.prcp,perc.q,emission.old1,emissio
     prcp.site.u2.proposed <- lapply(prcp.site.z2.proposed,function(x){pnorm(x)})
 
     #accept proposed u with probability proportional to ratio of old and new exceedance ratios
-    samp.cf <- rmvnorm(n,rep(0,n.sites),S[2:(n.sites+1),2:(n.sites+1)])
-    samp2.cf <- sapply(1:n.sites,function(x) {samp.cf[idx2[[x]],x]})
+    set.seed(1)
+    samp.cf <- rnorm(n,0,1)
+    samp2.cf <- sapply(1:n.sites,function(x) {samp.cf[idx2[[x]]]})
     coin.flip <- lapply(samp2.cf,function(x){pnorm(x)})
     
     prcp.site.u2.new <- sapply(1:n.sites,function(i,x,y,cf) {
