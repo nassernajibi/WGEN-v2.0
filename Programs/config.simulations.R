@@ -157,7 +157,7 @@ for (change in 1:nrow(change.list)) {
                                     tmax.site.sim=tmax.site.sim,
                                     emission.fits.site=emission.fits.site,
                                     months=months,dates.sim=dates.sim,n.sites=n.sites,
-                                    qq=qq,perc.mu=perc.mu,perc.q=perc.q,S=S,Sbasin=Sbasin,cur.jitter=cur.jitter,cur.tc=cur.tc,
+                                    qq=qq,perc.mu=perc.mu,perc.q=perc.q,Sbasin=Sbasin,cur.jitter=cur.jitter,cur.tc=cur.tc,
                                     num.iter=num.iter,thshd.prcp=thshd.prcp,qq.month=qq.month)
   set.seed(NULL)
   prcp.site.sim.perturbed <- perturbed.sim[[1]]
