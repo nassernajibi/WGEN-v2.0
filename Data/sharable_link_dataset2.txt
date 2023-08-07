@@ -1,0 +1,17 @@
+// Sharable links (permanent) to download the input data //
+
+San Francisco Bay, HUC4:1805
+
+Box folder:
+https://cornell.box.com/s/hhf7jc2veph6ka9ezu3duqhsa0uxgxu8
+~ 383 MB
+
+
+
+Original data sources:
+1. Livneh et al. (2015) (daily, 0.0625-by-0.0625 degress, ~6-by-6 km resolution).
+Livneh, B., Bohn, T.J., Pierce, D.W., Munoz-Arriola, F., Nijssen, B., Vose, R., Cayan, D.R. and Brekke, L. (2015) A spatially comprehensive, hydrometeorological data set for Mexico, the U.S., and southern Canada 1950-2013. 2(1), 1-12. Scientific Data, https://doi.org/10.1038/sdata.2015.42
+2. Pierce et al. (2021)
+Pierce, D. W., Su, L., Cayan, D. R., Risser, M. D., Livneh, B., & Lettenmaier, D. P. (2021). An extreme-preserving long-term gridded daily precipitation dataset for the conterminous United States. Journal of Hydrometeorology, 22(7), 1883-1895.
+3. PRISM Climate Group (2014)
+PRISM Climate Group (2014). Oregon State University, https://prism.oregonstate.edu, data created 4 Feb 2014.
