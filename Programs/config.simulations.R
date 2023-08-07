@@ -62,7 +62,7 @@ long.dates.sim <- rep(dates.synoptic,times=my.num.sim)
 #########Precipitation characteristics#########
 
 #location of obs weather data (RData format): weather data (e.g., precip and temp) as matrices (time x lat|lon: t-by-number of grids); dates vector for time; basin average precip (see the example meteohydro file)
-processed.data.meteohydro <- paste0("./Data/processed.data.files/processed.meteohydro/processed.meteohydro.myPilot.RData")
+processed.data.meteohydro <- paste0("./Data/processed.data.files/processed.meteohydro/processed.meteohydro.",basin.cnt,".RData")
 load(processed.data.meteohydro) #load in weather data
 
 
