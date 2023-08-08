@@ -1,6 +1,6 @@
-# Weather Generator v2.0
+# Stochastic Weather Generator v2.0
 
-## Welcome to the code repository of the weather regime based stochastic weather generator: WR-SWG, or for simplicity, WGEN! ##
+## Code repository of the weather regime-based stochastic weather generator: WR-SWG (or WGEN) ##
 
 The WGEN was first developed by [Prof. Scott Steinschneider](https://github.com/SteinschneiderLab) (Cornell University) (see *Steinschneider et al., 2019*). 
 Since then, it has been upgraded, applied to different locations, and used for varying purposes by [the Steinschneider Research Group]( https://blogs.cornell.edu/steinschneider/) and their collaborators.
