@@ -11,7 +11,7 @@ The tool is useful in expediting the adoption of bottom-up vulnerability assessm
 
 WGEN-v2.0 scripts were developed in the R Foundation for Statistical Computing Platform Desktop System Type x64-based PC with Intel(R) Core(TM) i7-9700 CPU 3.00 GHz 8 Cores 8 Logical Processors 64.0 GB RAM (64-bit) R version 4.2.0 (RStudio 2022-04-22 ucrt).
 
-A permanent and archived version of this repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311768.svg)](https://doi.org/10.5281/zenodo.7311768). (all versions DOI)
+A permanent and archived version of this repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311768.svg)](https://doi.org/10.5281/zenodo.7311768) (all versions DOI).
 
 ### How to cite
 
