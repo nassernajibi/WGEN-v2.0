@@ -93,6 +93,8 @@ This will show you how we developed different modules of the WGEN, and produced 
 
 If you want to dig deeper, but not run our codes, then you may want to look at the R functions in `Programs/functions/` and/or the modules as `Programs/config.simulations.R` and `Programs/run.stochastic.weather.generator.R`.
 
+$${\color{red}#### To run WGEN}$$
+
 #### To run WGEN
 
 > If you want to reproduce or modify our results, this section is for you
