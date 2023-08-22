@@ -24,7 +24,7 @@ or its results/methods, please cite the references below.
 @software{SWGEN,
   author = {Najibi, Nasser and Steinschneider, Scott},
   title = {Stochastic Weather Generator v2.0},
-  url = {https://hadoop.apache.org](https://doi.org/10.5281/zenodo.7311768},
+  url = {https://doi.org/10.5281/zenodo.7311768},
   version = {2.0},
   date = {2023-08-22},
 }
