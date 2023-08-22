@@ -1,23 +1,17 @@
-// Sharable links (permanent) to download the input/ouput sample data //
-
-Box folder:
-https://cornell.box.com/s/tfkwmnhqfmwwbzs2f0xu5o7jyv7bfe16
-~ 535 MB
-
-or
-
-Sync folder:
-https://ln5.sync.com/dl/8fc0abc00/m3egptbc-hdpesjw4-qmyn22aq-i93g2crf
-~ 535 MB
-
-or
+// Sharable links (permanent) to download the input/output sample data //
 
 Zenodo repository:
 https://doi.org/10.5281/zenodo.7311768
-~ 583 MB
+~ 780 MB
+(August 2023 version)
 
 Original data sources:
 1. NCEP/NCAR Reanalysis 1 (daily, 2.5-by-2.5 degrees resolution) (https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.html)
 Kalnay et al. (1996) The NCEP/NCAR 40-year reanalysis project, Bull. Amer. Meteor. Soc., 77, 437-470. https://doi.org/10.1175/1520-0477(1996)077%3C0437:TNYRP%3E2.0.CO;2
 2. Livneh et al. (2015) (daily, 0.0625-by-0.0625 degress, ~6-by-6 km resolution).
 Livneh, B., Bohn, T.J., Pierce, D.W., Munoz-Arriola, F., Nijssen, B., Vose, R., Cayan, D.R. and Brekke, L. (2015) A spatially comprehensive, hydrometeorological data set for Mexico, the U.S., and southern Canada 1950-2013. 2(1), 1-12. Scientific Data, https://doi.org/10.1038/sdata.2015.42
+3. Pierce et al. (2021)
+Pierce, D. W., Su, L., Cayan, D. R., Risser, M. D., Livneh, B., & Lettenmaier, D. P. (2021). An extreme-preserving long-term gridded daily precipitation dataset for the conterminous United States. Journal of Hydrometeorology, 22(7), 1883-1895.
+4. PRISM Climate Group (2014)
+PRISM Climate Group (2014). Oregon State University, https://prism.oregonstate.edu, data created 4 Feb 2014.
+
