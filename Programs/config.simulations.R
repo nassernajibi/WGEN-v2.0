@@ -1,193 +1,155 @@
-
-rm(list=ls())
-
-library(MASS)
-library(fExtremes)
-library(evmix)
-library(zoo)
-library(abind)
-library(parallel)
-library(mvtnorm)
-library(tictoc)
-library(lubridate)
-
-#adjust main directory and directory for simulation files
-mainDir <- "D:/Projects/Tuolumne_River_Basin/GitHub_WGENv2.0"
-setwd(mainDir)
-
-dir.to.sim.files <- "./Data/simulated.data.files/WGEN.out"
-dir.create(file.path(mainDir, dir.to.sim.files), showWarnings = FALSE)
-
-num.iter <- 1 # A single long trace (e.g., thousand years) is sufficient although we create like 5 ensembles in the simulated WRs
-basin.cnt <- 'myPilot' # for a set of 12 randomly selected Livneh grids in the Tuolumne River Basin 
-number.years.long <- 3050 # e.g., 500, 1000, 2000, 3000, 5000 years, etc [note: current NHMM output (parametric) is for 1036 years; current non-parametric is for 3050 years]
-
-##############################Define perturbations#######################################
-## Climate changes and jitter to apply:
-change.list <- data.frame("tc"=  c(0), # e.g., 1, 2, ...
-                          "jitter"=  c(TRUE),
-                          "pccc"=c( 0), # e.g., 0.07, 0.14, ...
-                          "pmuc"=c( 0)# e.g., -.125
-)
-
-# For simulating the WRs (i.e., 'config.WRs.non_param.R'; 'config.WRs.param.NHMM.R'), do you use non-parametric or parametric method
-use.non_param.WRs <- TRUE #TRUE for non-parametric, FALSE for parametric simulated WRs
-####### Choose A (FALSE) or B (TRUE) below for the simulated WRs #################
-#-- A) load in NHMM with WRs (parametric)
-tmp.list <- readRDS(paste0("./Data/simulated.data.files/WRs.out/final.NHMM.output.rds"))
-weather.state.assignments <- tmp.list$WR.historical # this is for BOTH the parametric and non-parametric approach 
-sim.weather.state.assignments <- tmp.list$WR.simulation[,1:num.iter] # this is only for the parametric approach of simulating WRs
-num.states <- length(unique(as.vector(weather.state.assignments)))    #number of WRs in the model
-rm(tmp.list) # for memory
-
-#-- B) load in non-parametric simulation with WRs
-np.list.sim.weather.state.assignments <- readRDS(paste0("./Data/simulated.data.files/WRs.out/final.non_param.WRs.output.rds")) #this is only for the non-parametric approach of simulating WRs
-num.states <- length(unique(np.list.sim.weather.state.assignments$markov.chain.sim[[num.iter]]))    #number of WRs in the model
-
-# load in supporting functions
-files.sources = list.files("./Programs/functions",full.names = TRUE)
-my.functions <- sapply(files.sources, source)
-##################################
-
-#dates for the historical WRs
-start_date_synoptic="1948-01-01"; end_date_synoptic="2021-12-31"
-dates.synoptic <- seq(as.Date(start_date_synoptic),as.Date(end_date_synoptic), by="days")
-#create dates for the simulated WRs
-my.num.sim = ceiling(number.years.long/length(unique(format(dates.synoptic,'%Y')))) # number of chunks of historical periods; e.g., 1 is one set of simulation equal to the historical
-long.dates.sim <- rep(dates.synoptic,times=my.num.sim)
-
-##################################
-
-
-#########Precipitation characteristics#########
-
-#location of obs weather data (RData format): weather data (e.g., precip and temp) as matrices (time x lat|lon: t-by-number of grids); dates vector for time; basin average precip (see the example meteohydro file)
-processed.data.meteohydro <- paste0("./Data/processed.data.files/processed.meteohydro/processed.meteohydro.",basin.cnt,".RData")
-load(processed.data.meteohydro) #load in weather data
-
-
-qq <- .99              # percentile threshold to separate Gamma and GPD distributions
-thshd.prcp <- apply(prcp.site,2,function(x) {quantile(x[x!=0],qq,na.rm=T)})
-
-
-#Bootstrapping choices###
-window.size <- rep(3,length(months))   #the size of the window (in days) from which runs can be bootstrapped around the current day of simulation, by month: Jan -- Dec
-
-trace <- 0.25     #trace prcp threshold. 0.25 mm (for Livneh dataset); or 0.01 inches
-
-
-#The spearman correlation between the precipitation sites, used in the copula-based jitters
-Sbasin <- cor(prcp.site,method="spearman")
-n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
-
-
-#fit emission distributions to each site by month. sites along the columns, parameters for month down the rows
-emission.fits.site <- fit.emission(prcp.site=prcp.site,
-                                   months=months,
-                                   months.weather=months.weather,
-                                   n.sites=n.sites,
-                                   thshd.prcp=thshd.prcp)
-
-
-#how often is prcp under threshold by month and site
-qq.month <- sapply(1:n.sites,function(i,x=prcp.site,m,mm) {
-  sapply(m,function(m) {
-    length(which(as.numeric(x[x[,i]!=0 & mm==m & !is.na(x[,i]),i])<=thshd.prcp[i]))/length(as.numeric(x[x[,i]!=0 & mm==m & !is.na(x[,i]),i]))
-  })},
-  m=months, mm=months.weather)
-
-#################################################
-
-##########################Simulate model with perturbations#######################################
-
-#decide whether or not to use historic or simulated WRs
-if(use.non_param.WRs) {
+config.simulations <- function(){
   
-  dates.sim <- np.list.sim.weather.state.assignments$dates.sim
-  markov.chain.sim <- np.list.sim.weather.state.assignments$markov.chain.sim
-  identical.dates.idx <- dates.synoptic%in%dates.weather
-  weather.state.assignments <- weather.state.assignments[identical.dates.idx]
+  ######  ------------------------
+  ######  ------------------------
+  ######----> General Settings <-------------------------------------------------######
+  ######  ------------------------
+  ######  ------------------------
+  {
+    basin.cnt <- 'Tuolumne.River' # for a set of 12 randomly selected Livneh grids in the Tuolumne River Basin
+    # basin.cnt <- 'SFB' # for San Francisco Bay: HUC4-1805 (not yet; will run if we get some extra time)
+    
+    
+    ##adjust main directory and directory for simulation files
+    mainDir <- "D:/Projects/Tuolumne_River_Basin/GitHub_WGENv2.0"
+    setwd(mainDir)
+    
+    dir.to.sim.files <- "./Data/simulated.data.files/WGEN.out"
+    dir.create(file.path(mainDir, dir.to.sim.files), showWarnings = FALSE)
+    
+    ##location of obs weather data (RData format): weather data (e.g., precip and temp) as matrices (time x lat|lon: t-by-number of grids); dates vector for time; basin average precip (see the example meteohydro file)
+    path.to.processed.data.meteohydro <- paste0("./Data/processed.data.files/processed.meteohydro/processed.meteohydro.",basin.cnt,".RData")
+    months <- seq(1,12) # Jun-Dec calendar year
+    
+    
+    ##threshold for mixed Gamma-GPD population separation
+    qq <- .99  
+    
+    
+    ##bootstrapping choices##
+    window.size <- rep(3,length(months))   #the size of the window (in days) from which runs can be bootstrapped around the current day of simulation, by month: Jan -- Dec
+    pr.trace <- 0.25     # {0.25 mm, 0.01 in} trace prcp threshold. 0.25 mm (for Livneh dataset); or 0.01 inches: lower threshold below which day is considered dry
+    
+    ##-------------Define perturbations-------------##
+    ##climate changes and jitter to apply:
+    change.list <- data.frame("tc"=  c(0), # {e.g., }0, 1, 2, ...} (changes in temperature)
+                              "jitter"= c(TRUE),
+                              "pccc"= c( 0), # {e.g., 0, 0.07, 0.14, ...} (changes for precipitation extreme quantile -- CC)
+                              "pmuc"= c( 0)# {e.g., 0, -.125, .125, ...} (changes in precipitation mean)
+    )
+    ##----------------------------------------------##
+    
+    ##load in supporting functions
+    files.sources = list.files("./Programs/functions",full.names = TRUE)
+    my.functions <- sapply(files.sources, source)
+    
+  }
   
-} else {
-  dates.sim <- long.dates.sim
-  markov.chain.sim <- as.list(data.frame(sim.weather.state.assignments))
+  ######  -----------------------
+  ######  -----------------------
+  ######----> Dates and Years <------------------------------------------------------------######
+  ######  -----------------------
+  ######  -----------------------
+  {
+    ##length of final simulated weather (in calendar years)##
+    number.years.long <- 1000 # {e.g., 500, 1000, 2000, 3000, 5000 years,...} [note: current NHMM output (parametric) is for 1036 years; current non-parametric is for 3050 years]
+    num.iter <- 1 # A single long trace (e.g., thousand years) is sufficient although we create like 5 ensembles in the simulated WRs
+    
+    start.date.weather="1950-01-01"; end.date.weather="2013-12-31" # Toulamne River
+    # start.date.weather="1948-01-01"; end.date.weather="2018-12-31" # SFB
+    
+    start.date.synoptic="1948-01-01"; end.date.synoptic="2021-12-31" # from processed GPHA file
+    
+    start.date.par="1948-01-01"; end.date.par="2019-12-31" # proper leap year orders (starting with leap year of 1948, ending a year before (i.e., 2019) the leap year of 2020)
+    start.date.nonpar="1948-01-01"; end.date.nonpar="2019-12-31" # proper leap year orders (starting with leap year of 1948, ending a year before (i.e., 2019) the leap year of 2020)
+  }
+  
+  ######  -----------------------------------------------------------------
+  ######  -----------------------------------------------------------------
+  ######----> Hyperparameters of the WRs Identification and Simulation <---------######
+  ######  -----------------------------------------------------------------
+  ######  -----------------------------------------------------------------
+  {
+    num.years.sim.WRs <- 1000 # e.g., 500, 1000, 2000, 3000, 5000 years, etc [note: current NHMM output (parametric) is for 1036 years]
+    
+    dir.to.sim.WRs.files <- "./Data/simulated.data.files/WRs.out" # dir.to.sim.WRs.files
+    num.iter.WRs <- 1   #number of iterations to simulate sequence of WRs
+    path.to.processed.GPHAs <- './Data/processed.data.files/processed.hgt/hgt.500.Pacific.NorthAmer.synoptic.region_19480101_20211231.rds'
+    # Covariates should be a matrix with the first column as dates, and the second column as 
+    #      ... normalized pPC1 (scaled and centered)
+    path.to.processed.SPI.PCs <- './Data/processed.data.files/processed.NHMM.data/paleo.norm.4.cold.PCs.dates_extracted.rds'
+    
+    #######################define seasons and covariates for NHMM models of WRs#############################
+    cold.months <- c(11,12,1,2,3,4) # Nov-Apr
+    warm.months <- c(5,6,7,8,9,10)  #May-Oct
+    num.PCs <- 10
+    seasons <- list(cold.months,warm.months)
+    num_eofs.season <- rep(num.PCs,length(seasons))  #number of PCs to use for geopotential heights per season
+    num_WRs.season <- c(7,3)    #number of WRs to fit per season
+    
+    
+    ##Choose below whether through parametric or non-parametric way to create the simulated WRs ##
+    use.non_param.WRs <- TRUE #{TRUE, FALSE}: TRUE for non-parametric, FALSE for parametric simulated WRs
+    
+    dynamic.scenario  <- 0 # {0, 1, 2}: 0: no dynamic change; 1: dynamic scenario #1 (30% increase in WR3); or 2: dynamic scenario #2 (linear trend)
+    
+    if (use.non_param.WRs){      #----------- 1+2 dynamic scenarios ----------#
+      if (dynamic.scenario==0){
+        ##===> Attempt #0 (thermodynamic only; no change to freq of WRs) ===##
+        # #specify target change (as a percent) for WR probabilities
+        WR_prob_change <- c(0,0,0,0,0,0,0,0,0,0) # between 0 and 1
+        # #how close (in % points) do the WR frequencies (probabilities) need to be to the target
+        lp.threshold <- 0.00001
+        # #how much change do we allow in a sub-period sampling probability before incurring a larger penalty in the optimization
+        piecewise_limit <- .02
+        
+      }else if(dynamic.scenario==1){
+        ##===> Attempt #1 (dynamic scenario #1) ===##
+        # #specify target change (as a percent) for WR probabilities (if, increasing WR3 in future)
+        WR_prob_change <- c(0,0,.3,0,0,0,0,0,0,0) # between 0 and 1
+        # #how close (in % points) do the WR frequencies (probabilities) need to be to the target
+        lp.threshold <- 0.007
+        # #how much change do we allow in a sub-period sampling probability before incurring a larger penalty in the optimization
+        piecewise_limit <- .02
+        
+      }else if(dynamic.scenario==2){
+        ##===> Attempt #2 (dynamic scenario #2) ===##
+        # specify target change (as a percent) for WR probabilities (if, continuing their current trends in future)
+        WR_prob_change <- c(-0.09969436,  0.27467048,  0.33848792,
+                            -0.28431861, -0.23549986,  0.03889970,
+                            -0.05628958, 0.38059153, -0.16636739, -0.17995965) # between 0 and 1
+        # how close (in % points) do the WR frequencies (probabilities) need to be to the target
+        lp.threshold <- 0.008
+        # how much change do we allow in a sub-period sampling probability before incurring a larger penalty in the optimization
+        piecewise_limit <- .02
+      }
+    }
+    
+  }
+  
+  ######  -----------------------------------
+  ######  -----------------------------------
+  ######----> Create Figures <---------######
+  ######  -----------------------------------
+  ######  -----------------------------------
+  {
+    # labels for x and y-axes
+    label1 <- paste0('Obs [',format(as.Date(start.date.weather),'%Y'),
+                     '-',format(as.Date(end.date.weather),'%Y'),']')
+    label2 <- 'Sim (WGEN: baseline)'
+  }
+  
+  ######  ----------------------------------------
+  ######  ----------------------------------------
+  ######----> Create Output files <---------######
+  ######  ----------------------------------------
+  ######  ----------------------------------------
+  {
+    # directory to store output files
+    dir.to.output.files <- './Data/output.data.files/'
+  }
+  
+  # returning the entire values inserted here to 'run.stochastic.weather.generator'
+  values = as.list(environment())
+  return(values)
 }
-
-#run the daily weather generate num.iter times using the num.iter Markov chains
-mc.sim <- resampled.date.sim <- resampled.date.loc.sim <- prcp.site.sim <- tmin.site.sim <- tmax.site.sim <-  list()
-start_time <- Sys.time()
-for (k in 1:num.iter) {
-  my.itertime <- Sys.time()
-  my.sim <- wgen.simulator(weather.state.assignments=weather.state.assignments,mc.sim=markov.chain.sim[[k]],
-                           prcp.basin=prcp.basin,dates.weather=dates.weather,
-                           first.month=first.month,last.month=last.month,dates.sim=dates.sim,
-                           months=months,window.size=window.size,min.thresh=trace)
-  print(paste(k,":", Sys.time()-my.itertime))
-  
-  #each of these is a list of length iter
-  mc.sim[[k]] <- my.sim[[1]]
-  resampled.date.sim[[k]] <- my.sim[[2]]
-  resampled.date.loc.sim[[k]] <- my.sim[[3]]
-  prcp.site.sim[[k]] <- prcp.site[resampled.date.loc.sim[[k]],]
-  tmin.site.sim[[k]] <- tmin.site[resampled.date.loc.sim[[k]],]
-  tmax.site.sim[[k]] <- tmax.site[resampled.date.loc.sim[[k]],]
-}
-end_time <- Sys.time(); run.time.sim <- end_time - start_time
-print(paste("SIMULATION started at:",start_time,", ended at:",end_time)); print(round(run.time.sim,2))
-#remove for memory
-rm(my.sim)
-
-
-#once the simulations are created, we now apply post-process climate changes (and jitters)
-for (change in 1:nrow(change.list)) {
-  start_time <- Sys.time()
-  cur.tc <- change.list$tc[change]
-  cur.jitter <- change.list$jitter[change]
-  cur.pccc <- change.list$pccc[change]
-  cur.pmuc <- change.list$pmuc[change]
-  
-  #precipitation scaling (temperature change dependent)
-  perc.q <- (1 + cur.pccc)^cur.tc    #scaling in the upper tail for each month of non-zero prcp
-  perc.mu <- (1 + cur.pmuc)          #scaling in the mean for each month of non-zero prcp
-  
-  #perturb the climate from the simulations above (the longest procedure in this function is saving the output files)
-  set.seed(1)   #this ensures the copula-based jitterrs are always performed in the same way for each climate change
-  perturbed.sim <-  perturb.climate(prcp.site.sim=prcp.site.sim,
-                                    tmin.site.sim=tmin.site.sim,
-                                    tmax.site.sim=tmax.site.sim,
-                                    emission.fits.site=emission.fits.site,
-                                    months=months,dates.sim=dates.sim,n.sites=n.sites,
-                                    qq=qq,perc.mu=perc.mu,perc.q=perc.q,Sbasin=Sbasin,cur.jitter=cur.jitter,cur.tc=cur.tc,
-                                    num.iter=num.iter,thshd.prcp=thshd.prcp,qq.month=qq.month)
-  set.seed(NULL)
-  prcp.site.sim.perturbed <- perturbed.sim[[1]]
-  tmin.site.sim.perturbed <- perturbed.sim[[2]]
-  tmax.site.sim.perturbed <- perturbed.sim[[3]]
-  
-  #remove for memory
-  rm(perturbed.sim)
-  end_time <- Sys.time(); run.time.qmap <- end_time - start_time
-  print(paste("QMAPPING started at:",start_time,", ended at:",end_time)); print(round(run.time.qmap,2))
-  
-  #how to name each file name to track perturbations in each set of simulations
-  file.suffix <- paste0(".temp.",cur.tc,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_hist.state.",use.non_param.WRs,"_jitter.",cur.jitter,"_s",num.states,"_with_",num.iter,".",basin.cnt)
-  
-  print(paste("|---start saving---|"))
-  write.output.large(dir.to.sim.files,
-                     prcp.site.sim=prcp.site.sim.perturbed,
-                     tmin.site.sim=tmin.site.sim.perturbed,
-                     tmax.site.sim=tmax.site.sim.perturbed,
-                     mc.sim=mc.sim,resampled.date.sim=resampled.date.sim,
-                     dates.sim=dates.sim,file.suffix=file.suffix)
-  print(paste("|---finished saving---|"))
-  
-}
-
-#remove for memory
-rm(resampled.date.sim,resampled.date.loc.sim,markov.chain.sim,mc.sim)
-##################################################################################################
-print(paste0("--- done.  state= ", num.states," --- ensemble member:",num.iter))
-gc()
-
-# The End
-#####################################################################################

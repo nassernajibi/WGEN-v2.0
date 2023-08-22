@@ -45,6 +45,15 @@ quantile.mapping <- function(prcp.site,Sbasin,thshd.prcp,perc.q,emission.old1,em
   }, z=emission.old1,m=months.sim,mm=months
   )
 
+  #replace any probability==1 (to avoid getting 'inf' instances in next 'sapply') with a very close value to 1.
+  check.probs.one <- sapply(1:n.sites,function(x) {sum(prcp.site.u1[[x]]==1)>0})
+  if (sum(check.probs.one==1)>0){
+    idx.ones <- lapply(prcp.site.u1,function(x){which(x==1)})
+    prcp.site.u1 <- sapply(1:n.sites,function(x) {
+      replace(prcp.site.u1[[x]],idx.ones[[x]],1-.Machine$double.eps)
+    })
+  }
+  
   #transform new U's to new precipitation using new emission distributions
   prcp.site.new1 <- sapply(1:n.sites,function(x,z,m,mm) {
     qgamma(prcp.site.u1[[x]],'shape'=z[1,match(m[[x]],mm),x],'rate'=z[2,match(m[[x]],mm),x])

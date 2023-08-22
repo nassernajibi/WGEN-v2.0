@@ -1,7 +1,9 @@
 
 
 ##########################Linear Program Attempt 1####################
-WR_prob_estimator <- function(WR_prob_chunk,WR_prob_change,threshold,piecewise_limit) {
+WR_prob_estimator <- function(WR_prob_chunk,WR_prob_change,
+                              threshold,piecewise_limit,
+                              weather.nonpar.state.assignments) {
 
   ####notation####
   # i = WR (1,...,K)
