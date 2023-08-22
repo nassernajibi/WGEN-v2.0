@@ -28,6 +28,7 @@ or its results/methods, please cite the references below.
   version = {2.0},
   date = {2023-08-22},
 }
+```
 
 2. Steinschneider, S., Ray, P., Rahat, S. H., & Kucharski, J. (2019). A weather‐regime‐based stochastic weather generator for climate vulnerability assessments of water systems in the western United States. *[Water Resources Research](https://doi.org/10.1029/2018WR024446)*, 55(8), 6923-6945.
 
