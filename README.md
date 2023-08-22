@@ -61,7 +61,7 @@ or its results/methods, please cite the references below.
 
 ## For the Public
 
-Summaries of this package in a plain language will be available soon. If you'd like a high-level overview of its components, please visit us again at a later time. 
+This weather regime-based stochastic weather generator is a tool used to simulate possible future weather conditions by capturing the statistical patterns and variability observed in historical weather data. This method groups similar weather patterns, known as regimes, which represent distinct atmospheric conditions. By analyzing these regimes, the generator creates synthetic weather sequences that mimic the variability and statistics of real-world weather. This technology is essential for public applications such as risk assessment, scenario development, infrastructure design, and assessing system vulnerability. It enables decision-makers to explore a range of potential weather outcomes, aiding in designing structures that can withstand various conditions, assessing the risks associated with extreme weather events, and developing strategies to enhance the resilience of communities and systems in the face of changing climate patterns.
 
 
 ## For Researchers
