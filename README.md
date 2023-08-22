@@ -1,6 +1,6 @@
 # Stochastic Weather Generator v2.0
 
-## Documentation Guide ##
+## User Manual (Documentation Guide) ##
 
 The WGEN was first developed by [Prof. Scott Steinschneider](https://github.com/SteinschneiderLab) (Cornell University) (see *Steinschneider et al., 2019*). 
 Since then, it has been upgraded, applied to different locations, and used for varying purposes by [the Steinschneider Research Group]( https://blogs.cornell.edu/steinschneider/) and their collaborators.
