@@ -119,7 +119,13 @@ We again remind you that running will need a considerable disk space as it depen
 
 > If you want to plot different statistics, this section is for you
 
-Finally, you can run the diagnostic function `Programs/run.stochastic.weather.generator.R` to assess the performance of the WGEN through a set of selected statistics for precipitation and temperature (e.g., floods, droughts, monthly/yearly distributions, inter-annual variability, long-term dry/wet spells, heat/cold waves, and so on).
+You can run the diagnostic function `create.figures.baselines.stacked` given towards the end of the script `Programs/run.stochastic.weather.generator.R` to assess the performance of the WGEN through a set of selected statistics for precipitation and temperature (e.g., floods, droughts, monthly/yearly distributions, inter-annual variability, long-term dry/wet spells, heat/cold waves, and so on).
+
+#### To save simulated weather in delimited format
+
+> If you want to save the outputs in a delimited format, this section is for you
+
+Finally, you can run the `create.delimited.outputs` function in the script `Programs/run.stochastic.weather.generator.R` to save outputs (both simulation and observation files) for individual gridded locations in .csv format.
 
 ### Issues and Comments
 
