@@ -95,7 +95,7 @@ Next, you will need to `git clone` the repository to your machine, or download `
 
 In order to run, you will need to do two things to access the required data:
 
-1. Download the files from `Data/` and store them in a folder titled `Data` next to the `Programs` and `Figures` in your directory. *Note that you need to provide a similar input data (format, structure) for your particular case*. A permanent `Data` repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311769.svg)](https://doi.org/10.5281/zenodo.7311769).
+1. Download the files from `Data/` and store them in a folder titled `Data` next to the `Programs` and `Figures` in your directory. *Note that you need to provide a similar input data (format, structure) for your particular case*. A permanent `Data` repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311768.svg)](https://doi.org/10.5281/zenodo.7311768).
 
 1. Start with `config.WRs.non_param.R` or `config.WRs.param.NHMM.R` to identify/simulate the weather regimes.
 
@@ -119,9 +119,9 @@ A similar diagnostics can be produced for other variables (e.g., temperature, wi
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/nassernajibi/WGEN-v2.0/blob/83e90d81cd08d2aa18e998d7ad42c8c437308f9a/LICENSE) file for details.
 
 **Disclaimer:**
-You are running the scripts/functions that means you will not blame the author(s)/developer(s) if they break your stuff.
-The scripts/functions are provided AS IS without warranty of any kind. Author(s) disclaim all implied warranties including, without limitation, any implied warranties of merchantability or of fitness for a particular purpose. 
-In no event shall author(s) be held liable for any damages whatsoever (including, without limitation, any sorts of damages or loss) arising out of the use of or inability to use the scripts or documentations.
+You are running the scripts/functions which means you will not blame the author(s)/developer(s) if they break your stuff.
+The scripts/functions are provided AS IS without warranty of any kind. Author(s) disclaim all implied warranties, including, without limitation, any implied warranties of merchantability or of fitness for a particular purpose. 
+In no event shall the author(s) be held liable for any damages whatsoever (including, without limitation, any sorts of damages or loss) arising out of the use of or inability to use the scripts or documentation.
 Author(s) retain the right to alter this disclaimer at any time.
 The contents contained in this repository or within the articles are not the opinions of the funding agencies, affiliated university, or the U.S. Government but reflect the authors' opinions.
 
