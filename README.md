@@ -21,7 +21,7 @@ or its results/methods, please cite the references below.
 1. Najibi, N., Steinschneider, S. (2023). Stochastic Weather Generator v2.0. *[Zenodo](https://doi.org/10.5281/zenodo.7311768)*, Software, MIT License, Creative Commons Attribution 3.0 United States.
 
 ```bibtex
-@software{SWGEN,
+@software{SWGEN_v2.0_2023,
   author = {Najibi, Nasser and Steinschneider, Scott},
   title = {Stochastic Weather Generator v2.0},
   url = {https://doi.org/10.5281/zenodo.7311768},
