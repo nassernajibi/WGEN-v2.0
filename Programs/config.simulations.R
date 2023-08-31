@@ -32,9 +32,9 @@ config.simulations <- function(){
     
     ##-------------Define perturbations-------------##
     ##climate changes and jitter to apply:
-    change.list <- data.frame("tc"=  c(0), # {e.g., }0, 1, 2, ...} (changes in temperature)
+    change.list <- data.frame("tc"=  c(0), # {e.g., 0, 1, 2, ...} (changes in temperature)
                               "jitter"= c(TRUE),
-                              "pccc"= c( 0), # {e.g., 0, 0.07, 0.14, ...} (changes for precipitation extreme quantile -- CC)
+                              "pccc"= c( 0), # {e.g., 0, 0.07, 0.14, ...} (changes for precipitation extreme quantile -- Clausius-Clapeyron rate)
                               "pmuc"= c( 0)# {e.g., 0, -.125, .125, ...} (changes in precipitation mean)
     )
     ##----------------------------------------------##
