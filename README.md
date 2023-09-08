@@ -1,3 +1,8 @@
+![GitHub](https://img.shields.io/github/license/nassernajibi/WGEN-v2.0)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/nassernajibi/WGEN-v2.0)
+![GitHub repo size](https://img.shields.io/github/repo-size/nassernajibi/WGEN-v2.0)
+![GitHub language count](https://img.shields.io/github/languages/count/nassernajibi/WGEN-v2.0)
+![GitHub last commit](https://img.shields.io/github/last-commit/nassernajibi/WGEN-v2.0)
 # Stochastic Weather Generator v2.0
 
 ## User Manual (Documentation Guide) ##
