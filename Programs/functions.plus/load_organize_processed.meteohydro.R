@@ -92,4 +92,5 @@ save(list = ls(envir = environment(), all.names = TRUE),
      envir = environment())
 
 gc()
+
 # end
