@@ -14,7 +14,6 @@ seq.of.dates <- seq(as.Date(start_date),as.Date(end_date),by = "day")
 dir.to.all.files <- "./Data/processed.data.files/SanFranciscoBay_HUC4_1805_data/"
 
 list.grids <- list.files(dir.to.all.files)
-lst.grids.data <- list()
 
 ascii.array.precip.temp <- array(NA,c(length(seq.of.dates),length(list.grids),3))
 ascii.lonlat <- array(NA,c(length(list.grids),2))
