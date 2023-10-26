@@ -19,7 +19,7 @@ config.simulations <- function(){
     
     ##location of obs weather data (RData format): weather data (e.g., precip and temp) as matrices (time x lat|lon: t-by-number of grids); dates vector for time; basin average precip (see the example meteohydro file)
     path.to.processed.data.meteohydro <- paste0("./Data/processed.data.files/processed.meteohydro/processed.meteohydro.",basin.cnt,".RData")
-    months <- seq(1,12) # Jun-Dec calendar year
+    months <- seq(1,12) # Jan-Dec calendar year
     
     
     ##threshold for mixed Gamma-GPD population separation
