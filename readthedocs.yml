@@ -1,0 +1,20 @@
+# .readthedocs.yml
+
+# Use the latest version of the build environment
+version: 2
+
+# Specify the build image
+build:
+  image: latest
+
+# Specify R version
+python:
+  version: 4.3
+
+# Specify dependencies for building documentation
+dependencies:
+  # Install required R packages
+  - requirements: R_sessionInfo.txt
+
+# Specify the documentation format (R in this case)
+format: r
