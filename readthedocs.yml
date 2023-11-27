@@ -14,7 +14,7 @@ python:
 # Specify dependencies for building documentation
 dependencies:
   # Install required R packages
-  - requirements: R_sessionInfo.txt
+  - requirements: requirements.txt
 
 # Specify the documentation format (R in this case)
 format: r
