@@ -5,13 +5,13 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/nassernajibi/WGEN-v2.0)
 # Stochastic Weather Generator v2.0
 
-[**For the Public**](#For the Public)
-| [**For Researchers**](#For Researchers)
-| [**Repository organization**](#Repository organization)
-| [**To browse the codes**](#To browse the codes)
-| [**To run WGEN**](#To run WGEN)
-| [**How to cite**](#How to cite)
-| [**Issues and Comments**](#Issues and Comments)
+[**For the Public**](#ForthePublic)
+| [**For Researchers**](#ForResearchers)
+| [**Repository organization**](#Repository)
+| [**To browse the codes**](#Codes)
+| [**To run WGEN**](#SWG)
+| [**How to cite**](#Citing)
+| [**Issues and Comments**](#Issues)
 | [**License**](#License)
 
 ## User Manual (Documentation Guide) ##
@@ -27,12 +27,12 @@ WGEN-v2.0 scripts were developed in the R Foundation for Statistical Computing P
 
 A permanent and archived version of this repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311768.svg)](https://doi.org/10.5281/zenodo.7311768) (all versions DOI).
 
-## For the Public
+### For the Public
 
 This weather regime-based stochastic weather generator is a tool to simulate possible future weather conditions by capturing the statistical patterns and variability observed in historical weather data. This method groups similar weather patterns, known as regimes, which represent distinct atmospheric conditions. By analyzing these regimes, the generator creates synthetic weather sequences that mimic the variability and statistics of real-world weather. This technology is essential for public applications such as risk assessment, scenario development, infrastructure design, and assessing system vulnerability. It enables decision-makers to explore a range of potential weather outcomes, aiding in designing structures that can withstand various conditions, assessing the risks associated with extreme weather events, and developing strategies to enhance the resilience of communities and systems in the face of changing climate patterns.
 
 
-## For Researchers
+### For Researchers
 
 We are committed to making our work findable, accessible, interoperable and reusable ([FAIR principles](https://www.nature.com/articles/sdata201618)) by the scientific community and the society at large.
 The programming language/platform (i.e., [R](https://www.r-project.org/)) and data used here are publicly available via the public preservation repositories without any charges.
@@ -40,7 +40,7 @@ All code is posted on this repository.
 
 The following sections outline the steps you can take to run the WGEN.
 
-#### Repository organization
+### Repository
 
 - `README.md` is what you are looking at now.
 - `R_sessionInfo.txt` contains a list of packages in `R` (_attached base packages, attached packages, and loaded via a namespace_) with their release version. 
@@ -51,7 +51,7 @@ The following sections outline the steps you can take to run the WGEN.
 - `Figures/` contains a list of diagnostics and statistics to examine the performance of WGEN outputs. _If you want to use these figures, you are responsible for complying with the policies of the journals our papers have been published, or going to be published, but we mainly ask that you cite our papers when you do so._
 
 
-#### To browse the codes
+### Codes
 
 > If you want to browse our code, this section is for you
 
@@ -62,7 +62,7 @@ This will show you how we developed different modules of the WGEN, and produced 
 If you want to dig deeper, but not run our codes, then you may want to look at the R functions in `Programs/functions/` and/or the modules as `Programs/config.simulations.R` and `Programs/run.stochastic.weather.generator.R`.
 
 
-#### To run WGEN
+### SWG
 
 > If you want to reproduce or modify our results, this section is for you
 
@@ -96,7 +96,7 @@ You can run the diagnostic function `create.figures.baselines.stacked` given tow
 
 Finally, you can run the `create.delimited.outputs` function in the script `Programs/run.stochastic.weather.generator.R` to save outputs (both simulation and observation files) for individual gridded locations in .csv format.
 
-### How to cite
+### Citing
 
 If you use the WGEN scripts (as a whole, or partially, and/or as a template for your research work), 
 or its results/methods, please cite the references below.
@@ -142,7 +142,7 @@ or its results/methods, please cite the references below.
 }
 ```
 
-### Issues and Comments
+### Issues
 
 - If you have issues related to the software/packages, please raise an issue in the Issues tab.
 - If you have comments, please contact the correspondence of this repository [Nasser Najibi](https://nassernajibi.com) directly.
