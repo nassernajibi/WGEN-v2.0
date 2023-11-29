@@ -18,52 +18,6 @@ WGEN-v2.0 scripts were developed in the R Foundation for Statistical Computing P
 
 A permanent and archived version of this repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311768.svg)](https://doi.org/10.5281/zenodo.7311768) (all versions DOI).
 
-### How to cite
-
-If you use the WGEN scripts (as a whole, or partially, and/or as a template for your research work), 
-or its results/methods, please cite the references below.
-
-1. Najibi, N., Steinschneider, S. (2023). Stochastic Weather Generator v2.0. *[Zenodo](https://doi.org/10.5281/zenodo.7311768)*, Software, MIT License, Creative Commons Attribution 3.0 United States.
-
-```bibtex
-@software{SWGEN_v2.0_2023,
-  author = {Najibi, Nasser and Steinschneider, Scott},
-  title = {Stochastic Weather Generator v2.0},
-  url = {https://doi.org/10.5281/zenodo.7311768},
-  version = {2.0},
-  date = {2023-08-22},
-}
-```
-
-2. Steinschneider, S., Ray, P., Rahat, S. H., & Kucharski, J. (2019). A weather‐regime‐based stochastic weather generator for climate vulnerability assessments of water systems in the western United States. *[Water Resources Research](https://doi.org/10.1029/2018WR024446)*, 55(8), 6923-6945.
-
-```bibtex
-@article{steinschneider2019weather,
-  title={A weather-regime-based stochastic weather generator for climate vulnerability assessments of water systems in the western United States},
-  author={Steinschneider, Scott and Ray, Patrick and Rahat, Saiful Haque and Kucharski, John},
-  journal={Water Resources Research},
-  volume={55},
-  number={8},
-  pages={6923--6945},
-  year={2019},
-  publisher={Wiley Online Library}
-}
-```
-
-3. Najibi, N., Mukhopadhyay, S., & Steinschneider, S. (2021). Identifying weather regimes for regional‐scale stochastic weather generators. *[International Journal of Climatology](https://doi.org/10.1002/joc.6969)*, 41(4), 2456-2479.
-```bibtex
-@article{najibi2021identifying,
-  title={Identifying weather regimes for regional-scale stochastic weather generators},
-  author={Najibi, Nasser and Mukhopadhyay, Sudarshana and Steinschneider, Scott},
-  journal={International Journal of Climatology},
-  volume={41},
-  number={4},
-  pages={2456--2479},
-  year={2021},
-  publisher={Wiley Online Library}
-}
-```
-
 ## For the Public
 
 This weather regime-based stochastic weather generator is a tool to simulate possible future weather conditions by capturing the statistical patterns and variability observed in historical weather data. This method groups similar weather patterns, known as regimes, which represent distinct atmospheric conditions. By analyzing these regimes, the generator creates synthetic weather sequences that mimic the variability and statistics of real-world weather. This technology is essential for public applications such as risk assessment, scenario development, infrastructure design, and assessing system vulnerability. It enables decision-makers to explore a range of potential weather outcomes, aiding in designing structures that can withstand various conditions, assessing the risks associated with extreme weather events, and developing strategies to enhance the resilience of communities and systems in the face of changing climate patterns.
@@ -132,6 +86,52 @@ You can run the diagnostic function `create.figures.baselines.stacked` given tow
 > If you want to save the outputs in a delimited format, this section is for you
 
 Finally, you can run the `create.delimited.outputs` function in the script `Programs/run.stochastic.weather.generator.R` to save outputs (both simulation and observation files) for individual gridded locations in .csv format.
+
+### How to cite
+
+If you use the WGEN scripts (as a whole, or partially, and/or as a template for your research work), 
+or its results/methods, please cite the references below.
+
+1. Najibi, N., Steinschneider, S. (2023). Stochastic Weather Generator v2.0. *[Zenodo](https://doi.org/10.5281/zenodo.7311768)*, Software, MIT License, Creative Commons Attribution 3.0 United States.
+
+```bibtex
+@software{SWGEN_v2.0_2023,
+  author = {Najibi, Nasser and Steinschneider, Scott},
+  title = {Stochastic Weather Generator v2.0},
+  url = {https://doi.org/10.5281/zenodo.7311768},
+  version = {2.0},
+  date = {2023-08-22},
+}
+```
+
+2. Steinschneider, S., Ray, P., Rahat, S. H., & Kucharski, J. (2019). A weather‐regime‐based stochastic weather generator for climate vulnerability assessments of water systems in the western United States. *[Water Resources Research](https://doi.org/10.1029/2018WR024446)*, 55(8), 6923-6945.
+
+```bibtex
+@article{steinschneider2019weather,
+  title={A weather-regime-based stochastic weather generator for climate vulnerability assessments of water systems in the western United States},
+  author={Steinschneider, Scott and Ray, Patrick and Rahat, Saiful Haque and Kucharski, John},
+  journal={Water Resources Research},
+  volume={55},
+  number={8},
+  pages={6923--6945},
+  year={2019},
+  publisher={Wiley Online Library}
+}
+```
+
+3. Najibi, N., Mukhopadhyay, S., & Steinschneider, S. (2021). Identifying weather regimes for regional‐scale stochastic weather generators. *[International Journal of Climatology](https://doi.org/10.1002/joc.6969)*, 41(4), 2456-2479.
+```bibtex
+@article{najibi2021identifying,
+  title={Identifying weather regimes for regional-scale stochastic weather generators},
+  author={Najibi, Nasser and Mukhopadhyay, Sudarshana and Steinschneider, Scott},
+  journal={International Journal of Climatology},
+  volume={41},
+  number={4},
+  pages={2456--2479},
+  year={2021},
+  publisher={Wiley Online Library}
+}
+```
 
 ### Issues and Comments
 
