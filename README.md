@@ -4,6 +4,7 @@
 ![GitHub language count](https://img.shields.io/github/languages/count/nassernajibi/WGEN-v2.0)
 ![GitHub last commit](https://img.shields.io/github/last-commit/nassernajibi/WGEN-v2.0)
 # Stochastic Weather Generator v2.0
+## User Manual (Documentation Guide) ##
 
 [**For the Public**](#Public)
 | [**For Researchers**](#Researchers)
@@ -14,7 +15,6 @@
 | [**Issues and Comments**](#Issues)
 | [**License**](#License)
 
-## User Manual (Documentation Guide) ##
 
 The WGEN was first developed by [Prof. Scott Steinschneider](https://github.com/SteinschneiderLab) (Cornell University) (see *Steinschneider et al., 2019*). 
 Since then, it has been upgraded, applied to different locations, and used for varying purposes by [the Steinschneider Research Group]( https://blogs.cornell.edu/steinschneider/) and their collaborators.
