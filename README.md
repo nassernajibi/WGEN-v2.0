@@ -5,12 +5,12 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/nassernajibi/WGEN-v2.0)
 # Stochastic Weather Generator v2.0
 
-[**For the Public**](#ForthePublic)
-| [**For Researchers**](#ForResearchers)
-| [**Repository organization**](#Repository)
-| [**To browse the codes**](#Codes)
-| [**To run WGEN**](#SWG)
-| [**How to cite**](#Citing)
+[**For the Public**](#Public)
+| [**For Researchers**](#Researchers)
+| [**Repository Organization**](#Repository)
+| [**To Browse the Codes**](#Codes)
+| [**To Run SWG**](#SWG)
+| [**How to Cite**](#Citing)
 | [**Issues and Comments**](#Issues)
 | [**License**](#License)
 
@@ -27,12 +27,12 @@ WGEN-v2.0 scripts were developed in the R Foundation for Statistical Computing P
 
 A permanent and archived version of this repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311768.svg)](https://doi.org/10.5281/zenodo.7311768) (all versions DOI).
 
-### For the Public
+### Public
 
 This weather regime-based stochastic weather generator is a tool to simulate possible future weather conditions by capturing the statistical patterns and variability observed in historical weather data. This method groups similar weather patterns, known as regimes, which represent distinct atmospheric conditions. By analyzing these regimes, the generator creates synthetic weather sequences that mimic the variability and statistics of real-world weather. This technology is essential for public applications such as risk assessment, scenario development, infrastructure design, and assessing system vulnerability. It enables decision-makers to explore a range of potential weather outcomes, aiding in designing structures that can withstand various conditions, assessing the risks associated with extreme weather events, and developing strategies to enhance the resilience of communities and systems in the face of changing climate patterns.
 
 
-### For Researchers
+### Researchers
 
 We are committed to making our work findable, accessible, interoperable and reusable ([FAIR principles](https://www.nature.com/articles/sdata201618)) by the scientific community and the society at large.
 The programming language/platform (i.e., [R](https://www.r-project.org/)) and data used here are publicly available via the public preservation repositories without any charges.
