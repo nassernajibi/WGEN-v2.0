@@ -9,7 +9,7 @@ config.simulations <- function(){
     basin.cnt <- 'SanFranciscoBay' # for a set of 12 randomly selected Livneh Unsplit grids in the San Francisco Bay (HUC4# 1805)
 
     ##adjust main directory and directory for simulation files
-    mainDir <- "D:/Projects/Tuolumne_River_Basin/GitHub_WGENv2.0"
+    mainDir <- "D:/Projects/GitHub_WGENv2.0"
     setwd(mainDir)
     
     start.date.weather="1948-01-01"; end.date.weather="2018-12-31"
