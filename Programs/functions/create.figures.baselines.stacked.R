@@ -64,8 +64,8 @@ create.figures.baselines.stacked <- function(mainDir,
   years.weather <- as.numeric(format(dates.weather,'%Y'))
   months.weather <- as.numeric(format(dates.weather,'%m'))
   
-  lon_lat_basin <- lon_lat_grids # for 'Tuolumne.River'
-  # lon_lat_basin <- lon_lat # for 'SFB'
+  # lon_lat_basin <- lon_lat_grids # for 'Tuolumne.River'
+  lon_lat_basin <- lon_lat # for 'SFB'
   
   n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
   
@@ -943,6 +943,8 @@ create.figures.baselines.stacked <- function(mainDir,
             outcol=alpha('red',0.5),outcex=1.15, outpch=21,medcol=alpha('red',0.5),
             outbg=alpha('red',0.5),whiskcol=alpha('red',0.5),whisklty=1,staplecol=alpha('red',0.5),
             frame=F,main='',
+            ylim = c(min(min(annual.tmean.sd),sd(annual.tmean),sd(annual.tmean.sim)),
+                     max(max(annual.tmean.sd),sd(annual.tmean),sd(annual.tmean.sim))),
             xlab='',ylab='annual stdev [Average Temperature]',
             cex.axis=2,cex.main=2.5,cex.lab=1.65, font.main=1)
     points(sd(annual.tmean),col="red",pch=16,cex=3)
@@ -1007,10 +1009,11 @@ create.figures.baselines.stacked <- function(mainDir,
   # Figure 6:
   # 6) heat and cold waves/stress temperature
   {
-    temp.specific.diagnostics <- function(temp.mean,my.range=NULL,mc.cores=1)
+    temp.specific.diagnostics <- function(temp.mean,temp.max,temp.min,
+                                          my.range=NULL,mc.cores=1)
     {
       
-      temp.min <- temp.max <- temp.mean
+      # temp.min <- temp.max <- temp.mean
       #This function will calculate a series of specific diagnostic statistics for temp, which is a list of independent temp vectors 
       #
       #Arguments:
@@ -1174,11 +1177,16 @@ create.figures.baselines.stacked <- function(mainDir,
       return(my.stats)
       
     }
-    temp.specific.obs <- temp.specific.diagnostics(list(tmean.site.data))
+    
+    temp.specific.obs <- temp.specific.diagnostics(list(tmean.site.data),
+                                                   list(tmax.site.data),
+                                                   list(tmin.site.data))
     temp.specific.obs <- data.frame(temp.specific.obs[,,1])
     # converting to per year metrics:
     temp.specific.obs[,c(1,4,7,8)] <- temp.specific.obs[,c(1,4,7,8)]/length(unique(years.weather))
-    temp.specific.sim <- temp.specific.diagnostics(list(tmean.site.data.sim))
+    temp.specific.sim <- temp.specific.diagnostics(list(tmean.site.data.sim),
+                                                   list(tmax.site.data.sim),
+                                                   list(tmin.site.data.sim))
     temp.specific.sim <- data.frame(temp.specific.sim[,,1])
     # converting to per year metrics:
     temp.specific.sim[,c(1,4,7,8)] <- temp.specific.sim[,c(1,4,7,8)]/total.num.yrs
@@ -1199,7 +1207,7 @@ create.figures.baselines.stacked <- function(mainDir,
                      '(above-threshold, C)','(below-threshold, C)',
                      '(above-threshold, C)','(below-threshold, C)')
     
-    file.name.fig <- paste0("scatters_tmean_heat.cold.specific_",n.sites,".grids_s",
+    file.name.fig <- paste0("scatters_tmax_tmin_heat.cold.specific_",n.sites,".grids_s",
                             num.states,"_with_",num.iter,"_ens.",basin.cnt,".png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 18; hh.mom <- 10
@@ -1241,7 +1249,7 @@ create.figures.baselines.stacked <- function(mainDir,
     # label2 <- 'Sim (WGEN: baseline)'
     # library(svglite)
     # svglite("./myplot.svg", width = 20, height = 12)
-    file.name.fig <- paste0("maps_tmean_heat.cold.specific_",n.sites,".grids_s",
+    file.name.fig <- paste0("maps_tmax_tmin_heat.cold.specific_",n.sites,".grids_s",
                             num.states,"_with_",num.iter,"_ens.",basin.cnt,".png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 20; hh.mom <- 12

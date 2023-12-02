@@ -33,51 +33,59 @@ for (i in 1:length(lst)) {assign(names(lst[i]), lst[[i]]) }; rm(lst)
 
 #*************************************
 #--- Weather Regimes Module ---#
-if (use.non_param.WRs){      #----------- 1+2 dynamic scenarios ----------#
-  final.NHMM.output <- execute.WRs.non_param.NHMM(mainDir,
-                                                  dir.to.sim.WRs.files,
-                                                  num.iter.WRs,
-                                                  seasons,
-                                                  num_eofs.season,
-                                                  num_WRs.season,
-                                                  num.years.sim.WRs,
-                                                  start.date.synoptic,
-                                                  end.date.synoptic,
-                                                  path.to.processed.SPI.PCs,
-                                                  path.to.processed.GPHAs,
-                                                  WR_prob_change,
-                                                  lp.threshold,
-                                                  piecewise_limit,
-                                                  start.date.weather,
-                                                  end.date.weather,
-                                                  start.date.nonpar,
-                                                  end.date.nonpar,
-                                                  dynamic.scenario)
+if (use.provided.WRs){
+  final.NHMM.output <- readRDS('./Data/simulated.data.files/WRs.out/final.NHMM.non_param.output.rds')
   weather.state.assignments <- final.NHMM.output$WR.historical # this is the historical WRs 
   num.states <- length(unique(as.vector(weather.state.assignments)))    #number of WRs in the model
   dates.sim <- final.NHMM.output$dates.sim
   markov.chain.sim <- final.NHMM.output$WR.simulation
-  
-} else {
-  final.NHMM.output <- execute.WRs.param.NHMM(mainDir,
-                                              dir.to.sim.WRs.files,
-                                              num.iter.WRs,
-                                              seasons,
-                                              num_eofs.season,
-                                              num_WRs.season,
-                                              num.years.sim.WRs,
-                                              start.date.synoptic,
-                                              end.date.synoptic,
-                                              path.to.processed.SPI.PCs,
-                                              path.to.processed.GPHAs,
-                                              start.date.weather,
-                                              end.date.weather,
-                                              start.date.par,
-                                              end.date.par)
-  weather.state.assignments <- final.NHMM.output$WR.historical # this is the historical WRs 
-  num.states <- length(unique(as.vector(weather.state.assignments)))    #number of WRs in the model
-  dates.sim <- final.NHMM.output$dates.sim
-  markov.chain.sim <- as.list(data.frame(final.NHMM.output$WR.simulation[,1:num.iter]))
+} else{
+  if (use.non_param.WRs){      #----------- 1+2 dynamic scenarios ----------#
+    final.NHMM.output <- execute.WRs.non_param.NHMM(mainDir,
+                                                    dir.to.sim.WRs.files,
+                                                    num.iter.WRs,
+                                                    seasons,
+                                                    num_eofs.season,
+                                                    num_WRs.season,
+                                                    num.years.sim.WRs,
+                                                    start.date.synoptic,
+                                                    end.date.synoptic,
+                                                    path.to.processed.SPI.PCs,
+                                                    path.to.processed.GPHAs,
+                                                    WR_prob_change,
+                                                    lp.threshold,
+                                                    piecewise_limit,
+                                                    start.date.weather,
+                                                    end.date.weather,
+                                                    start.date.nonpar,
+                                                    end.date.nonpar,
+                                                    dynamic.scenario)
+    weather.state.assignments <- final.NHMM.output$WR.historical # this is the historical WRs 
+    num.states <- length(unique(as.vector(weather.state.assignments)))    #number of WRs in the model
+    dates.sim <- final.NHMM.output$dates.sim
+    markov.chain.sim <- final.NHMM.output$WR.simulation
+    
+  } else {
+    final.NHMM.output <- execute.WRs.param.NHMM(mainDir,
+                                                dir.to.sim.WRs.files,
+                                                num.iter.WRs,
+                                                seasons,
+                                                num_eofs.season,
+                                                num_WRs.season,
+                                                num.years.sim.WRs,
+                                                start.date.synoptic,
+                                                end.date.synoptic,
+                                                path.to.processed.SPI.PCs,
+                                                path.to.processed.GPHAs,
+                                                start.date.weather,
+                                                end.date.weather,
+                                                start.date.par,
+                                                end.date.par)
+    weather.state.assignments <- final.NHMM.output$WR.historical # this is the historical WRs 
+    num.states <- length(unique(as.vector(weather.state.assignments)))    #number of WRs in the model
+    dates.sim <- final.NHMM.output$dates.sim
+    markov.chain.sim <- as.list(data.frame(final.NHMM.output$WR.simulation[,1:num.iter]))
+  }
 }
 rm(final.NHMM.output) # for memory
 
@@ -127,7 +135,7 @@ create.figures.baselines.stacked(mainDir,
 
 #--- outputs ---#
 # YYYY, MM, DD, P(mm), Tmax(C), Tmin(C) in .csv individual lat/lon file #
-# for both simulated and observed data #
+# for simulated data #
 create.delimited.outputs(mainDir,
                          dir.to.sim.files,
                          dir.to.output.files,

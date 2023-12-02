@@ -119,14 +119,14 @@ create.delimited.outputs <- function(mainDir,
                 row.names = FALSE, col.names = FALSE, sep = " , ",quote = FALSE)
     
     # obs output
-    my.filename <- paste0('obs_meteo_',my.lat,'_',my.lon,'.csv')
-    dates.vec <- long.dates.obs
-    prcp.atemp <- round(cbind(prcp.site.data[,k],
-                        tmax.site.data[,k],
-                        tmin.site.data[,k]),2)
-    mat.to.save <- as.matrix(cbind(dates.vec,prcp.atemp)) # YEAR MONTH DAY PRCP MAX-TEMP MIN-TEMP
-    write.table(mat.to.save,file=paste0(path.to.save.ensm,my.filename),
-                row.names = FALSE, col.names = FALSE, sep = " , ",quote = FALSE)
+    # my.filename <- paste0('obs_meteo_',my.lat,'_',my.lon,'.csv')
+    # dates.vec <- long.dates.obs
+    # prcp.atemp <- round(cbind(prcp.site.data[,k],
+    #                     tmax.site.data[,k],
+    #                     tmin.site.data[,k]),2)
+    # mat.to.save <- as.matrix(cbind(dates.vec,prcp.atemp)) # YEAR MONTH DAY PRCP MAX-TEMP MIN-TEMP
+    # write.table(mat.to.save,file=paste0(path.to.save.ensm,my.filename),
+    #             row.names = FALSE, col.names = FALSE, sep = " , ",quote = FALSE)
     
     print(paste('site',k,'out of',n.sites,
                 '--',round(k/n.sites*100,2),"%"))
