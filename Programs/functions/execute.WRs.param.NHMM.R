@@ -1,22 +1,8 @@
 
-execute.WRs.param.NHMM <- function(mainDir,
-                                  dir.to.sim.WRs.files,
-                                  num.iter.WRs,
-                                  seasons,
-                                  num_eofs.season,
-                                  num_WRs.season,
-                                  num.years.sim.WRs,
-                                  start.date.synoptic,
-                                  end.date.synoptic,
-                                  path.to.processed.SPI.PCs,
-                                  path.to.processed.GPHAs,
-                                  start.date.weather,
-                                  end.date.weather,
-                                  start.date.par,
-                                  end.date.par){
+execute.WRs.param.NHMM <- function(){
   
   
-  dir.create(file.path(mainDir, dir.to.sim.WRs.files), showWarnings = FALSE)
+  dir.create(file.path(dir.to.sim.WRs.files), showWarnings = FALSE)
   n.seasons <- length(seasons)
   
 

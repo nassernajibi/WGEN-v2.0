@@ -1,19 +1,4 @@
-execute.simulations <- function(mainDir,
-                               dir.to.sim.files,
-                               num.iter,
-                               basin.cnt,
-                               number.years.long,
-                               change.list,
-                               path.to.processed.data.meteohydro,
-                               qq,
-                               window.size,
-                               pr.trace,
-                               weather.state.assignments,
-                               num.states,
-                               dates.sim,
-                               markov.chain.sim,
-                               start.date.weather,
-                               end.date.weather){
+execute.simulations <- function(){
   
   #########Precipitation/Temperature Inputs #########
   
@@ -123,13 +108,15 @@ execute.simulations <- function(mainDir,
   for (change in 1:nrow(change.list)) {
     start_time <- Sys.time()
     cur.tc <- change.list$tc[change]
-    cur.jitter <- change.list$jitter[change]
     cur.pccc <- change.list$pccc[change]
     cur.pmuc <- change.list$pmuc[change]
     
     #precipitation scaling (temperature change dependent)
     perc.q <- (1 + cur.pccc)^cur.tc    #scaling in the upper tail for each month of non-zero prcp
     perc.mu <- (1 + cur.pmuc)          #scaling in the mean for each month of non-zero prcp
+    
+    #set the jitter
+    cur.jitter <- to.jitter
     
     #perturb the climate from the simulations above (the longest procedure in this function is saving the output files)
     set.seed(1)   #this ensures the copula-based jitterrs are always performed in the same way for each climate change
@@ -151,7 +138,7 @@ execute.simulations <- function(mainDir,
     print(paste("QMAPPING started at:",start_time,", ended at:",end_time)); print(round(run.time.qmap,2))
     
     #how to name each file name to track perturbations in each set of simulations
-    file.suffix <- paste0(".temp.",cur.tc,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_hist.state.",use.non_param.WRs,"_jitter.",cur.jitter,"_s",num.states,"_with_",num.iter,".",basin.cnt)
+    file.suffix <- paste0(".temp.",cur.tc,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_hist.state.",use.non_param.WRs,"_jitter.",cur.jitter,"_s",num.states,"_with_",num.iter)
     
     print(paste("|---start saving---|"))
     write.output.large(dir.to.sim.files,

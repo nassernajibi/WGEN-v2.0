@@ -1,27 +1,12 @@
 
-create.delimited.outputs <- function(mainDir,
-                                     dir.to.sim.files,
-                                     dir.to.output.files,
-                                     path.to.processed.data.meteohydro,
-                                     num.iter,
-                                     basin.cnt,
-                                     change.list,
-                                     use.non_param.WRs,
-                                     num.states,
-                                     start.date.weather,
-                                     end.date.weather){
+create.delimited.outputs <- function(scenario = 1){
   
   # this function creates output files #
-  
-  change = 1 # row number in baseline (1st) == ONLY BASELINE
-  
-  short_abbr <- basin.cnt # e.g., shorter name
-  
+  #scenario = the row in ClimateChangeScenarios.csv for which to plot results
   
   ##// weather data and synoptic dates ---##
   #location of obs weather data
-  processed.data.meteohydro <- path.to.processed.data.meteohydro
-  load(processed.data.meteohydro) #load in weather data
+  load(path.to.processed.data.meteohydro) #load in weather data
   dates.user.specific <- seq(as.Date(start.date.weather),as.Date(end.date.weather),by="day")
   identical.dates.idx <- dates.weather%in%dates.user.specific
   
@@ -37,17 +22,16 @@ create.delimited.outputs <- function(mainDir,
   lon_lat_basin <- get(ls()[which(grepl('lon_lat',ls()))]) 
 
   n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
+  cur.jitter <- to.jitter      #whether jitters were activated or not
   
   # Sim. file
-  cur.tc <- change.list$tc[change]
-  cur.jitter <- change.list$jitter[change]
-  cur.pccc <- change.list$pccc[change]
-  cur.pmuc <- change.list$pmuc[change]
-  
+  cur.tc <- change.list$tc[scenario]
+  cur.pccc <- change.list$pccc[scenario]
+  cur.pmuc <- change.list$pmuc[scenario]
   
   ##// sim files ---##
   {
-    simulated.file.run.model.saved <- paste0(".temp.",cur.tc,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_hist.state.",use.non_param.WRs,"_jitter.",cur.jitter,"_s",num.states,"_with_",num.iter,".",basin.cnt)
+    simulated.file.run.model.saved <- paste0(".temp.",cur.tc,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_hist.state.",use.non_param.WRs,"_jitter.",cur.jitter,"_s",num.states,"_with_",num.iter)
     
     prcp.site.sim_sfx <- "prcp.site.sim"
     load(paste0(dir.to.sim.files,"/",prcp.site.sim_sfx,simulated.file.run.model.saved,".RData"))
@@ -98,10 +82,7 @@ create.delimited.outputs <- function(mainDir,
   
   start_time <- Sys.time()
   
-  mainDir1 <- dir.to.output.files
-  dir.create(file.path(mainDir, mainDir1), showWarnings = FALSE)
-  
-  path.to.save.ensm <- paste0(mainDir, mainDir1,'/')
+  dir.create(file.path(dir.to.output.files), showWarnings = FALSE)
   
   for (k in 1:n.sites){
     
@@ -115,18 +96,8 @@ create.delimited.outputs <- function(mainDir,
                         tmax.site.data.sim[,k],
                         tmin.site.data.sim[,k])
     mat.to.save <- as.matrix(cbind(dates.vec,prcp.atemp)) # YEAR MONTH DAY PRCP MAX-TEMP MIN-TEMP
-    write.table(mat.to.save,file=paste0(path.to.save.ensm,my.filename),
+    write.table(mat.to.save,file=paste0(dir.to.output.files,my.filename),
                 row.names = FALSE, col.names = FALSE, sep = " , ",quote = FALSE)
-    
-    # obs output
-    # my.filename <- paste0('obs_meteo_',my.lat,'_',my.lon,'.csv')
-    # dates.vec <- long.dates.obs
-    # prcp.atemp <- round(cbind(prcp.site.data[,k],
-    #                     tmax.site.data[,k],
-    #                     tmin.site.data[,k]),2)
-    # mat.to.save <- as.matrix(cbind(dates.vec,prcp.atemp)) # YEAR MONTH DAY PRCP MAX-TEMP MIN-TEMP
-    # write.table(mat.to.save,file=paste0(path.to.save.ensm,my.filename),
-    #             row.names = FALSE, col.names = FALSE, sep = " , ",quote = FALSE)
     
     print(paste('site',k,'out of',n.sites,
                 '--',round(k/n.sites*100,2),"%"))

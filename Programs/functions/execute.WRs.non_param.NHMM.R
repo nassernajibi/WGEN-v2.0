@@ -1,26 +1,8 @@
 
-execute.WRs.non_param.NHMM <- function(mainDir,
-                                      dir.to.sim.WRs.files,
-                                      num.iter.WRs,
-                                      seasons,
-                                      num_eofs.season,
-                                      num_WRs.season,
-                                      num.years.sim.WRs,
-                                      start.date.synoptic,
-                                      end.date.synoptic,
-                                      path.to.processed.SPI.PCs,
-                                      path.to.processed.GPHAs,
-                                      WR_prob_change,
-                                      lp.threshold,
-                                      piecewise_limit,
-                                      start.date.weather,
-                                      end.date.weather,
-                                      start.date.nonpar,
-                                      end.date.nonpar,
-                                      dynamic.scenario){
+execute.WRs.non_param.NHMM <- function(){
   
   
-  dir.create(file.path(mainDir, dir.to.sim.WRs.files), showWarnings = FALSE)
+  dir.create(file.path(dir.to.sim.WRs.files), showWarnings = FALSE)
   n.seasons <- length(seasons)
   
   

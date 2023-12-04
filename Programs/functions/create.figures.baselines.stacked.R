@@ -1,18 +1,9 @@
 
-create.figures.baselines.stacked <- function(mainDir,
-                                             dir.to.sim.files,
-                                             path.to.processed.data.meteohydro,
-                                             num.iter,
-                                             basin.cnt,
-                                             change.list,
-                                             use.non_param.WRs,
-                                             num.states,
-                                             qq,
-                                             start.date.weather,
-                                             end.date.weather,
-                                             label1,
-                                             label2){
+create.figures.baselines.stacked <- function(scenario=1){
   # stacked version #
+  
+  #scenario = the row in ClimateChangeScenarios.csv for which to plot results
+  
   # ------------------------------------------------------------------------------- #
   # ------------------------------------------------------------------------------- #
   # A set of 8 figures stacked to show diagnostics for WGEN baseline (thousands-yr): precipitation and temperature #
@@ -29,16 +20,10 @@ create.figures.baselines.stacked <- function(mainDir,
   # 2) heat waves, heat stress
   # 3) cold waves, cold stress
   
-  # mainDir <- "D:/Projects/Tuolumne_River_Basin/GitHub_WGENv2.0"
-  # setwd(mainDir)
-  # 
-  # basin.cnt <- 'Tuolumne.River' # for a set of 12 randomly selected Livneh grids in Tuolumne River Basin
-  # basin.cnt <- 'SFB' # for San Francisco Bay: HUC4-1805 (not yet; will run if we get some extra time)
-  
-  change = 1 # row number in baseline (1st) == ONLY BASELINE
-  
-  short_abbr <- basin.cnt # e.g., shorter name
-  
+  #preset labels for figures below
+  label1 = paste0('Obs [',format(as.Date(start.date.weather),'%Y'),
+                  '-',format(as.Date(end.date.weather),'%Y'),']')
+  label2 = 'Sim (WGEN: baseline)'
   
   # use.non_param.WRs <- TRUE #TRUE for non-parametric, FALSE for parametric simulated WRs
   # num.states <- c(10) # K WRs
@@ -50,8 +35,7 @@ create.figures.baselines.stacked <- function(mainDir,
   
   ##// weather data and synoptic dates ---##
   #location of obs weather data
-  processed.data.meteohydro <- path.to.processed.data.meteohydro
-  load(processed.data.meteohydro) #load in weather data
+  load(path.to.processed.data.meteohydro) #load in weather data
   dates.user.specific <- seq(as.Date(start.date.weather),as.Date(end.date.weather),by="day")
   identical.dates.idx <- dates.weather%in%dates.user.specific
   
@@ -64,26 +48,18 @@ create.figures.baselines.stacked <- function(mainDir,
   years.weather <- as.numeric(format(dates.weather,'%Y'))
   months.weather <- as.numeric(format(dates.weather,'%m'))
   
-  # lon_lat_basin <- lon_lat_grids # for 'Tuolumne.River'
-  lon_lat_basin <- lon_lat # for 'SFB'
-  
   n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
   
-  # Sim. file
-  # change.list <- data.frame("tc"=  c(0), # e.g., 1, 2, ...
-  #                           "jitter"=  c(TRUE),
-  #                           "pccc"=c( 0), # e.g., 0.07, 0.14, ...
-  #                           "pmuc"=c( 0)# e.g., -.125
-  # )
-  cur.tc <- change.list$tc[change]
-  cur.jitter <- change.list$jitter[change]
-  cur.pccc <- change.list$pccc[change]
-  cur.pmuc <- change.list$pmuc[change]
-  
+  #select the scenario for plotting
+  cur.tc <- change.list$tc[scenario]
+  cur.pccc <- change.list$pccc[scenario]
+  cur.pmuc <- change.list$pmuc[scenario]
+
+  cur.jitter <- to.jitter
   
   ##// sim files ---##
   {
-    simulated.file.run.model.saved <- paste0(".temp.",cur.tc,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_hist.state.",use.non_param.WRs,"_jitter.",cur.jitter,"_s",num.states,"_with_",num.iter,".",basin.cnt)
+    simulated.file.run.model.saved <- paste0(".temp.",cur.tc,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_hist.state.",use.non_param.WRs,"_jitter.",cur.jitter,"_s",num.states,"_with_",num.iter)
     
     prcp.site.sim_sfx <- "prcp.site.sim"
     load(paste0(dir.to.sim.files,"/",prcp.site.sim_sfx,simulated.file.run.model.saved,".RData"))
@@ -174,7 +150,7 @@ create.figures.baselines.stacked <- function(mainDir,
     label12 <- 'Obs [GPD]'
     
     file.name.fig <- paste0("lines_prcp.GEV.GPD.NEP_dur.maxima_wet.spells_",n.sites,".grids_s",
-                            num.states,"_with_",num.iter,"_ens.",basin.cnt,".png")
+                            num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 14; hh.mom <- 14
     png(fname.fig,width=ww.mom,height=hh.mom,units="in",res=300)
@@ -305,8 +281,7 @@ create.figures.baselines.stacked <- function(mainDir,
            lwd=c(NA,1.5,NA,2),
            bty = "n",horiz = FALSE,
            title='at-basin',title.col = 'purple')
-    mtext(paste0(short_abbr),3,cex=3)
-    
+
     
     # (b)
     #----------------------------------------- #
@@ -467,11 +442,9 @@ create.figures.baselines.stacked <- function(mainDir,
   # Figure 2:
   # 2) precipitation cdf, mean, standard variation (yearly, year-to-year)
   {
-    # label1 <- 'Obs [1948-2018]'
-    # label2 <- 'Sim (WGEN: baseline)'
     
     file.name.fig <- paste0("lines_prcp.mean_cdf_sd_",n.sites,".grids_s",
-                            num.states,"_with_",num.iter,"_ens.",basin.cnt,".png")
+                            num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 14; hh.mom <- 14
     png(fname.fig,width=ww.mom,height=hh.mom,units="in",res=300)
@@ -503,7 +476,6 @@ create.figures.baselines.stacked <- function(mainDir,
     y <- annual.prcp.sim
     EP <- (1:length(y))/(length(y)+1)
     plot(EP.hat,sort(y.hat),log="y",type='l',frame=F,
-         main=paste0(short_abbr),
          col="red",lwd=5,xlab='Exceedance Probability',ylab='Precipitation [WY]',
          cex.axis=2,cex.main=4,cex.lab=2, font.main=1)
     lines(EP,sort(y),lty=1, col='gray50',lwd=6)
@@ -607,7 +579,7 @@ create.figures.baselines.stacked <- function(mainDir,
     # label2 <- 'Sim (WGEN: baseline)'
     
     file.name.fig <- paste0("lines_prcp.cumulative_seasonality_",n.sites,".grids_s",
-                            num.states,"_with_",num.iter,"_ens.",basin.cnt,".png")
+                            num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 15; hh.mom <- 14
     png(fname.fig,width=ww.mom,height=hh.mom,units="in",res=300)
@@ -684,7 +656,7 @@ create.figures.baselines.stacked <- function(mainDir,
                 max(c(mean.psite.sim.metric2.90th[my.seq.days],
                       mean.psite.obs.metric2.90th[my.seq.days]))),
          cex.lab=2,cex.axis=1.5,cex.main=3.5,
-         main=paste0(short_abbr))
+         )
     
     axis(1,at = my.seq.days[idx.fst.d.month],col='gray50',cex.lab=3,cex.axis=2,
          labels = sample.WY.Months[idx.fst.d.month])
@@ -783,7 +755,7 @@ create.figures.baselines.stacked <- function(mainDir,
     # label2 <- 'Sim (WGEN: baseline)'
     
     file.name.fig <- paste0("boxplots_prcp.PBIAS_",n.sites,".grids_s",
-                            num.states,"_with_",num.iter,"_ens.",basin.cnt,".png")
+                            num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 16; hh.mom <- 12
     png(fname.fig,width=ww.mom,height=hh.mom,units="in",res=300)
@@ -838,7 +810,7 @@ create.figures.baselines.stacked <- function(mainDir,
     
     my.median.values <- paste0(round(apply(pBias.full.set.metrics,2,median),0),"%")
     
-    boxplot(pBias.full.set.metrics,boxwex=.65,main=paste0(short_abbr),
+    boxplot(pBias.full.set.metrics,boxwex=.65,
             col='wheat',outline=F,frame=F,cex.axis=2.5,cex.lab=2.5,cex.main=3.5,font.main=1,
             xlab='Precipitation [water year]',ylab='PBIAS[%]',xaxt = "n",ylim=c(-60,60),
             border=alpha('black',0.6),
@@ -875,11 +847,9 @@ create.figures.baselines.stacked <- function(mainDir,
   # Figure 5:
   # 5) temperature cdf, mean, standard variation (yearly, year-to-year)
   {
-    # label1 <- 'Obs [1948-2018]'
-    # label2 <- 'Sim (WGEN: baseline)'
-    
+
     file.name.fig <- paste0("lines_tmean_mean_cdf_sd_",n.sites,".grids_s",
-                            num.states,"_with_",num.iter,"_ens.",basin.cnt,".png")
+                            num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 14; hh.mom <- 14
     png(fname.fig,width=ww.mom,height=hh.mom,units="in",res=300)
@@ -911,7 +881,6 @@ create.figures.baselines.stacked <- function(mainDir,
     y <- annual.tmean.sim
     EP <- (1:length(y))/(length(y)+1)
     plot(EP.hat,sort(y.hat),log="y",type='l',frame=F,
-         main=paste0(short_abbr),
          col="red",lwd=5,
          xlab='Exceedance Probability',ylab='Temperature [WY]',
          cex.axis=2,cex.main=4,cex.lab=2, font.main=1)
@@ -1208,7 +1177,7 @@ create.figures.baselines.stacked <- function(mainDir,
                      '(above-threshold, C)','(below-threshold, C)')
     
     file.name.fig <- paste0("scatters_tmax_tmin_heat.cold.specific_",n.sites,".grids_s",
-                            num.states,"_with_",num.iter,"_ens.",basin.cnt,".png")
+                            num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 18; hh.mom <- 10
     png(fname.fig,width=ww.mom,height=hh.mom,units="in",res=300)
@@ -1232,7 +1201,7 @@ create.figures.baselines.stacked <- function(mainDir,
       abline(a=0,b=1, col='gray75',lwd=1.5, lty=2)
       points(my2.x0,my1.x0, xlim=x_y_lim, ylim=x_y_lim, pch=16, 
              cex=2.5,col=alpha("gray40",0.65))
-      legend("topleft", title=paste0(short_abbr),pch=16,
+      legend("topleft",pch=16,
              col='gray30',
              horiz = FALSE,inset=0.01,text.col='purple',
              cex=1.5,legend=paste0('at-site'),
@@ -1243,127 +1212,11 @@ create.figures.baselines.stacked <- function(mainDir,
   
   
   # Figure 7:
-  # 7) maps for heat and cold waves/stress temperature
-  {
-    # label1 <- 'Obs [1948-2018]'
-    # label2 <- 'Sim (WGEN: baseline)'
-    # library(svglite)
-    # svglite("./myplot.svg", width = 20, height = 12)
-    file.name.fig <- paste0("maps_tmax_tmin_heat.cold.specific_",n.sites,".grids_s",
-                            num.states,"_with_",num.iter,"_ens.",basin.cnt,".png")
-    fname.fig <- paste0("./Figures/",file.name.fig)
-    ww.mom <- 20; hh.mom <- 12
-    png(fname.fig,width=ww.mom,height=hh.mom,units="in",res=300)
-    # MAPS #
-    par(mfrow=c(2,4),mai=c(1, 0.75, 1, 0.5))
-    myseleccolors <- c("blue","green" ,"yellow", "orange", "red")
-    
-    for (k in c(1,7,4,8)){
-      myname <- labs.metrics[k]
-      x <- temp.specific.obs[,k]
-      # NOTE: (x-min(x)) / diff(range(x)) transforms x to have a range of 0:1
-      pal <- colorRamp(myseleccolors)    # 1) choose colors
-      if(sum(x)==0){
-        plot(lon_lat_basin[,1],
-             lon_lat_basin[,2],cex=2.5,cex.main=2.5,cex.axis=1.5,cex.lab=1.75,
-             xlab='lon',ylab='lat',main=myname,font.main=1,
-             pch=21,frame=F)
-        legend("bottomright",title='at-site (/yr)',
-               legend='0',horiz = F,
-               col ='black',
-               pch=20,pt.cex=1.75,
-               cex=1.5,inset=0.01,bg="white",
-               title.col = 'purple',title.cex = 1.5)
-        mtext(paste0(short_abbr),cex=1.5,col='black',side = 3, adj = 1, line=0.5)
-        mtext(paste0(label1),cex=1.15,col='red',side = 1, adj = 1, line=3)
-      }
-      else{
-        col <- (rgb(pal((x - min(x)) / diff(base::range(x))), max=255))  # 2) interpolate numbers
-        
-        plot(lon_lat_basin[,1],
-             lon_lat_basin[,2],cex=2.5,cex.main=2.5,cex.axis=1.5,cex.lab=1.75,
-             xlab='lon',ylab='lat',main=myname,font.main=1,
-             pch=21,frame=F)
-        abline(h=as.numeric(unique(lon_lat_basin[,2])),col=alpha('gray50',0.5),lty=2,lwd=0.5)
-        abline(v=as.numeric(unique(lon_lat_basin[,1])),col=alpha('gray50',0.5),lty=2,lwd=0.5)
-        points(lon_lat_basin[x>0,1],
-               lon_lat_basin[x>0,2],cex=2.5,
-               col=col[x>0], pch=19)
-        # points(lon_lat_basin[x==0,1],
-        #        lon_lat_basin[x==0,2],cex=1.5,
-        #        col='black', pch=4)
-        myseq <- (max(x)-min(x[x>0]))/4
-        my.legend.col <- round(seq(min(x[x>0]),max(x),myseq),2)
-        legend("bottomright",title='at-site (/yr)',
-               legend=rev(as.character(my.legend.col)),horiz = F,
-               col =rev(myseleccolors),
-               pch=20,pt.cex=1.75,
-               cex=1.5,inset=0.01,bg="white",
-               title.col = 'purple',title.cex = 1.5)
-        mtext(paste0(short_abbr),cex=1.5,col='black',side = 3, adj = 1, line=0.5)
-        mtext(paste0(label1),cex=1.15,col='red',side = 1, adj = 1, line=3)
-      }
-    }
-    
-    for (k in c(1,7,4,8)){
-      myname <- labs.metrics[k]
-      x <- temp.specific.sim[,k]
-      # NOTE: (x-min(x)) / diff(range(x)) transforms x to have a range of 0:1
-      pal <- colorRamp(myseleccolors)    # 1) choose colors
-      if(sum(x)==0){
-        plot(lon_lat_basin[,1],
-             lon_lat_basin[,2],cex=2.5,cex.main=2.5,cex.axis=1.5,cex.lab=1.75,
-             xlab='lon',ylab='lat',main=myname,font.main=1,
-             pch=21,frame=F)
-        legend("bottomright",title='at-site (/yr)',
-               legend='0',horiz = F,
-               col ='black',
-               pch=20,pt.cex=1.75,
-               cex=1.5,inset=0.01,bg="white",
-               title.col = 'purple',title.cex = 1.5)
-        mtext(paste0(short_abbr),cex=1.5,col='black',side = 3, adj = 1, line=0.5)
-        mtext(paste0(label2,'[',total.num.yrs,'-yr]'),cex=1.15,col='red',side = 1, adj = 1, line=4.5)
-      }
-      else{
-        col <- (rgb(pal((x - min(x)) / diff(base::range(x))), max=255))  # 2) interpolate numbers
-        
-        plot(lon_lat_basin[,1],
-             lon_lat_basin[,2],cex=2.5,cex.main=2.5,cex.axis=1.5,cex.lab=1.75,
-             xlab='lon',ylab='lat',main=myname,font.main=1,
-             pch=21,frame=F)
-        abline(h=as.numeric(unique(lon_lat_basin[,2])),col=alpha('gray50',0.5),lty=2,lwd=0.5)
-        abline(v=as.numeric(unique(lon_lat_basin[,1])),col=alpha('gray50',0.5),lty=2,lwd=0.5)
-        points(lon_lat_basin[x>0,1],
-               lon_lat_basin[x>0,2],cex=2.5,
-               col=col[x>0], pch=19)
-        # points(lon_lat_basin[x==0,1],
-        #        lon_lat_basin[x==0,2],cex=1.5,
-        #        col='black', pch=4)
-        myseq <- (max(x)-min(x[x>0]))/4
-        my.legend.col <- round(seq(min(x[x>0]),max(x),myseq),2)
-        legend("bottomright",title='at-site (/yr)',
-               legend=rev(as.character(my.legend.col)),horiz = F,
-               col =rev(myseleccolors),
-               pch=20,pt.cex=1.75,
-               cex=1.5,inset=0.01,bg="white",
-               title.col = 'purple',title.cex = 1.5)
-        mtext(paste0(short_abbr),cex=1.5,col='black',side = 3, adj = 1, line=0.5)
-        mtext(paste0(label2,'[',total.num.yrs,'-yr]'),cex=1.15,col='red',side = 1, adj = 1, line=4.5)
-      }
-    }
-    
-    dev.off()
-  }
-  
-  
-  # Figure 8:
   # 8) precipitation minima, dry-spells, drought stats
   {
-    # label1 <- 'Obs [1948-2018]'
-    # label2 <- 'Sim (WGEN: baseline)'
-    
+
     file.name.fig <- paste0("hist_prcp.n.year.droughts_minima_dry.spells_",n.sites,".grids_s",
-                            num.states,"_with_",num.iter,"_ens.",basin.cnt,".png")
+                            num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 26; hh.mom <- 14
     png(fname.fig,width=ww.mom,height=hh.mom,units="in",res=300)
@@ -1426,7 +1279,7 @@ create.figures.baselines.stacked <- function(mainDir,
     max.obs.sim <- max(c(n.yr.obs.diagnostics.min.extreme.all,n.yr.sim.diagnostics.min.all))
     plot(n.yr.sim.diagnostics.min.all,
          n.yr.obs.diagnostics.min.extreme.all,
-         main=paste0(short_abbr),font.main = 1,
+         font.main = 1,
          cex.axis=3,cex.lab=3.5,cex.main=6,
          font.main=1,cex.sub=1.15,
          frame=F,
@@ -1555,7 +1408,6 @@ create.figures.baselines.stacked <- function(mainDir,
                border = c(NA,NA),
                horiz = FALSE,inset=0.01)
         mtext(paste0('at-basin'),4,adj=0.925, cex=2,col='purple')
-        #mtext(paste0(short_abbr),3,adj=0.995, cex=1.25,col='purple')
       }
     }
     

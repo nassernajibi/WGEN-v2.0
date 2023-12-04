@@ -2,98 +2,81 @@ config.simulations <- function(){
   
   ######  --------------------------------------------------------------------------
   ######  --------------------------------------------------------------------------
-  ######----> Dates, Years <--------------------------------------------------######
+  ######  ---------------> Simulation Length <------------------------------- ######
   ######  --------------------------------------------------------------------------
   ######  --------------------------------------------------------------------------
   {
-    basin.cnt <- 'SanFranciscoBay' # for a set of 12 randomly selected Livneh Unsplit grids in the San Francisco Bay (HUC4# 1805)
-
-    ##adjust main directory and directory for simulation files
-    mainDir <- "D:/Projects/GitHub_WGENv2.0"
-    setwd(mainDir)
-    
-    start.date.weather="1948-01-01"; end.date.weather="2018-12-31"
     ##length of final simulated weather (in calendar years)##
-    number.years.long <- 1000 # {e.g., 500, 1000, 2000, 3000, 5000 years,...} [note: current NHMM output (parametric) is for 1036 years; current non-parametric is for 3050 years]
-    num.iter <- 1 # A single long trace (e.g., thousand years) is sufficient although we create like 5 ensembles in the simulated WRs
+    simulation.length <- suppressWarnings(read.table('SimulationLength.csv',header=TRUE,sep=","))
+    number.years.long <- simulation.length$number_of_years_per_ensemble_member # {e.g., 500, 1000, 2000, 3000, 5000 years,...} [note: current NHMM output (parametric) is for 1036 years; current non-parametric is for 3050 years]
+    num.iter <- simulation.length$number_of_ensemble_members # A single long trace (e.g., thousand years) is sufficient, although more can be developed if desired
   }
+  
   
   ######  --------------------------------------------------------------------------
   ######  --------------------------------------------------------------------------
-  ######----> Thermodynamic Climate Change <-------------------------------------------------######
+  ######----> Thermodynamic Climate Change Scenarios<-------------------------######
   ######  --------------------------------------------------------------------------
   ######  --------------------------------------------------------------------------
   {
 	##-------------Define perturbations-------------##
     ##climate changes and jitter to apply:
-    change.list <- data.frame("tc"=  c(0), # {e.g., 0, 1, 2, ...} (changes in temperature)
-                              "jitter"= c(TRUE),
-                              "pccc"= c( 0.00), # {e.g., 0, 0.07, 0.14, ...} (changes for precipitation extreme quantile -- CC)
-                              "pmuc"= c( 0.00)# {e.g., 0, -.125, .125, ...} (changes in precipitation mean)
+    climate.change.scenarios <- suppressWarnings(read.table('ClimateChangeScenarios.csv',header=TRUE,sep=","))
+      
+    change.list <- data.frame("tc"=  climate.change.scenarios$mean_temperature_change_degC, # {e.g., 0, 1, 2, ...} (changes in temperature)
+                              "pmuc"= climate.change.scenarios$mean_precipitation_change_percent/100, # {e.g., 0, -.125, .125, ...} (changes in precipitation mean)
+                              "pccc"= climate.change.scenarios$extreme_precipitation_scaling_rate_percent/100 # {e.g., 0, 0.07, 0.14, ...} (changes for precipitation extreme quantile -- CC)
     )
     ##----------------------------------------------##
   }
   
   
-  ########################################################################
-  ########################################################################
-  ########################################################################
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%% ADJUST BELOW IF AND ONLY IF YOU MUST %%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ##%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
-  ########################################################################
-  ########################################################################
-  ########################################################################
-
-  ######  -----------------------------------
-  ######  -----------------------------------
-  ######----> Create Figures <---------######
-  ######  -----------------------------------
-  ######  -----------------------------------
+  ######  --------------------------------------------------------------------------
+  ######  --------------------------------------------------------------------------
+  ######  ----------------> Dates for Weather Data <---------------------------######
+  ######  --------------------------------------------------------------------------
+  ######  --------------------------------------------------------------------------
   {
-    # labels for x and y-axes
-    label1 <- paste0('Obs [',format(as.Date(start.date.weather),'%Y'),
-                     '-',format(as.Date(end.date.weather),'%Y'),']')
-    label2 <- 'Sim (WGEN: baseline)'
+    lst.import.datafile <- tryCatch(suppressMessages(readRDS(file='./Data/processed.data.files/processed.meteorology/lst.import.datafile.rds')),
+                                    error=function(e) {
+                                           message('You have not yet run process.meteorology.R')
+                                           print(e)
+                                       })
+    start.date.weather <- lst.import.datafile$seq.of.dates[1]
+    end.date.weather <- lst.import.datafile$seq.of.dates[length(lst.import.datafile$seq.of.dates)]
   }
   
   ######  ----------------------------------------
   ######  ----------------------------------------
-  ######----> Create Output files <---------######
+  ######----> Directories <---------######
   ######  ----------------------------------------
   ######  ----------------------------------------
   {
     dir.to.sim.files <- "./Data/simulated.data.files/WGEN.out"
-    dir.create(file.path(mainDir, dir.to.sim.files), showWarnings = FALSE)
+    dir.create(file.path(dir.to.sim.files), showWarnings = FALSE)
     
     # directory to store output files
     dir.to.output.files <- './Data/output.data.files/'
+  
+    ##location of obs weather data (RData format): weather data (e.g., precip and temp) as matrices (time x lat|lon: t-by-number of grids); dates vector for time; basin average precip (see the example meteohydro file)
+    path.to.processed.data.meteohydro <- "./Data/processed.data.files/processed.meteorology/processed.meteorology.RData"
   }
+  
   
   ######  -----------------------------------------------------
   ######  -----------------------------------------------------
-  ######----> Settings and Create Output files <---------######
+  ######  -------> WGEN Hyperparameters <--------------- ######
   ######  -----------------------------------------------------
   ######  -----------------------------------------------------
   {
-    ##location of obs weather data (RData format): weather data (e.g., precip and temp) as matrices (time x lat|lon: t-by-number of grids); dates vector for time; basin average precip (see the example meteohydro file)
-    path.to.processed.data.meteohydro <- paste0("./Data/processed.data.files/processed.meteohydro/processed.meteohydro.RData")
-    
-  	months <- seq(1,12) # Jan-Dec calendar year
+    first.month <- 1
+    last.month <- 12
+  	months <- seq(first.month,last.month) # Jan-Dec calendar year
     ##threshold for mixed Gamma-GPD population separation
     qq <- .99  
+    
+    #keep the jittering on
+    to.jitter <- TRUE
     
     ##bootstrapping choices##
     window.size <- rep(3,length(months))   #the size of the window (in days) from which runs can be bootstrapped around the current day of simulation, by month: Jan -- Dec
