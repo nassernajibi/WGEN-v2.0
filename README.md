@@ -90,11 +90,11 @@ In order to run, you will need to do two things to access the required data:
 
 1. Download the files from `Data/` and store them in a folder titled `Data` next to the `Programs` and `Figures` in your directory. *Note that you need to provide similar input data (format, structure) for your particular case*. A permanent `Data` repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311768.svg)](https://doi.org/10.5281/zenodo.7311768).
 
-1. Start with `process.meteorology.R` to prepare input meteorology required to be sent to the weather generator.
+2. Start with `process.meteorology.R` to prepare input meteorology required to be sent to the weather generator.
 
-1. If required, modify `config.simulations.R` to provide all the stochastic inputs and hyperparameters (e.g., directories, dates, regimes simulation mode, and so on).
+3. If required, modify `config.simulations.R` to provide all the stochastic inputs and hyperparameters (e.g., directories, dates, regimes simulation mode, and so on).
 
-**Now you can run `run.stochastic.weather.generator.R`!**
+4. **Now you can run `run.stochastic.weather.generator.R`!**
 
 We again remind you that running will need a considerable disk space as it depends on the spatiotemporal dimensions of the input files and the length of outputs, e.g., *how many years of weather data to generate?*
 
