@@ -94,7 +94,7 @@ In order to run, you will need to do two things to access the required data:
 
 3. If required, modify `config.simulations.R` to provide all the stochastic inputs and hyperparameters (e.g., directories, dates, regimes simulation mode, and so on).
 
-4. **Now you can run `run.stochastic.weather.generator.R`!**
+4. **Now you can run `run.stochastic.weather.generator.R`**
 
 We again remind you that running will need a considerable disk space as it depends on the spatiotemporal dimensions of the input files and the length of outputs, e.g., *how many years of weather data to generate?*
 
