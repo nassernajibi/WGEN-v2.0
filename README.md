@@ -56,8 +56,10 @@ The following sections outline the steps you can take to run the WGEN.
 - `R_sessionInfo.txt` contains a list of packages in `R` (_attached base packages, attached packages, and loaded via a namespace_) with their release version. 
 - `LICENSE` describes the terms of the MIT LICENSE under which our code is licensed. This is a "free, copyleft license for software and other kinds of works, that guarantees end users the four freedoms to run, study, share, and modify the software".
 - `docs/` contains the articles (PDF format) published in peer-reviewed journals.
-- `Programs/` contains the scripts required to run the WGEN, from inserting the simulation parameters and determining the stochastic settings (`Programs/config.simulations.R`), to running the stochastic weather generator, plotting the diagnostics, and providing the output files (`Programs/run.stochastic.weather.generator.R`).
-- `Data/` contains a link to a permanent repository to download sample data/format to run the WGEN. The raw inputs are stored in `Data/processed.data.files/`, for the large-scale atmospheric circulations `Data/processed.data.files/processed.hgt` and `Data/processed.data.files/processed.NHMM.data` and observational weather records `Data/processed.data.files/processed.meteohydro`. The final output files are located in `Data/simulated.data.files/WGEN.out` (.RDATA) and `Data/simulated.data.files/output.data.files` (.csv).
+- `ClimateChangeScenarios.csv` contains the user inputs as a list of options to impose thermodynamic climate change scenarios, including changes in temperature (degree C), changes in precipitation mean (%), and changes for precipitation extremes quantile (i.e., Clausius–Clapeyron scaling) (%).
+- `SimulationLength.csv` contains the user inputs for number of years of simulation per ensemble member and number of ensemble members.
+- `Programs/` contains the scripts required to run the WGEN, from processing the meteorology raw data (`Programs/process.meteorology.R`), to inserting the simulation parameters and determining the stochastic settings (`Programs/config.simulations.R`), to running the stochastic weather generator, plotting the diagnostics, and providing the output files (`Programs/run.stochastic.weather.generator.R`).
+- `Data/` contains a link to a permanent repository to download sample data/format to run the WGEN. The raw inputs are stored in `Data/raw.data.files` and and `Data/processed.data.files/`, for the large-scale atmospheric circulations in `Data/processed.data.files/processed.hgt` and `Data/processed.data.files/processed.NHMM.data` and observational weather records `Data/processed.data.files/processed.meteorology`. The final output files are located in `Data/simulated.data.files/WGEN.out` (.RDATA) and `Data/simulated.data.files/output.data.files` (.csv).
 - `Figures/` contains a list of diagnostics and statistics to examine the performance of WGEN outputs. _If you want to use these figures, you are responsible for complying with the policies of the journals our papers have been published, or going to be published, but we mainly ask that you cite our papers when you do so._
 
 
@@ -88,7 +90,9 @@ In order to run, you will need to do two things to access the required data:
 
 1. Download the files from `Data/` and store them in a folder titled `Data` next to the `Programs` and `Figures` in your directory. *Note that you need to provide similar input data (format, structure) for your particular case*. A permanent `Data` repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311768.svg)](https://doi.org/10.5281/zenodo.7311768).
 
-1. Start with `config.simulations.R` to provide all the stochastic inputs and hyperparameters (e.g., directories, dates, length, regimes simulation mode, and so on).
+1. Start with `process.meteorology.R` to prepare input meteorology required to be sent to the weather generator.
+
+1. If required, modify `config.simulations.R` to provide all the stochastic inputs and hyperparameters (e.g., directories, dates, regimes simulation mode, and so on).
 
 **Now you can run `run.stochastic.weather.generator.R`!**
 
