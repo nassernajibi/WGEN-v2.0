@@ -21,8 +21,10 @@ create.figures.baselines.stacked <- function(scenario=1){
   # 3) cold waves, cold stress
   
   #preset labels for figures below
-  label1 = paste0('Obs [',format(as.Date(start.date.weather),'%Y'),
-                  '-',format(as.Date(end.date.weather),'%Y'),']')
+  identical.dates.idx <- dates.weather%in%dates.WRs.specific
+  dates.weather <- dates.weather[identical.dates.idx]
+  label1 = paste0('Obs [',format(as.Date(range(dates.weather)[1]),'%Y'),
+                  '-',format(as.Date(range(dates.weather)[2]),'%Y'),']')
   label2 = 'Sim (WGEN: baseline)'
   
   # use.non_param.WRs <- TRUE #TRUE for non-parametric, FALSE for parametric simulated WRs
@@ -84,17 +86,6 @@ create.figures.baselines.stacked <- function(scenario=1){
   }
   
   
-  # average precipitation & temperature at-basin #
-  {
-    # average precipitation #
-    mean.prcp.site <- as.matrix(apply(prcp.site.data,1,mean))
-    mean.prcp.site.sim <- as.matrix(apply(prcp.site.data.sim,1,mean))
-    
-    # average temperature #
-    mean.tmean.site <- as.matrix(apply(tmean.site.data,1,mean))
-    mean.tmean.site.sim <- as.matrix(apply(tmean.site.data.sim,1,mean))
-  }
-  
   # water years dates/values #
   {
     # generating synthetic dates/years #
@@ -140,6 +131,25 @@ create.figures.baselines.stacked <- function(scenario=1){
   }
   
   
+  # average precipitation & temperature at-basin #
+  {
+    # average precipitation #
+    mean.prcp.site <- as.matrix(apply(prcp.site.data,1,mean))
+    mean.prcp.site.sim <- as.matrix(apply(prcp.site.data.sim,1,mean))
+    
+    # average temperature #
+    mean.tmean.site <- as.matrix(apply(tmean.site.data,1,mean))
+    mean.tmean.site.sim <- as.matrix(apply(tmean.site.data.sim,1,mean))
+    
+    # average wy precipitation #
+    mean.wy.prcp.site <- as.matrix(apply(wy.data.obs,1,mean))
+    mean.wy.prcp.site.sim <- as.matrix(apply(wy.data.sim,1,mean))
+    
+    # average wy temperature #
+    mean.wy.tmean.site <- as.matrix(apply(wy.tmean.data.obs,1,mean))
+    mean.wy.tmean.site.sim <- as.matrix(apply(wy.tmean.data.sim,1,mean))
+    
+  }
   
   # Figure 1:
   # 1) precipitation extremes, wet-spells, flood stats
@@ -1212,7 +1222,7 @@ create.figures.baselines.stacked <- function(scenario=1){
   
   
   # Figure 7:
-  # 8) precipitation minima, dry-spells, drought stats
+  # 7) precipitation minima, dry-spells, drought stats
   {
 
     file.name.fig <- paste0("hist_prcp.n.year.droughts_minima_dry.spells_",n.sites,".grids_s",
@@ -1231,7 +1241,8 @@ create.figures.baselines.stacked <- function(scenario=1){
       
       d <- length(prcp)
       n.sites <- dim(prcp[[1]])[2]
-      ma.options.rolling <- seq(1,nyears)*365 # n-day moving averages
+      # ma.options.rolling <- seq(1,nyears)*365 # n-day moving averages
+      ma.options.rolling <- seq(1,nyears) # n-year moving averages
       stat.names2 <- paste0(seq(1,nyears),'.year.min')
       #calculate at-site statistics: min
       n.stats <- length(stat.names2)
@@ -1265,11 +1276,11 @@ create.figures.baselines.stacked <- function(scenario=1){
     nyears <- 10
     stat.names2 <- paste0(seq(1,nyears),'.year')
     stat.names22 <- paste0(seq(1,nyears),'-yr')
-    obs.diagnostics.min <- prcp.min.extreme.diagnostics(list(mean.prcp.site))
+    obs.diagnostics.min <- prcp.min.extreme.diagnostics(list(mean.wy.prcp.site))
     obs.diagnostics.min.extreme <- as.matrix(obs.diagnostics.min[,,1])
     obs.stats.min <- round(obs.diagnostics.min.extreme,digits = n.dig)
     
-    sim.diagnostics.min <- prcp.min.extreme.diagnostics(list(mean.prcp.site.sim))
+    sim.diagnostics.min <- prcp.min.extreme.diagnostics(list(mean.wy.prcp.site.sim))
     sim.diagnostics.min.extreme <- as.matrix(sim.diagnostics.min[,,1])
     
     n.yr.obs.diagnostics.min.extreme.all <- obs.diagnostics.min.extreme
@@ -1279,8 +1290,8 @@ create.figures.baselines.stacked <- function(scenario=1){
     max.obs.sim <- max(c(n.yr.obs.diagnostics.min.extreme.all,n.yr.sim.diagnostics.min.all))
     plot(n.yr.sim.diagnostics.min.all,
          n.yr.obs.diagnostics.min.extreme.all,
-         font.main = 1,
-         cex.axis=3,cex.lab=3.5,cex.main=6,
+         main='Worst Droughts', font.main = 1,
+         cex.axis=3,cex.lab=3.5,cex.main=4,
          font.main=1,cex.sub=1.15,
          frame=F,
          xlab='',cex=6,xlim=c(min.obs.sim,
@@ -1297,7 +1308,7 @@ create.figures.baselines.stacked <- function(scenario=1){
     mtext(paste0(label1),2,col='red',line=3.5, cex=1.75)
     legend("bottomright", legend=stat.names22,pch=seq(1,nyears),
            cex=2.5,
-           col=seq(1,nyears),title ='worst droughts',
+           col=seq(1,nyears),title ='WY Total',
            horiz = FALSE,inset=c(0,0.02),ncol=2)
     #mtext(paste0('worst droughts'),4,cex=1.85,col='black')
     mtext(paste0('at-basin'),4,adj=0.925, cex=2,col='purple')

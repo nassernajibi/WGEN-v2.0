@@ -6,18 +6,17 @@ execute.simulations <- function(){
   load(path.to.processed.data.meteohydro) #load in weather data
   n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
   
-  dates.user.specific <- seq(as.Date(start.date.weather),as.Date(end.date.weather),by="day")
-  identical.dates.idx <- dates.weather%in%dates.user.specific
+  identical.dates.idx <- dates.weather%in%dates.WRs.specific
   
-  weather.state.assignments <- weather.state.assignments[identical.dates.idx]
   dates.weather <- dates.weather[identical.dates.idx]
+  months.weather <- as.numeric(format(dates.weather,'%m'))
   prcp.site <- prcp.site[identical.dates.idx,]
   tmax.site <- tmax.site[identical.dates.idx,]
   tmin.site <- tmin.site[identical.dates.idx,]
   prcp.basin <- prcp.basin[identical.dates.idx]
   
-  months.weather <- as.numeric(format(dates.weather,'%m'))
-  
+  identical.dates.idx <- dates.WRs.specific%in%dates.weather
+  weather.state.assignments <- weather.state.assignments[identical.dates.idx]
   
   # sanitary check if all days for that specific month and grid is zero === causing problems in gamma fit
   # this will be zero after implementing the quantile mapping, so there is no effect whatsoever

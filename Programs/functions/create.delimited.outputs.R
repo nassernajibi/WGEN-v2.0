@@ -1,5 +1,5 @@
 
-create.delimited.outputs <- function(scenario = 1){
+create.delimited.outputs <- function(scenario = selected_scenario){
   
   # this function creates output files #
   #scenario = the row in ClimateChangeScenarios.csv for which to plot results
@@ -19,7 +19,7 @@ create.delimited.outputs <- function(scenario = 1){
   months.weather <- as.numeric(format(dates.weather,'%m'))
   days.weather <- as.numeric(format(dates.weather,'%d'))
   
-  lon_lat_basin <- get(ls()[which(grepl('lon_lat',ls()))]) 
+  list.file.names <- gsub("data", "sim", list.file.names)
 
   n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
   cur.jitter <- to.jitter      #whether jitters were activated or not
@@ -35,15 +35,15 @@ create.delimited.outputs <- function(scenario = 1){
     
     prcp.site.sim_sfx <- "prcp.site.sim"
     load(paste0(dir.to.sim.files,"/",prcp.site.sim_sfx,simulated.file.run.model.saved,".RData"))
-    prcp.site.data.sim <- prcp.site.sim[[1]] # becase there was only one iteration
+    prcp.site.data.sim <- prcp.site.sim[[scenario]] # because there was only one iteration
     
     prcp.site.sim_sfx <- "tmin.site.sim"
     load(paste0(dir.to.sim.files,"/",prcp.site.sim_sfx,simulated.file.run.model.saved,".RData"))
-    tmin.site.data.sim <- tmin.site.sim[[1]]
+    tmin.site.data.sim <- tmin.site.sim[[scenario]]
     
     prcp.site.sim_sfx <- "tmax.site.sim"
     load(paste0(dir.to.sim.files,"/",prcp.site.sim_sfx,simulated.file.run.model.saved,".RData"))
-    tmax.site.data.sim <- tmax.site.sim[[1]]
+    tmax.site.data.sim <- tmax.site.sim[[scenario]]
     
     tmean.site.data.sim <- (tmax.site.data.sim+tmin.site.data.sim)/2
     
@@ -86,11 +86,8 @@ create.delimited.outputs <- function(scenario = 1){
   
   for (k in 1:n.sites){
     
-    my.lat <- lon_lat_basin[k,2]
-    my.lon <- lon_lat_basin[k,1]
-    
     # sim output
-    my.filename <- paste0('sim_meteo_',my.lat,'_',my.lon,'.csv')
+    my.filename <- paste0(list.file.names[k])
     dates.vec <- long.dates.sim
     prcp.atemp <- cbind(prcp.site.data.sim[,k],
                         tmax.site.data.sim[,k],

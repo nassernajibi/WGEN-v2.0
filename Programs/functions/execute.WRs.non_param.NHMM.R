@@ -28,7 +28,7 @@ execute.WRs.non_param.NHMM <- function(){
   
   # given the length of non-parametric simulating segments, below should make sense in terms of leap years (every 4 years)
   # e.g., segment for 4-yr; 1948 ('1948') is a leap year; 2020 ('2019+1') is a leap year
-  dates.shared.nonpar <- seq(as.Date(start.date.nonpar),as.Date(end.date.nonpar),by="day")
+  dates.shared.nonpar <- dates.WRs.specific
   
   dates.synoptic <- seq(as.Date(start.date.synoptic),as.Date(end.date.synoptic), by="days")
   months.synoptic <- as.numeric(format(dates.synoptic,'%m'))
@@ -97,45 +97,45 @@ execute.WRs.non_param.NHMM <- function(){
   
   ##################fit NHMMs by season with appropriate covariates#####################
   
-  # fit.mod.NHMM <- list()    #final NHMMs fit by season
-  # 
-  # for (s in 1:n.seasons) {
-  #   #organize hgt and covariate for current season
-  #   hgt.synoptic.region.pca <- prcomp(hgt.final[[s]],center=T,scale=T)
-  #   n.eofs <- num_eofs.season[s]
-  #   synoptic.pcs <- hgt.synoptic.region.pca$x[,1:n.eofs]
-  #   n.states <- num_WRs.season[s]
-  # 
-  #   #here we define the covariate matrix and the formula (fo) of the multinomial regression in the NHMM
-  #   #define day of year for all dates, and then define formula for the NHMM
-  #   tsteps <- as.numeric(format(dates.final[[s]], "%j")) #seq_len(nrow(my.synoptic.pcs))
-  #   omegaT <- (2*pi*tsteps)/365
-  #   if (is.na(all(covariates.final[[s]]))) {
-  #     my.covar.trans <- data.frame(intercept=1, CosT = cos(omegaT), SinT = sin(omegaT))
-  #     fo <- "~ -1 + intercept + CosT + SinT"     #if we want to drop intercept: "~ -1 + CosT + SinT"
-  #     fo <- as.formula(fo)
-  #   } else{
-  #     my.covar.trans <- data.frame(intercept=1, CosT = cos(omegaT), SinT = sin(omegaT),covariates.final[[s]])
-  #     num.cov <- ncol(covariates.final[[s]])
-  #     fo <- "~ -1 + intercept + CosT + SinT"
-  #     for (h in 1:num.cov) {
-  #       fo <- paste(fo," + X",h,sep="")
-  #     }
-  #     fo <- as.formula(fo)
-  #   }
-  # 
-  # 
-  #   # fit NHMM. this can take a while (tries multiple random starts until convergence)
-  #   fit.mod.NHMM[[s]] <- fit.NHMM(my.nstates=n.states,
-  #                                 my.synoptic.pcs=synoptic.pcs,
-  #                                 my.covar.trans=my.covar.trans,
-  #                                 fo=fo,
-  #                                 n.eofs=n.eofs)
-  # }
-  # 
-  # saveRDS(fit.mod.NHMM,file = paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.rds"))
+  fit.mod.NHMM <- list()    #final NHMMs fit by season
+
+  for (s in 1:n.seasons) {
+    #organize hgt and covariate for current season
+    hgt.synoptic.region.pca <- prcomp(hgt.final[[s]],center=T,scale=T)
+    n.eofs <- num_eofs.season[s]
+    synoptic.pcs <- hgt.synoptic.region.pca$x[,1:n.eofs]
+    n.states <- num_WRs.season[s]
+
+    #here we define the covariate matrix and the formula (fo) of the multinomial regression in the NHMM
+    #define day of year for all dates, and then define formula for the NHMM
+    tsteps <- as.numeric(format(dates.final[[s]], "%j")) #seq_len(nrow(my.synoptic.pcs))
+    omegaT <- (2*pi*tsteps)/365
+    if (is.na(all(covariates.final[[s]]))) {
+      my.covar.trans <- data.frame(intercept=1, CosT = cos(omegaT), SinT = sin(omegaT))
+      fo <- "~ -1 + intercept + CosT + SinT"     #if we want to drop intercept: "~ -1 + CosT + SinT"
+      fo <- as.formula(fo)
+    } else{
+      my.covar.trans <- data.frame(intercept=1, CosT = cos(omegaT), SinT = sin(omegaT),covariates.final[[s]])
+      num.cov <- ncol(covariates.final[[s]])
+      fo <- "~ -1 + intercept + CosT + SinT"
+      for (h in 1:num.cov) {
+        fo <- paste(fo," + X",h,sep="")
+      }
+      fo <- as.formula(fo)
+    }
+
+
+    # fit NHMM. this can take a while (tries multiple random starts until convergence)
+    fit.mod.NHMM[[s]] <- fit.NHMM(my.nstates=n.states,
+                                  my.synoptic.pcs=synoptic.pcs,
+                                  my.covar.trans=my.covar.trans,
+                                  fo=fo,
+                                  n.eofs=n.eofs)
+  }
+
+  saveRDS(fit.mod.NHMM,file = paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.rds"))
   
-  fit.mod.NHMM <- readRDS(paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.rds")) # load in this to save running time for now
+  # fit.mod.NHMM <- readRDS(paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.rds")) # load in this to save running time for now
   
   
   #here we glue together the different seasons
@@ -157,7 +157,7 @@ execute.WRs.non_param.NHMM <- function(){
   
   weather.state.assignments <- WR.historical[identical.dates.idx]
   weather.nonpar.state.assignments <- WR.historical[dates.synoptic%in%dates.shared.nonpar]
-  
+  dates.historical <- dates.historical[identical.dates.idx]
   
   dates.weather.nonpar <- dates.shared.nonpar
   months.weather.nonpar <- as.numeric(format(dates.weather.nonpar,'%m'))

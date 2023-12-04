@@ -98,8 +98,9 @@ config.simulations <- function(){
     
     start.date.synoptic="1948-01-01"; end.date.synoptic="2021-12-31" # from processed GPHA file
     
-    start.date.par="1948-01-01"; end.date.par="2019-12-31" # proper leap year orders (starting with leap year of 1948, ending a year before (i.e., 2019) the leap year of 2020)
-    start.date.nonpar="1948-01-01"; end.date.nonpar="2019-12-31" # proper leap year orders (starting with leap year of 1948, ending a year before (i.e., 2019) the leap year of 2020)
+    start.date.WRs="1948-01-01"; end.date.WRs="2019-12-31" # proper leap year orders (starting with leap year of 1948, ending a year before (i.e., 2019) the leap year of 2020)
+
+    dates.WRs.specific <- seq(as.Date(start.date.WRs),as.Date(end.date.WRs),by="day")
     
     num.years.sim.WRs <- number.years.long # e.g., 500, 1000, 2000, 3000, 5000 years, etc [note: current NHMM output (parametric) is for 1036 years]
     

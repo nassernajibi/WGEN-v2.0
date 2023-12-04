@@ -12,7 +12,7 @@ execute.WRs.param.NHMM <- function(){
   dates.weather <- seq(as.Date(start.date.weather),as.Date(end.date.weather),by="day") # also known as dates.shared amongst
   
   # below should make sense in terms of leap years (starting with leap year (1948); ending to a year before leap year in history)
-  dates.shared.par <- seq(as.Date(start.date.par),as.Date(end.date.par),by="day")
+  dates.shared.par <- dates.WRs.specific
   
   dates.synoptic <- seq(as.Date(start.date.synoptic),as.Date(end.date.synoptic), by="days")
   months.synoptic <- as.numeric(format(dates.synoptic,'%m'))

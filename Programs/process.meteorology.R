@@ -3,14 +3,13 @@ rm(list=ls())
 library(stringr) # computation
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
-# This script provides the 'meteohydro' input required for the WGEN run #
+# This script provides the 'meteorology' input required for the WGEN run #
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
 
 #------------------------------------------------------------------
 ##/ Step 1: Importing raw meteorological time series \##
 
 ###----- raw data files MUST BE formatted as: yyyy mm dd P[mm] Tmax[C] Tmin[C]  *.csv file ----- ####
-
 
 dir.to.all.raw.files <- "./Data/raw.data.files/"
 list.locations <- list.files(dir.to.all.raw.files) # list of gridded location or station data
@@ -36,7 +35,8 @@ for (f in 1:length(list.locations)){
 
 
 lst.import.datafile <- list('ascii.array.precip.temp'=ascii.array.precip.temp,
-                            'seq.of.dates'=seq.of.dates)
+                            'seq.of.dates'=seq.of.dates,
+                            'file.names'=list.locations)
 
 saveRDS(lst.import.datafile,
         file='./Data/processed.data.files/processed.meteorology/lst.import.datafile.rds')
@@ -51,6 +51,7 @@ lst.import.datafile <- readRDS(file='./Data/processed.data.files/processed.meteo
 
 ascii.array.precip.temp <- lst.import.datafile$ascii.array.precip.temp
 dates.weather <- lst.import.datafile$seq.of.dates
+list.file.names <- lst.import.datafile$file.names
 rm(lst.import.datafile) # for memory
 
 years.weather <- as.numeric(format(format(dates.weather,'%Y')))
