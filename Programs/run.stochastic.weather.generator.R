@@ -38,6 +38,7 @@ if (use.provided.WRs){
   num.states <- length(unique(as.vector(weather.state.assignments)))    #number of WRs in the model
   dates.sim <- final.NHMM.output$dates.sim
   markov.chain.sim <- final.NHMM.output$WR.simulation
+  dates.synoptics <- final.NHMM.output$dates.historical
 } else{
   if (use.non_param.WRs){      #----------- 1+2 dynamic scenarios ----------#
     final.NHMM.output <- execute.WRs.non_param.NHMM()
@@ -45,6 +46,7 @@ if (use.provided.WRs){
     num.states <- length(unique(as.vector(weather.state.assignments)))    #number of WRs in the model
     dates.sim <- final.NHMM.output$dates.sim
     markov.chain.sim <- final.NHMM.output$WR.simulation
+    dates.synoptics <- final.NHMM.output$dates.historical
     
   } else {
     final.NHMM.output <- execute.WRs.param.NHMM()
@@ -52,6 +54,7 @@ if (use.provided.WRs){
     num.states <- length(unique(as.vector(weather.state.assignments)))    #number of WRs in the model
     dates.sim <- final.NHMM.output$dates.sim
     markov.chain.sim <- as.list(data.frame(final.NHMM.output$WR.simulation[,1:num.iter]))
+    dates.synoptics <- final.NHMM.output$dates.historical
   }
 }
 rm(final.NHMM.output) # for memory

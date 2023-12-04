@@ -20,9 +20,15 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
   # 2) heat waves, heat stress
   # 3) cold waves, cold stress
   
+  #location of obs weather data
+  load(path.to.processed.data.meteohydro) #load in weather data
+
   #preset labels for figures below
-  identical.dates.idx <- dates.weather%in%dates.WRs.specific
+  identical.dates.idx <- dates.weather%in%dates.synoptics
   dates.weather <- dates.weather[identical.dates.idx]
+  years.weather <- as.numeric(format(dates.weather,'%Y'))
+  months.weather <- as.numeric(format(dates.weather,'%m'))
+  
   label1 = paste0('Obs [',format(as.Date(range(dates.weather)[1]),'%Y'),
                   '-',format(as.Date(range(dates.weather)[2]),'%Y'),']')
   label2 = 'Sim (WGEN: baseline)'
@@ -36,19 +42,10 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
   # dir.to.sim.files <- "./Data/simulated.data.files/WGEN.out/"
   
   ##// weather data and synoptic dates ---##
-  #location of obs weather data
-  load(path.to.processed.data.meteohydro) #load in weather data
-  dates.user.specific <- seq(as.Date(start.date.weather),as.Date(end.date.weather),by="day")
-  identical.dates.idx <- dates.weather%in%dates.user.specific
-  
   prcp.site.data <- prcp.site[identical.dates.idx,]
   tmin.site.data <- tmin.site[identical.dates.idx,]
   tmax.site.data <- tmax.site[identical.dates.idx,]
   tmean.site.data <- (tmin.site.data+tmax.site.data)/2
-  
-  dates.weather <- dates.user.specific
-  years.weather <- as.numeric(format(dates.weather,'%Y'))
-  months.weather <- as.numeric(format(dates.weather,'%m'))
   
   n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
   
@@ -159,7 +156,7 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
     label11 <- 'Obs [GEV]'
     label12 <- 'Obs [GPD]'
     
-    file.name.fig <- paste0("lines_prcp.GEV.GPD.NEP_dur.maxima_wet.spells_",n.sites,".grids_s",
+    file.name.fig <- paste0("lines_prcp.GEV.GPD.NEP_dur.maxima_wet.spells_",n.sites,".files_s",
                             num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 14; hh.mom <- 14
@@ -285,10 +282,10 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
     
     myTicks = axTicks(1)
     axis(1, at = myTicks, labels = formatC(myTicks, format = 'd'),cex.axis=1.75)
-    legend("topleft", legend=c(label1,label11,label2,label12),
-           col=c("red", "red","black", 'blue'), 
-           lty=c(NA,1,NA,1),cex=1.5,pch=c(4,NA,16,NA),
-           lwd=c(NA,1.5,NA,2),
+    legend("topleft", legend=c(label1,label11,label12,label2),
+           col=c("red", "red",'blue',"black"), 
+           lty=c(NA,1,1,NA),cex=1.5,pch=c(4,NA,NA,16),
+           lwd=c(NA,1.5,2,NA),
            bty = "n",horiz = FALSE,
            title='at-basin',title.col = 'purple')
 
@@ -453,7 +450,7 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
   # 2) precipitation cdf, mean, standard variation (yearly, year-to-year)
   {
     
-    file.name.fig <- paste0("lines_prcp.mean_cdf_sd_",n.sites,".grids_s",
+    file.name.fig <- paste0("lines_prcp.mean_cdf_sd_",n.sites,".files_s",
                             num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 14; hh.mom <- 14
@@ -588,7 +585,7 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
     # label1 <- 'Obs [1948-2018]'
     # label2 <- 'Sim (WGEN: baseline)'
     
-    file.name.fig <- paste0("lines_prcp.cumulative_seasonality_",n.sites,".grids_s",
+    file.name.fig <- paste0("lines_prcp.cumulative_seasonality_",n.sites,".files_s",
                             num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 15; hh.mom <- 14
@@ -764,7 +761,7 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
     # label1 <- 'Obs [1948-2018]'
     # label2 <- 'Sim (WGEN: baseline)'
     
-    file.name.fig <- paste0("boxplots_prcp.PBIAS_",n.sites,".grids_s",
+    file.name.fig <- paste0("boxplots_prcp.PBIAS_",n.sites,".files_s",
                             num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 16; hh.mom <- 12
@@ -858,7 +855,7 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
   # 5) temperature cdf, mean, standard variation (yearly, year-to-year)
   {
 
-    file.name.fig <- paste0("lines_tmean_mean_cdf_sd_",n.sites,".grids_s",
+    file.name.fig <- paste0("lines_tmean_mean_cdf_sd_",n.sites,".files_s",
                             num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 14; hh.mom <- 14
@@ -1186,7 +1183,7 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
                      '(above-threshold, C)','(below-threshold, C)',
                      '(above-threshold, C)','(below-threshold, C)')
     
-    file.name.fig <- paste0("scatters_tmax_tmin_heat.cold.specific_",n.sites,".grids_s",
+    file.name.fig <- paste0("scatters_tmax_tmin_heat.cold.specific_",n.sites,".files_s",
                             num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 18; hh.mom <- 10
@@ -1225,7 +1222,7 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
   # 7) precipitation minima, dry-spells, drought stats
   {
 
-    file.name.fig <- paste0("hist_prcp.n.year.droughts_minima_dry.spells_",n.sites,".grids_s",
+    file.name.fig <- paste0("hist_prcp.n.year.droughts_minima_dry.spells_",n.sites,".files_s",
                             num.states,"_with_",num.iter,"_ens.png")
     fname.fig <- paste0("./Figures/",file.name.fig)
     ww.mom <- 26; hh.mom <- 14

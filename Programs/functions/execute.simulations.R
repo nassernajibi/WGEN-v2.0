@@ -6,8 +6,7 @@ execute.simulations <- function(){
   load(path.to.processed.data.meteohydro) #load in weather data
   n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
   
-  identical.dates.idx <- dates.weather%in%dates.WRs.specific
-  
+  identical.dates.idx <- dates.weather%in%dates.synoptics
   dates.weather <- dates.weather[identical.dates.idx]
   months.weather <- as.numeric(format(dates.weather,'%m'))
   prcp.site <- prcp.site[identical.dates.idx,]
@@ -15,7 +14,7 @@ execute.simulations <- function(){
   tmin.site <- tmin.site[identical.dates.idx,]
   prcp.basin <- prcp.basin[identical.dates.idx]
   
-  identical.dates.idx <- dates.WRs.specific%in%dates.weather
+  identical.dates.idx <- dates.synoptics%in%dates.weather
   weather.state.assignments <- weather.state.assignments[identical.dates.idx]
   
   # sanitary check if all days for that specific month and grid is zero === causing problems in gamma fit

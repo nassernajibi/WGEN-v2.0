@@ -22,19 +22,10 @@ execute.WRs.non_param.NHMM <- function(){
   }
   
   #########################################################################
-  
-  #dates for the historical WRs
-  dates.weather <- seq(as.Date(start.date.weather),as.Date(end.date.weather),by="day") # also known as dates.shared amongst
-  
-  # given the length of non-parametric simulating segments, below should make sense in terms of leap years (every 4 years)
-  # e.g., segment for 4-yr; 1948 ('1948') is a leap year; 2020 ('2019+1') is a leap year
-  dates.shared.nonpar <- dates.WRs.specific
-  
   dates.synoptic <- seq(as.Date(start.date.synoptic),as.Date(end.date.synoptic), by="days")
   months.synoptic <- as.numeric(format(dates.synoptic,'%m'))
   
-  identical.dates.idx <- dates.synoptic%in%dates.weather
-  
+
   #create dates for the simulated WRs
   my.num.sim = ceiling(num.years.sim.WRs/length(unique(format(dates.synoptic,'%Y')))) # number of chunks of historical periods; e.g., 1 is one set of simulation equal to the historical
   long.dates.sim <- rep(dates.synoptic,times=my.num.sim)
@@ -96,7 +87,7 @@ execute.WRs.non_param.NHMM <- function(){
   
   
   ##################fit NHMMs by season with appropriate covariates#####################
-  
+
   fit.mod.NHMM <- list()    #final NHMMs fit by season
 
   for (s in 1:n.seasons) {
@@ -134,7 +125,7 @@ execute.WRs.non_param.NHMM <- function(){
   }
 
   saveRDS(fit.mod.NHMM,file = paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.rds"))
-  
+
   # fit.mod.NHMM <- readRDS(paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.rds")) # load in this to save running time for now
   
   
@@ -155,11 +146,13 @@ execute.WRs.non_param.NHMM <- function(){
   
   
   
-  weather.state.assignments <- WR.historical[identical.dates.idx]
-  weather.nonpar.state.assignments <- WR.historical[dates.synoptic%in%dates.shared.nonpar]
-  dates.historical <- dates.historical[identical.dates.idx]
-  
-  dates.weather.nonpar <- dates.shared.nonpar
+  weather.state.assignments <- WR.historical
+  # given the length of non-parametric simulating segments, below should make sense in terms of leap years (every 4 years)
+  # e.g., segment for 4-yr; 1948 ('1948') is a leap year; 2020 ('2019+1') is a leap year
+  # dates.WRs.specific
+  weather.nonpar.state.assignments <- WR.historical[dates.synoptic%in%dates.WRs.specific]
+
+  dates.weather.nonpar <- dates.synoptic[dates.synoptic%in%dates.WRs.specific]
   months.weather.nonpar <- as.numeric(format(dates.weather.nonpar,'%m'))
   years.weather.nonpar <- as.numeric(format(dates.weather.nonpar,'%Y'))
   

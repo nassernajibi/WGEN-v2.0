@@ -8,16 +8,12 @@ execute.WRs.param.NHMM <- function(){
 
   #########################################################################
   
-  #dates for the historical WRs
-  dates.weather <- seq(as.Date(start.date.weather),as.Date(end.date.weather),by="day") # also known as dates.shared amongst
-  
+
   # below should make sense in terms of leap years (starting with leap year (1948); ending to a year before leap year in history)
-  dates.shared.par <- dates.WRs.specific
-  
   dates.synoptic <- seq(as.Date(start.date.synoptic),as.Date(end.date.synoptic), by="days")
   months.synoptic <- as.numeric(format(dates.synoptic,'%m'))
   
-  identical.dates.idx <- dates.synoptic%in%dates.shared.par # indexes of dates to replicate different segments considering leap years
+  identical.dates.idx <- dates.synoptic%in%dates.WRs.specific # indexes of dates to replicate different segments considering leap years
   
   #create dates for the simulated WRs
   my.num.sim = ceiling(num.years.sim.WRs/length(unique(format(dates.synoptic[identical.dates.idx],'%Y')))) # number of chunks of historical periods
@@ -49,7 +45,7 @@ execute.WRs.param.NHMM <- function(){
   covariates.all <- list(covariates.cold,covariates.warm)
   dates.covariates.all <- list(dates.covariates.cold,dates.covariates.warm)
   # indexes of dates to replicate different segments considering leap years:
-  identical.cov.dates.idx <- dates.covariates.cold%in%dates.shared.par
+  identical.cov.dates.idx <- dates.covariates.cold%in%dates.WRs.specific
   
   ############################################################################
   
