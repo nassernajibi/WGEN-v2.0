@@ -108,7 +108,7 @@ You can run the diagnostic function `create.figures.baselines.stacked` given tow
 
 > If you want to save the outputs in a delimited format, this section is for you
 
-Finally, you can run the `create.delimited.outputs` function in the script `Programs/run.stochastic.weather.generator.R` to save outputs (both simulation and observation files) for individual gridded locations in .csv format.
+Finally, you can run the `create.delimited.outputs` function in the script `Programs/run.stochastic.weather.generator.R` to save outputs (simulation files) for individual gridded locations in .csv format.
 
 ### Citing
 
