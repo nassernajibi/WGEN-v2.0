@@ -90,7 +90,7 @@ In order to run, you will need to do two things to access the required data:
 
 1. Download the files from `Data/` and store them in a folder titled `Data` next to the `Programs` and `Figures` in your directory. *Note that you need to provide similar input data (format, structure) for your particular case*. A permanent `Data` repository is available on Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7311768.svg)](https://doi.org/10.5281/zenodo.7311768).
 
-2. Start with `process.meteorology.R` to prepare input meteorology required to be sent to the weather generator.
+2. Start with `process.meteorology.R` to prepare input meteorology raw data required to be sent to the weather generator.
 
 3. If required, modify `config.simulations.R` to provide all the stochastic inputs and hyperparameters (e.g., directories, dates, regimes simulation mode, and so on).
 
