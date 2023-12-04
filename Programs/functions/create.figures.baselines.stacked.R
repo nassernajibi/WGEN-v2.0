@@ -1,5 +1,5 @@
 
-create.figures.baselines.stacked <- function(scenario=1){
+create.figures.baselines.stacked <- function(scenario=selected_scenario){
   # stacked version #
   
   #scenario = the row in ClimateChangeScenarios.csv for which to plot results
