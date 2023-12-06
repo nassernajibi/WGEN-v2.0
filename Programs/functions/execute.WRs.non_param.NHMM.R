@@ -127,7 +127,7 @@ execute.WRs.non_param.NHMM <- function(){
   saveRDS(fit.mod.NHMM,file = paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.rds"))
 
   # fit.mod.NHMM <- readRDS(paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.rds")) # load in this to save running time for now
-  
+
   
   #here we glue together the different seasons
   #for each season, put in the final simulations into the right places for the historical

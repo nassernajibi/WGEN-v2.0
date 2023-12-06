@@ -757,103 +757,7 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
   
   
   # Figure 4:
-  # 4) PBIAS for a list of metrics for precipitation as boxplots
-  {
-    # label1 <- 'Obs [1948-2018]'
-    # label2 <- 'Sim (WGEN: baseline)'
-    
-    file.name.fig <- paste0("boxplots_prcp.PBIAS_",n.sites,".files_s",
-                            num.states,"_with_",num.iter,"_ens.png")
-    fname.fig <- paste0("./Figures/",file.name.fig)
-    ww.mom <- 16; hh.mom <- 12
-    png(fname.fig,width=ww.mom,height=hh.mom,units="in",res=300)
-    par(mfcol=c(1,1),mai=c(1,1,0.75,0.5),font.main=1)
-    
-    ##Metrics for PBIAS
-    nsites <- n.sites
-    metrics <- cbind(
-      'SD'=sapply(1:nsites,function(x){return(100*(sd(wy.data.sim[,x])-sd(wy.data.obs[,x]))/sd(wy.data.obs[,x]))}),
-      'MEAN'=sapply(1:nsites,function(x){return(100*(mean(wy.data.sim[,x])-mean(wy.data.obs[,x]))/mean(wy.data.obs[,x]))}),
-      'MEDIAN'=sapply(1:nsites,function(x){return(100*(quantile(wy.data.sim[,x],0.5)-quantile(wy.data.obs[,x],0.5))/quantile(wy.data.obs[,x],0.5))}),
-      'MIN'=sapply(1:nsites,function(x){return(100*(min(wy.data.sim[,x])-min(wy.data.obs[,x]))/min(wy.data.obs[,x]))}),
-      'MIN2'=sapply(1:nsites,function(x){return(100*(min(rollmean(wy.data.sim[,x],2))-min(rollmean(wy.data.obs[,x],2)))/min(rollmean(wy.data.obs[,x],2)))}),
-      'MIN3'=sapply(1:nsites,function(x){return(100*(min(rollmean(wy.data.sim[,x],3))-min(rollmean(wy.data.obs[,x],3)))/min(rollmean(wy.data.obs[,x],3)))}),
-      'MIN5'=sapply(1:nsites,function(x){return(100*(min(rollmean(wy.data.sim[,x],5))-min(rollmean(wy.data.obs[,x],5)))/min(rollmean(wy.data.obs[,x],5)))}),
-      'Q05'=sapply(1:nsites,function(x){return(100*(quantile(wy.data.sim[,x],0.05)-quantile(wy.data.obs[,x],0.05))/quantile(wy.data.obs[,x],0.05))}),
-      'Q90'=sapply(1:nsites,function(x){return(100*(quantile(wy.data.sim[,x],0.9)-quantile(wy.data.obs[,x],0.9))/quantile(wy.data.obs[,x],0.9))}),
-      'Q99'=sapply(1:nsites,function(x){return(100*(quantile(wy.data.sim[,x],0.99)-quantile(wy.data.obs[,x],0.99))/quantile(wy.data.obs[,x],0.99))}),
-      'MAX'=sapply(1:nsites,function(x){return(100*(max(wy.data.sim[,x])-max(wy.data.obs[,x]))/max(wy.data.obs[,x]))}),
-      'MAX2'=sapply(1:nsites,function(x){return(100*(max(rollmean(wy.data.sim[,x],2))-max(rollmean(wy.data.obs[,x],2)))/max(rollmean(wy.data.obs[,x],2)))}),
-      'MAX3'=sapply(1:nsites,function(x){return(100*(max(rollmean(wy.data.sim[,x],3))-max(rollmean(wy.data.obs[,x],3)))/max(rollmean(wy.data.obs[,x],3)))}),
-      'MAX5'=sapply(1:nsites,function(x){return(100*(max(rollmean(wy.data.sim[,x],5))-max(rollmean(wy.data.obs[,x],5)))/max(rollmean(wy.data.obs[,x],5)))})
-    )
-    
-    fct.spell.stats <- function(prcp.file){
-      prcp.thresh <- 0    #trace precipitation threshold (0 inches)
-      apply(prcp.file,2,function(x) {
-        y <- x[!is.na(x)]
-        nn <- length(y)
-        wet.dry <- y
-        wet.dry[wet.dry<=prcp.thresh] <- 0
-        wet.dry[wet.dry>prcp.thresh] <- 1
-        first.of.run <- c(1,which(diff(wet.dry)!=0) + 1)
-        last.of.run <- c(which(diff(wet.dry)!=0),nn)
-        run.length <- last.of.run-first.of.run + 1
-        run.type <- wet.dry[first.of.run]
-        wet.dry.runs <- data.frame('type'=run.type,'first'=first.of.run,'last'=last.of.run,'length'=run.length)
-        result <- c(
-          mean(wet.dry.runs$length[wet.dry.runs$type==1]),
-          max(wet.dry.runs$length[wet.dry.runs$type==1]),
-          mean(wet.dry.runs$length[wet.dry.runs$type==0]),
-          max(wet.dry.runs$length[wet.dry.runs$type==0])
-        )
-        return(result)
-      })
-    }
-    
-    spell.stats.metrics <- t(100*(fct.spell.stats(prcp.site.data.sim) - fct.spell.stats(prcp.site.data))/fct.spell.stats(prcp.site.data))
-    pBias.full.set.metrics <- cbind(metrics,spell.stats.metrics)
-    colnames(pBias.full.set.metrics) <- c(colnames(metrics),c('MEAN.W.SPELL','MAX.W.SPELL','MEAN.D.SPELL','MAX.D.SPELL'))
-    rownames(pBias.full.set.metrics) <- NULL
-    
-    my.median.values <- paste0(round(apply(pBias.full.set.metrics,2,median),0),"%")
-    
-    boxplot(pBias.full.set.metrics,boxwex=.65,
-            col='wheat',outline=F,frame=F,cex.axis=2.5,cex.lab=2.5,cex.main=3.5,font.main=1,
-            xlab='Precipitation [water year]',ylab='PBIAS[%]',xaxt = "n",ylim=c(-60,60),
-            border=alpha('black',0.6),
-            whisklty = 1,medcol = alpha('red',0.5),medlwd=1)
-    abline(v=1:dim(pBias.full.set.metrics)[2],col=alpha('gray',0.45),lty=3)
-    abline(h=0,col=alpha('thistle',0.65),lwd=1,lty=1)
-    axis(side = 1, labels = FALSE)
-    text(x = 1:dim(pBias.full.set.metrics)[2],
-         y = par("usr")[3],labels = colnames(pBias.full.set.metrics),
-         xpd = NA,adj=c(rep(0,dim(metrics)[2]),rep(0.1,dim(spell.stats.metrics)[2])),
-         ## Rotate the labels by 35 degrees.
-         srt = 90,cex = 2, col='gray50')
-    text(x = 1:dim(pBias.full.set.metrics)[2],
-         bg ="lightblue",
-         y = 60,labels = my.median.values,
-         xpd = NA,adj=0,
-         ## Rotate the labels by 35 degrees.
-         srt = 45,cex = 1.8, col=alpha('red',0.5))
-    text(x = 0,
-         y = 60,labels = 'median',
-         xpd = NA,adj=0,
-         ## Rotate the labels by 35 degrees.
-         srt = 90,cex = 2, col=alpha('red',0.5))
-    mtext(paste0(label2,' vs.', label1),4,cex=2,col='black')
-    legend('top',legend=c(paste0('sites: 1-',nsites)),
-           title='at-site',box.col = "white",
-           title.col = 'purple',title.cex = 2,
-           fill='wheat',cex=1.6,inset = 0.08)
-    
-    dev.off()
-  }
-  
-  
-  # Figure 5:
-  # 5) temperature cdf, mean, standard variation (yearly, year-to-year)
+  # 4) temperature cdf, mean, standard variation (yearly, year-to-year)
   {
 
     file.name.fig <- paste0("lines_tmean_mean_cdf_sd_",n.sites,".files_s",
@@ -983,8 +887,8 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
   }
   
   
-  # Figure 6:
-  # 6) heat and cold waves/stress temperature
+  # Figure 5:
+  # 5) heat and cold waves/stress temperature
   {
     temp.specific.diagnostics <- function(temp.mean,temp.max,temp.min,
                                           my.range=NULL,mc.cores=1)
@@ -1219,8 +1123,8 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
   }
   
   
-  # Figure 7:
-  # 7) precipitation minima, dry-spells, drought stats
+  # Figure 6:
+  # 6) precipitation minima, dry-spells, drought stats
   {
 
     file.name.fig <- paste0("hist_prcp.n.year.droughts_minima_dry.spells_",n.sites,".files_s",
