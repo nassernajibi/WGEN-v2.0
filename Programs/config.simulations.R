@@ -23,7 +23,8 @@ config.simulations <- function(){
     ##climate changes and jitter to apply:
     climate.change.scenarios <- suppressWarnings(read.table('ClimateChangeScenarios.csv',header=TRUE,sep=","))
       
-    change.list <- data.frame("tc"=  climate.change.scenarios$mean_temperature_change_degC, # {e.g., 0, 1, 2, ...} (changes in temperature)
+    change.list <- data.frame("tc.max"=  climate.change.scenarios$max_temperature_change_degC, # {e.g., 0, 1, 2, ...} (changes in temperature)
+                              "tc.min"=  climate.change.scenarios$min_temperature_change_degC, # {e.g., 0, 1, 2, ...} (changes in temperature)
                               "pmuc"= climate.change.scenarios$mean_precipitation_change_percent/100, # {e.g., 0, -.125, .125, ...} (changes in precipitation mean)
                               "pccc"= climate.change.scenarios$extreme_precipitation_scaling_rate_percent/100 # {e.g., 0, 0.07, 0.14, ...} (changes for precipitation extreme quantile -- CC)
     )

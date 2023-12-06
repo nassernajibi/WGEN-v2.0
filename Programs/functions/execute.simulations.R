@@ -105,9 +105,12 @@ execute.simulations <- function(){
   #once the simulations are created, we now apply post-process climate changes (and jitters)
   for (change in 1:nrow(change.list)) {
     start_time <- Sys.time()
-    cur.tc <- change.list$tc[change]
+    cur.tc.max <- change.list$tc.max[change]
+    cur.tc.min <- change.list$tc.min[change]
     cur.pccc <- change.list$pccc[change]
     cur.pmuc <- change.list$pmuc[change]
+    
+    cur.tc <- mean(cur.tc.max,cur.tc.min)
     
     #precipitation scaling (temperature change dependent)
     perc.q <- (1 + cur.pccc)^cur.tc    #scaling in the upper tail for each month of non-zero prcp
@@ -123,7 +126,8 @@ execute.simulations <- function(){
                                       tmax.site.sim=tmax.site.sim,
                                       emission.fits.site=emission.fits.site,
                                       months=months,dates.sim=dates.sim,n.sites=n.sites,
-                                      qq=qq,perc.mu=perc.mu,perc.q=perc.q,Sbasin=Sbasin,cur.jitter=cur.jitter,cur.tc=cur.tc,
+                                      qq=qq,perc.mu=perc.mu,perc.q=perc.q,Sbasin=Sbasin,cur.jitter=cur.jitter,
+                                      cur.tc.min=cur.tc.min,cur.tc.max=cur.tc.max,
                                       num.iter=num.iter,thshd.prcp=thshd.prcp,qq.month=qq.month)
     set.seed(NULL)
     prcp.site.sim.perturbed <- perturbed.sim[[1]]
@@ -136,7 +140,7 @@ execute.simulations <- function(){
     print(paste("QMAPPING started at:",start_time,", ended at:",end_time)); print(round(run.time.qmap,2))
     
     #how to name each file name to track perturbations in each set of simulations
-    file.suffix <- paste0(".temp.",cur.tc,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_hist.state.",use.non_param.WRs,"_jitter.",cur.jitter,"_s",num.states,"_with_",num.iter)
+    file.suffix <- paste0(".tmax.",cur.tc.max,".tmin.",cur.tc.min,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_num.year.",number.years.long,"_with.",num.iter)
     
     print(paste("|---start saving---|"))
     write.output.large(dir.to.sim.files,

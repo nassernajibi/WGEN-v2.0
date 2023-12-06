@@ -1,2 +1,2 @@
-mean_temperature_change_degC,mean_precipitation_change_percent,extreme_precipitation_scaling_rate_percent
-0,0,0
+max_temperature_change_degC,min_temperature_change_degC,mean_precipitation_change_percent,extreme_precipitation_scaling_rate_percent
+0,0,0,0

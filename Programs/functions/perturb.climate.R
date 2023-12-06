@@ -3,7 +3,7 @@ perturb.climate <- function(prcp.site.sim,
                             tmin.site.sim,
                             tmax.site.sim,
                             emission.fits.site,months,dates.sim,n.sites,
-                            qq,perc.mu,perc.q,Sbasin,cur.jitter,cur.tc,num.iter,thshd.prcp,qq.month) {
+                            qq,perc.mu,perc.q,Sbasin,cur.jitter,cur.tc.min,cur.tc.max,num.iter,thshd.prcp,qq.month) {
   
   #this function takes the simulated prcp, tmax, and tmin from the daily weather generator and perturbs the data to 
   #1) impose thermodynamic climate changes
@@ -22,7 +22,8 @@ perturb.climate <- function(prcp.site.sim,
   #perc.q = percent change in the qqth quantile for each month of non-zero prcp for CC-scaling
   #Sbasin = the spearman correlation matrix (n.site x nsite) between the precipitation sites
   #cur.jitter = TRUE/FALSE indicating whether we randomly perturb the non-exceedance probabilities at each site conditional on the basin average value?
-  #cur.tc = a step change to apply to all temperatures (tmax and tmin)
+  #cur.tc.min = a step change to apply to all tmin temperatures
+  #cur.tc.max = a step change to apply to all tmax temperatures
   #num.iter = the number of iterations for the simulation
   #thshd.prcp = the threshold used to separate gamma from GPD
   #qq.month = the frequency prcp under threshold by month and site
@@ -44,9 +45,12 @@ perturb.climate <- function(prcp.site.sim,
                                            emission.new1=emission.new1,
                                            n.sites=n.sites,months=months,dates.sim=dates.sim,cur.jitter=cur.jitter)
     
-    #A placeholder for a spot to add in temperature trends  
-    tmin.site.sim[[j]] <- tmin.site.sim[[j]] + cur.tc
-    tmax.site.sim[[j]] <- tmax.site.sim[[j]] + cur.tc
+    #Add in temperature trends
+    tmin.site.sim[[j]] <- tmin.site.sim[[j]] + cur.tc.min
+    tmax.site.sim[[j]] <- tmax.site.sim[[j]] + cur.tc.max
+    #dont let tmin exceed tmax - replace tmax with tmin if this situation occurs
+    tmax.site.sim[[j]][tmin.site.sim[[j]] > tmax.site.sim[[j]]] <- tmin.site.sim[[j]][tmin.site.sim[[j]] > tmax.site.sim[[j]]]
+    
     print(paste("Quant map",j,":", Sys.time()-my.systime))
   }
   return(list(prcp.site.sim,tmin.site.sim,tmax.site.sim))

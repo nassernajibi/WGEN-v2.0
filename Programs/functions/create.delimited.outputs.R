@@ -7,49 +7,28 @@ create.delimited.outputs <- function(scenario = selected_scenario){
   ##// weather data and synoptic dates ---##
   #location of obs weather data
   load(path.to.processed.data.meteohydro) #load in weather data
-  dates.user.specific <- seq(as.Date(start.date.weather),as.Date(end.date.weather),by="day")
-  identical.dates.idx <- dates.weather%in%dates.user.specific
-  
-  prcp.site.data <- prcp.site[identical.dates.idx,]
-  tmin.site.data <- tmin.site[identical.dates.idx,]
-  tmax.site.data <- tmax.site[identical.dates.idx,]
-  
-  dates.weather <- dates.user.specific
-  years.weather <- as.numeric(format(dates.weather,'%Y'))
-  months.weather <- as.numeric(format(dates.weather,'%m'))
-  days.weather <- as.numeric(format(dates.weather,'%d'))
-  
-  list.file.names <- gsub("data", "sim", list.file.names)
 
-  n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
-  cur.jitter <- to.jitter      #whether jitters were activated or not
-  
   # Sim. file
-  cur.tc <- change.list$tc[scenario]
+  cur.tc.max <- change.list$tc.max[scenario]
+  cur.tc.min <- change.list$tc.min[scenario]
   cur.pccc <- change.list$pccc[scenario]
   cur.pmuc <- change.list$pmuc[scenario]
   
   ##// sim files ---##
   {
-    simulated.file.run.model.saved <- paste0(".temp.",cur.tc,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_hist.state.",use.non_param.WRs,"_jitter.",cur.jitter,"_s",num.states,"_with_",num.iter)
+    simulated.file.run.model.saved <- paste0(".tmax.",cur.tc.max,".tmin.",cur.tc.min,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_num.year.",number.years.long,"_with.",num.iter)
     
-    prcp.site.sim_sfx <- "prcp.site.sim"
-    load(paste0(dir.to.sim.files,"/",prcp.site.sim_sfx,simulated.file.run.model.saved,".RData"))
+    load(paste0(dir.to.sim.files,"/","prcp.site.sim",simulated.file.run.model.saved,".RData"))
     prcp.site.data.sim <- prcp.site.sim[[scenario]] # because there was only one iteration
     
-    prcp.site.sim_sfx <- "tmin.site.sim"
-    load(paste0(dir.to.sim.files,"/",prcp.site.sim_sfx,simulated.file.run.model.saved,".RData"))
+    load(paste0(dir.to.sim.files,"/","tmin.site.sim",simulated.file.run.model.saved,".RData"))
     tmin.site.data.sim <- tmin.site.sim[[scenario]]
     
-    prcp.site.sim_sfx <- "tmax.site.sim"
-    load(paste0(dir.to.sim.files,"/",prcp.site.sim_sfx,simulated.file.run.model.saved,".RData"))
+    load(paste0(dir.to.sim.files,"/","tmax.site.sim",simulated.file.run.model.saved,".RData"))
     tmax.site.data.sim <- tmax.site.sim[[scenario]]
     
-    tmean.site.data.sim <- (tmax.site.data.sim+tmin.site.data.sim)/2
-    
-    prcp.site.sim_sfx <- "dates.sim"
-    load(paste0(dir.to.sim.files,"/",prcp.site.sim_sfx,simulated.file.run.model.saved,".RData"))
     #dates.sim
+    load(paste0(dir.to.sim.files,"/","dates.sim",simulated.file.run.model.saved,".RData"))
     
     months.sim <- as.numeric(format(dates.sim,"%m"))
     years.sim <- as.numeric(format(dates.sim,"%Y"))
@@ -78,8 +57,7 @@ create.delimited.outputs <- function(scenario = selected_scenario){
   ##/ create a single long trace for each site
   
   long.dates.sim <- cbind(long.years.vec,long.months.vec,days.sim)
-  long.dates.obs <- cbind(years.weather,months.weather,days.weather)
-  
+
   start_time <- Sys.time()
   
   dir.create(file.path(dir.to.output.files), showWarnings = FALSE)

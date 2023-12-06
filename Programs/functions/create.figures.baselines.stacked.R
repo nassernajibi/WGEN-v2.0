@@ -50,7 +50,8 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
   n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
   
   #select the scenario for plotting
-  cur.tc <- change.list$tc[scenario]
+  cur.tc.max <- change.list$tc.max[scenario]
+  cur.tc.min <- change.list$tc.min[scenario]
   cur.pccc <- change.list$pccc[scenario]
   cur.pmuc <- change.list$pmuc[scenario]
 
@@ -58,8 +59,8 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
   
   ##// sim files ---##
   {
-    simulated.file.run.model.saved <- paste0(".temp.",cur.tc,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_hist.state.",use.non_param.WRs,"_jitter.",cur.jitter,"_s",num.states,"_with_",num.iter)
-    
+    simulated.file.run.model.saved <- paste0(".tmax.",cur.tc.max,".tmin.",cur.tc.min,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_num.year.",number.years.long,"_with.",num.iter)
+
     prcp.site.sim_sfx <- "prcp.site.sim"
     load(paste0(dir.to.sim.files,"/",prcp.site.sim_sfx,simulated.file.run.model.saved,".RData"))
     prcp.site.data.sim <- prcp.site.sim[[1]] # becase there was only one iteration
