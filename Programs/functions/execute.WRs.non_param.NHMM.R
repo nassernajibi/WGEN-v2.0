@@ -7,37 +7,14 @@ execute.WRs.non_param.NHMM <- function(){
   
   
   ###### output path and filenames ####
-  
-  if (dynamic.scenario==0){
-    # Attempt 0
-    filename_path <- paste0(dir.to.sim.WRs.files,'/final.NHMM.non_param.output.rds')
-    
-  } else if(dynamic.scenario==1){
-    # Attempt 1
-    filename_path <- paste0(dir.to.sim.WRs.files,'/final.NHMM.non_param.output.30prct.incr.WR3.rds')
-    
-  } else if(dynamic.scenario==2){
-    # Attempt 2
-    filename_path <- paste0(dir.to.sim.WRs.files,'/final.NHMM.non_param.output.ltrend.rds')
-  }
-  
+  filename_path <- paste0(dir.to.sim.WRs.files,'/final.NHMM.non_param.output.user.developed.rds')
+
   #########################################################################
   dates.synoptic <- seq(as.Date(start.date.synoptic),as.Date(end.date.synoptic), by="days")
   months.synoptic <- as.numeric(format(dates.synoptic,'%m'))
   
-
-  #create dates for the simulated WRs
-  my.num.sim = ceiling(num.years.sim.WRs/length(unique(format(dates.synoptic,'%Y')))) # number of chunks of historical periods; e.g., 1 is one set of simulation equal to the historical
-  long.dates.sim <- rep(dates.synoptic,times=my.num.sim)
-  target.long.dates <- list(long.dates.sim[as.numeric(format(long.dates.sim,"%m"))%in%seasons[[1]]],
-                            long.dates.sim[as.numeric(format(long.dates.sim,"%m"))%in%seasons[[2]]])
-  
-  
-  
-  
   #// Load processed 500mb-GPH hgt region data and dates
   hgt.synoptic.region <- readRDS(file=path.to.processed.GPHAs)
-  
   
   #####Load in covariates for the cold season
   #Covariates should be a matrix with the first column as dates, and the second column as 

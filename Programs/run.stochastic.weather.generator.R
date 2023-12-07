@@ -32,6 +32,7 @@ for (i in 1:length(lst)) {assign(names(lst[i]), lst[[i]]) }; rm(lst)
 
 #*************************************
 #--- Weather Regimes Module ---#
+#use provided WRs
 if (use.provided.WRs){
   final.NHMM.output <- readRDS('./Data/simulated.data.files/WRs.out/final.NHMM.non_param.output.rds')
   weather.state.assignments <- final.NHMM.output$WR.historical # this is the historical WRs 
@@ -39,23 +40,14 @@ if (use.provided.WRs){
   dates.sim <- final.NHMM.output$dates.sim
   markov.chain.sim <- final.NHMM.output$WR.simulation
   dates.synoptics <- final.NHMM.output$dates.historical
+#simulate your own WRs
 } else{
-  if (use.non_param.WRs){      #----------- 1+2 dynamic scenarios ----------#
-    final.NHMM.output <- execute.WRs.non_param.NHMM()
-    weather.state.assignments <- final.NHMM.output$WR.historical # this is the historical WRs 
-    num.states <- length(unique(as.vector(weather.state.assignments)))    #number of WRs in the model
-    dates.sim <- final.NHMM.output$dates.sim
-    markov.chain.sim <- final.NHMM.output$WR.simulation
-    dates.synoptics <- final.NHMM.output$dates.historical
-    
-  } else {
-    final.NHMM.output <- execute.WRs.param.NHMM()
-    weather.state.assignments <- final.NHMM.output$WR.historical # this is the historical WRs 
-    num.states <- length(unique(as.vector(weather.state.assignments)))    #number of WRs in the model
-    dates.sim <- final.NHMM.output$dates.sim
-    markov.chain.sim <- as.list(data.frame(final.NHMM.output$WR.simulation[,1:num.iter]))
-    dates.synoptics <- final.NHMM.output$dates.historical
-  }
+  final.NHMM.output <- execute.WRs.non_param.NHMM()
+  weather.state.assignments <- final.NHMM.output$WR.historical # this is the historical WRs 
+  num.states <- length(unique(as.vector(weather.state.assignments)))    #number of WRs in the model
+  dates.sim <- final.NHMM.output$dates.sim
+  markov.chain.sim <- final.NHMM.output$WR.simulation
+  dates.synoptics <- final.NHMM.output$dates.historical
 }
 rm(final.NHMM.output) # for memory
 

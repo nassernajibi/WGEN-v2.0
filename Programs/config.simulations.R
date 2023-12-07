@@ -121,41 +121,37 @@ config.simulations <- function(){
     num_WRs.season <- c(7,3)    #number of WRs to fit per season
     
     ##Choose below whether through parametric or non-parametric way to create the simulated WRs ##
-    use.non_param.WRs <- TRUE #{TRUE, FALSE}: TRUE for non-parametric, FALSE for parametric simulated WRs
+    dynamic.scenario  <- 0 # {0, 1}: 0: no dynamic change; 1: yes dynamic change 
     
-    dynamic.scenario  <- 0 # {0, 1, 2}: 0: no dynamic change; 1: dynamic scenario #1 (30% increase in WR3); or 2: dynamic scenario #2 (linear trend)
-    
-    if (use.non_param.WRs){      #----------- 1+2 dynamic scenarios ----------#
-      if (dynamic.scenario==0){
-        ##===> Attempt #0 (thermodynamic only; no change to freq of WRs) ===##
-        # #specify target change (as a percent) for WR probabilities
-        WR_prob_change <- c(0,0,0,0,0,0,0,0,0,0) # between 0 and 1
-        # #how close (in % points) do the WR frequencies (probabilities) need to be to the target
-        lp.threshold <- 0.00001
-        # #how much change do we allow in a sub-period sampling probability before incurring a larger penalty in the optimization
-        piecewise_limit <- .02
-        
-      }else if(dynamic.scenario==1){
-        ##===> Attempt #1 (dynamic scenario #1) ===##
-        # #specify target change (as a percent) for WR probabilities (if, increasing WR3 in future)
-        WR_prob_change <- c(0,0,.3,0,0,0,0,0,0,0) # between 0 and 1
-        # #how close (in % points) do the WR frequencies (probabilities) need to be to the target
-        lp.threshold <- 0.007
-        # #how much change do we allow in a sub-period sampling probability before incurring a larger penalty in the optimization
-        piecewise_limit <- .02
-        
-      }else if(dynamic.scenario==2){
-        ##===> Attempt #2 (dynamic scenario #2) ===##
-        # specify target change (as a percent) for WR probabilities (if, continuing their current trends in future)
-        WR_prob_change <- c(-0.09969436,  0.27467048,  0.33848792,
-                            -0.28431861, -0.23549986,  0.03889970,
-                            -0.05628958, 0.38059153, -0.16636739, -0.17995965) # between 0 and 1
-        # how close (in % points) do the WR frequencies (probabilities) need to be to the target
-        lp.threshold <- 0.008
-        # how much change do we allow in a sub-period sampling probability before incurring a larger penalty in the optimization
-        piecewise_limit <- .02
-      }
-    }
+    if (dynamic.scenario==0){
+      ##===> Attempt #0 (thermodynamic only; no change to freq of WRs) ===##
+      # #specify target change (as a percent) for WR probabilities
+      WR_prob_change <- c(0,0,0,0,0,0,0,0,0,0) # between 0 and 1
+      # #how close (in % points) do the WR frequencies (probabilities) need to be to the target
+      lp.threshold <- 0.00001
+      # #how much change do we allow in a sub-period sampling probability before incurring a larger penalty in the optimization
+      piecewise_limit <- .02
+      
+    #   --------- NOTE: some of these hyper-parameters may need tuning depending on the dynamic climate change selected
+    #   --------- Attempt with caution!!!!
+    }else if(dynamic.scenario==1){
+      ##===> Attempt #1 (dynamic scenario #1) ===##
+      # #specify target change (as a percent) for WR probabilities (if, increasing WR3 in future)
+      WR_prob_change <- c(0,0,.3,0,0,0,0,0,0,0) # between 0 and 1
+      # #how close (in % points) do the WR frequencies (probabilities) need to be to the target
+      lp.threshold <- 0.007
+      # #how much change do we allow in a sub-period sampling probability before incurring a larger penalty in the optimization
+      piecewise_limit <- .02
+      
+      ##===> Other option explored in final report===##
+      # specify target change (as a percent) for WR probabilities (if, continuing their current trends in future)
+      #WR_prob_change <- c(-0.09969436,  0.27467048,  0.33848792,
+      #                    -0.28431861, -0.23549986,  0.03889970,
+      #                    -0.05628958, 0.38059153, -0.16636739, -0.17995965) # between 0 and 1
+      # how close (in % points) do the WR frequencies (probabilities) need to be to the target
+      #lp.threshold <- 0.008
+      # how much change do we allow in a sub-period sampling probability before incurring a larger penalty in the optimization
+      #piecewise_limit <- .02
     
   }
   

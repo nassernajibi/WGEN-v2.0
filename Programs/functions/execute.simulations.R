@@ -38,8 +38,6 @@ execute.simulations <- function(){
         prcp.site[months.weather==mo.site[mi,1],mo.site[mi,2]] <- escaping.value
       }
     }
-    # > dim(mo.site)
-    # > mo.site
     
     # check if all days for that specific month and grid is negative === causing problems in gamma fittings
     indicators.sites <- which(prcp.site<0,arr.ind=T)
