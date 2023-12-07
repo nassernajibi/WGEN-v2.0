@@ -6,19 +6,14 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
   
   # ------------------------------------------------------------------------------- #
   # ------------------------------------------------------------------------------- #
-  # A set of 8 figures stacked to show diagnostics for WGEN baseline (thousands-yr): precipitation and temperature #
+  # A set of 6 figures stacked to show diagnostics for WGEN: precipitation and temperature #
   # ------------------------------------------------------------------------------- #
   # ------------------------------------------------------------------------------- #
   # including:
-  #- Precipitation:
-  # 1) extreme precipitation, wet-spells, flood stats
-  # 2) dry-spells, drought stats
-  # 3) seasonality, spatial correlation for extremes
-  # 4) percent bias stats
-  #- Temperature:
-  # 1) spatial pattern
-  # 2) heat waves, heat stress
-  # 3) cold waves, cold stress
+  # - Precipitation: averages, seasonality, variability, extreme precipitation, wet-spells, dry-spells, drought stats
+  # - Temperature: averages, variability, heat waves, heat stress, cold waves, cold stress
+  # - at-basin: statistics that have been calculated based on a basin average of precipitation and temperature data (i.e., avg across sites)
+  # - at-site: statistics that are shown for each site individually
   
   #location of obs weather data
   load(path.to.processed.data.meteohydro) #load in weather data
@@ -33,21 +28,13 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
                   '-',format(as.Date(range(dates.weather)[2]),'%Y'),']')
   label2 = 'Sim (WGEN: baseline)'
   
-  # use.non_param.WRs <- TRUE #TRUE for non-parametric, FALSE for parametric simulated WRs
-  # num.states <- c(10) # K WRs
-  # qq <- 0.99              # quantile to anchor the CC-scaling, and to split gamma and GPD
-  # num.iter <- 1 # Number of ensemble members generated using WR-SWG
-  # 
-  # # directory to simulation files
-  # dir.to.sim.files <- "./Data/simulated.data.files/WGEN.out/"
-  
-  ##// weather data and synoptic dates ---##
+  ##// cut obs weather data to synoptic dates for fair comparison ---##
   prcp.site.data <- prcp.site[identical.dates.idx,]
   tmin.site.data <- tmin.site[identical.dates.idx,]
   tmax.site.data <- tmax.site[identical.dates.idx,]
   tmean.site.data <- (tmin.site.data+tmax.site.data)/2
   
-  n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
+  n.sites <- dim(prcp.site)[2] # Number of locations
   
   #select the scenario for plotting
   cur.tc.max <- change.list$tc.max[scenario]
@@ -1279,7 +1266,7 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
     #------------------------------------------------- #
     ## -- frequency of annual rolling mean drought -- ##
     #------------------------------------------------- #
-    drought.rol.mean <- c(1,2,3,5,10,30)
+    drought.rol.mean <- c(1,2,3,5,10,20)
     labs.metrics <- paste0(drought.rol.mean,'-yr')
     annual.prcp <- apply(wy.data.obs,1,mean)
     annual.prcp.sim <- apply(wy.data.sim,1,mean)
@@ -1287,13 +1274,8 @@ create.figures.baselines.stacked <- function(scenario=selected_scenario){
       obs.HRU <- rollmean(annual.prcp,drought.rol.mean[my.opt])
       wgen.trace <- rollmean(annual.prcp.sim,drought.rol.mean[my.opt])
       x_min_max <- c(min(obs.HRU,wgen.trace),max(obs.HRU,wgen.trace))
-      hgA <- hist(wgen.trace,plot = FALSE,freq = T,
-                  main=paste0(labs.metrics[my.opt]),font.main = 1,
-                  cex.axis=2,cex.lab=1.5,cex.main=4,
-                  xlab='Precipitation [WY]',xlim=x_min_max,
-                  ylab='frequency [#WYs]',col='gray60',lty="blank",breaks = 25)
-      hgB <- hist(obs.HRU,plot = FALSE,freq = T,
-                  main=paste0(labs.metrics[my.opt]),breaks = 25)
+      hgA <- hist(wgen.trace,plot = FALSE,breaks = 25)
+      hgB <- hist(obs.HRU,plot = FALSE,breaks = 25)
       plot(hgA, col = alpha('gray',0.4),lty="blank",
            main=paste0(labs.metrics[my.opt]),font.main = 1,
            cex.axis=2.25,cex.lab=2.5,cex.main=4,
