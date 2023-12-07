@@ -8,7 +8,7 @@ execute.WRs.non_param.NHMM <- function(){
   
   ###### output path and filenames ####
   filename_path <- paste0(dir.to.sim.WRs.files,'/final.NHMM.non_param.output.user.developed.rds')
-
+  
   #########################################################################
   dates.synoptic <- seq(as.Date(start.date.synoptic),as.Date(end.date.synoptic), by="days")
   months.synoptic <- as.numeric(format(dates.synoptic,'%m'))
@@ -64,16 +64,16 @@ execute.WRs.non_param.NHMM <- function(){
   
   
   ##################fit NHMMs by season with appropriate covariates#####################
-
+  
   fit.mod.NHMM <- list()    #final NHMMs fit by season
-
+  
   for (s in 1:n.seasons) {
     #organize hgt and covariate for current season
     hgt.synoptic.region.pca <- prcomp(hgt.final[[s]],center=T,scale=T)
     n.eofs <- num_eofs.season[s]
     synoptic.pcs <- hgt.synoptic.region.pca$x[,1:n.eofs]
     n.states <- num_WRs.season[s]
-
+    
     #here we define the covariate matrix and the formula (fo) of the multinomial regression in the NHMM
     #define day of year for all dates, and then define formula for the NHMM
     tsteps <- as.numeric(format(dates.final[[s]], "%j")) #seq_len(nrow(my.synoptic.pcs))
@@ -91,8 +91,8 @@ execute.WRs.non_param.NHMM <- function(){
       }
       fo <- as.formula(fo)
     }
-
-
+    
+    
     # fit NHMM. this can take a while (tries multiple random starts until convergence)
     fit.mod.NHMM[[s]] <- fit.NHMM(my.nstates=n.states,
                                   my.synoptic.pcs=synoptic.pcs,
@@ -100,11 +100,12 @@ execute.WRs.non_param.NHMM <- function(){
                                   fo=fo,
                                   n.eofs=n.eofs)
   }
-
+  
   saveRDS(fit.mod.NHMM,file = paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.user.developed.rds"))
-
+  
+  # fit.mod.NHMM <- readRDS(paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.user.developed.rds")) # load in this to save running time for now
   # fit.mod.NHMM <- readRDS(paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.rds")) # load in this to save running time for now
-
+  
   
   #here we glue together the different seasons
   #for each season, put in the final simulations into the right places for the historical
@@ -127,7 +128,7 @@ execute.WRs.non_param.NHMM <- function(){
   # e.g., segment for 4-yr; 1948 ('1948') is a leap year; 2020 ('2019+1') is a leap year
   # dates.WRs.specific
   weather.nonpar.state.assignments <- WR.historical[dates.synoptic%in%dates.WRs.specific]
-
+  
   dates.weather.nonpar <- dates.synoptic[dates.synoptic%in%dates.WRs.specific]
   months.weather.nonpar <- as.numeric(format(dates.weather.nonpar,'%m'))
   years.weather.nonpar <- as.numeric(format(dates.weather.nonpar,'%Y'))
