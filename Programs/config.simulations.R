@@ -19,10 +19,10 @@ config.simulations <- function(){
   ######  --------------------------------------------------------------------------
   ######  --------------------------------------------------------------------------
   {
-	##-------------Define perturbations-------------##
+    ##-------------Define perturbations-------------##
     ##climate changes and jitter to apply:
     climate.change.scenarios <- suppressWarnings(read.table('ClimateChangeScenarios.csv',header=TRUE,sep=","))
-      
+    
     change.list <- data.frame("tc.max"=  climate.change.scenarios$max_temperature_change_degC, # {e.g., 0, 1, 2, ...} (changes in temperature)
                               "tc.min"=  climate.change.scenarios$min_temperature_change_degC, # {e.g., 0, 1, 2, ...} (changes in temperature)
                               "pmuc"= climate.change.scenarios$mean_precipitation_change_percent/100, # {e.g., 0, -.125, .125, ...} (changes in precipitation mean)
@@ -40,9 +40,9 @@ config.simulations <- function(){
   {
     lst.import.datafile <- tryCatch(suppressMessages(readRDS(file='./Data/processed.data.files/processed.meteorology/lst.import.datafile.rds')),
                                     error=function(e) {
-                                           message('You have not yet run process.meteorology.R')
-                                           print(e)
-                                       })
+                                      message('You have not yet run process.meteorology.R')
+                                      print(e)
+                                    })
     start.date.weather <- lst.import.datafile$seq.of.dates[1]
     end.date.weather <- lst.import.datafile$seq.of.dates[length(lst.import.datafile$seq.of.dates)]
   }
@@ -58,7 +58,7 @@ config.simulations <- function(){
     
     # directory to store output files
     dir.to.output.files <- './Data/output.data.files/'
-  
+    
     ##location of obs weather data (RData format): weather data (e.g., precip and temp) as matrices (time x lat|lon: t-by-number of grids); dates vector for time; basin average precip (see the example meteohydro file)
     path.to.processed.data.meteohydro <- "./Data/processed.data.files/processed.meteorology/processed.meteorology.RData"
   }
@@ -72,7 +72,7 @@ config.simulations <- function(){
   {
     first.month <- 1
     last.month <- 12
-  	months <- seq(first.month,last.month) # Jan-Dec calendar year
+    months <- seq(first.month,last.month) # Jan-Dec calendar year
     ##threshold for mixed Gamma-GPD population separation
     qq <- .99  
     
@@ -100,7 +100,7 @@ config.simulations <- function(){
     start.date.synoptic="1948-01-01"; end.date.synoptic="2021-12-31" # from processed GPHA file
     
     start.date.WRs="1948-01-01"; end.date.WRs="2019-12-31" # proper leap year orders (starting with leap year of 1948, ending a year before (i.e., 2019) the leap year of 2020)
-
+    
     dates.WRs.specific <- seq(as.Date(start.date.WRs),as.Date(end.date.WRs),by="day")
     
     num.years.sim.WRs <- number.years.long # e.g., 500, 1000, 2000, 3000, 5000 years, etc [note: current NHMM output (parametric) is for 1036 years]
@@ -132,8 +132,8 @@ config.simulations <- function(){
       # #how much change do we allow in a sub-period sampling probability before incurring a larger penalty in the optimization
       piecewise_limit <- .02
       
-    #   --------- NOTE: some of these hyper-parameters may need tuning depending on the dynamic climate change selected
-    #   --------- Attempt with caution!!!!
+      #   --------- NOTE: some of these hyper-parameters may need tuning depending on the dynamic climate change selected
+      #   --------- Attempt with caution!!!!
     }else if(dynamic.scenario==1){
       ##===> Attempt #1 (dynamic scenario #1) ===##
       # #specify target change (as a percent) for WR probabilities (if, increasing WR3 in future)
@@ -152,11 +152,12 @@ config.simulations <- function(){
       #lp.threshold <- 0.008
       # how much change do we allow in a sub-period sampling probability before incurring a larger penalty in the optimization
       #piecewise_limit <- .02
+      
+    }
     
+    
+    # returning the entire values inserted here to 'run.stochastic.weather.generator'
+    values = as.list(environment())
+    return(values)
   }
-  
-  
-  # returning the entire values inserted here to 'run.stochastic.weather.generator'
-  values = as.list(environment())
-  return(values)
 }
