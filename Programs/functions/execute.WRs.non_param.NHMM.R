@@ -101,7 +101,7 @@ execute.WRs.non_param.NHMM <- function(){
                                   n.eofs=n.eofs)
   }
 
-  saveRDS(fit.mod.NHMM,file = paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.rds"))
+  saveRDS(fit.mod.NHMM,file = paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.user.developed.rds"))
 
   # fit.mod.NHMM <- readRDS(paste0(dir.to.sim.WRs.files,"/fit.mod.NHMM.rds")) # load in this to save running time for now
 
@@ -111,7 +111,6 @@ execute.WRs.non_param.NHMM <- function(){
   #re-relabel the next season WRs for the final sequence of WRs
   #dates.sim <- as.Date(sort(unlist(dates.sim.s)),origin="1970-01-01")
   WR.historical.s <- list()
-  dates.sim <- long.dates.sim
   dates.historical <- as.Date(sort(unlist(dates.final)),origin="1970-01-01")
   WR.historical <- array(NA,length(dates.historical))
   for (s in 1:n.seasons) {
