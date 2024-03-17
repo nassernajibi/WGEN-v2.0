@@ -16,10 +16,7 @@
 | [**License**](#License)
 
 
-The WGEN (or SWG) was first developed by [Prof. Scott Steinschneider](https://github.com/SteinschneiderLab) (Cornell University) (see *Steinschneider et al., 2019*). 
-Since then, it has been upgraded, applied to different locations, and used for varying purposes by [the Steinschneider Research Group]( https://blogs.cornell.edu/steinschneider/) and their collaborators.
-
-The SWG is designed to be a flexible tool that can facilitate computationally fast, internally consistent scenario generation to support climate vulnerability assessments of water systems in a way that is more easily connected to advances in climate science. 
+The Stochastic Weather Generator (SWG, or WGEN) is designed to be a flexible tool that can facilitate computationally fast, internally consistent scenario generation to support climate vulnerability assessments of water systems in a way that is more easily connected to advances in climate science. 
 It is well suited for risk-based simulation studies of system-of-systems that span large regions and multiple sectors (e.g., food, energy, and water).
 The tool is useful in expediting the adoption of bottom-up vulnerability assessments across water, food, and energy sectors, by providing a regional set of scenarios that can be tailored for individual locations and analyses.
 
@@ -44,7 +41,8 @@ This weather regime-based stochastic weather generator (WR-SWG) is a tool to sim
 
 ### Researchers
 
-We are committed to making our work findable, accessible, interoperable and reusable ([FAIR principles](https://www.nature.com/articles/sdata201618)) by the scientific community and the society at large.
+The SWG was first developed by [Prof. Scott Steinschneider](https://github.com/SteinschneiderLab) (Cornell University) (see *Steinschneider et al., 2019*). 
+Since then, it has been upgraded, applied to different locations, and used for varying purposes by [the Steinschneider Research Group]( https://blogs.cornell.edu/steinschneider/) and their collaborators. We are committed to making our work findable, accessible, interoperable and reusable ([FAIR principles](https://www.nature.com/articles/sdata201618)) by the scientific community and the society at large.
 The programming language/platform (i.e., [R](https://www.r-project.org/)) and data used here are publicly available via the public preservation repositories without any charges.
 All code is posted on this repository.
 
