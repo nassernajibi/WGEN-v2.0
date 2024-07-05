@@ -154,6 +154,32 @@ or its results/methods, please cite the references below.
 }
 ```
 
+4. Najibi, N., Perez, A.J., Arnold, W., Schwarz, A., Maendly, R. & Steinschneider, S. (2024). A statewide, weather-regime based stochastic weather generator for process-based bottom-up climate risk assessments in California – Part I: Model evaluation. *[Climate Services](https://doi.org/10.1016/j.cliser.2024.100489)*, 34, 1-18.
+```bibtex
+@article{najibi2024statewide,
+  title={A statewide, weather-regime based stochastic weather generator for process-based bottom-up climate risk assessments in California -- Part I: Model evaluation},
+  author={Najibi, Nasser and Perez, Alejandro J and Arnold, Wyatt and Schwarz, Andrew and Maendly, Romain and Steinschneider, Scott},
+  journal={Climate Services},
+  volume={34},
+  pages={100489},
+  year={2024},
+  publisher={Elsevier}
+}
+```
+
+5. Najibi, N., Perez, A.J., Arnold, W., Schwarz, A., Maendly, R. & Steinschneider, S. (2024). A statewide, weather-regime based stochastic weather generator for process-based bottom-up climate risk assessments in California – Part II: Thermodynamic and dynamic climate change scenarios. *[Climate Services](https://doi.org/10.1016/j.cliser.2024.100485)*, 34, 1-16.
+```bibtex
+@article{najibi2024statewide,
+  title={A statewide, weather-regime based stochastic weather generator for process-based bottom-up climate risk assessments in California -- Part II: Thermodynamic and dynamic climate change scenarios},
+  author={Najibi, Nasser and Perez, Alejandro J and Arnold, Wyatt and Schwarz, Andrew and Maendly, Romain and Steinschneider, Scott},
+  journal={Climate Services},
+  volume={34},
+  pages={1--16},
+  year={2024},
+  publisher={Elsevier}
+}
+```
+
 ### Issues
 
 - If you have issues related to the software/packages, please raise an issue in the Issues tab.
