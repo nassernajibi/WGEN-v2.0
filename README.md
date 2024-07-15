@@ -110,7 +110,7 @@ Finally, you can run the `create.delimited.outputs` function in the script `Prog
 
 ### Citing
 
-If you use the WGEN scripts (as a whole, or partially, and/or as a template for your research work), 
+If you use the WGEN scripts (as a whole, or partially, and/or as a template for your work), 
 or its results/methods, please cite the references below.
 
 1. Najibi, N., Steinschneider, S. (2023). Stochastic Weather Generator v2.0. *[Zenodo](https://doi.org/10.5281/zenodo.7311768)*, Software, MIT License, Creative Commons Attribution 3.0 United States.
@@ -141,6 +141,7 @@ or its results/methods, please cite the references below.
 ```
 
 3. Najibi, N., Mukhopadhyay, S., & Steinschneider, S. (2021). Identifying weather regimes for regional‐scale stochastic weather generators. *[International Journal of Climatology](https://doi.org/10.1002/joc.6969)*, 41(4), 2456-2479.
+  
 ```bibtex
 @article{najibi2021identifying,
   title={Identifying weather regimes for regional-scale stochastic weather generators},
@@ -155,19 +156,21 @@ or its results/methods, please cite the references below.
 ```
 
 4. Najibi, N., Perez, A.J., Arnold, W., Schwarz, A., Maendly, R., & Steinschneider, S. (2024). A statewide, weather-regime based stochastic weather generator for process-based bottom-up climate risk assessments in California – Part I: Model evaluation. *[Climate Services](https://doi.org/10.1016/j.cliser.2024.100489)*, 34, 1-18.
+
 ```bibtex
 @article{najibi2024statewide1,
   title={A statewide, weather-regime based stochastic weather generator for process-based bottom-up climate risk assessments in California -- Part I: Model evaluation},
   author={Najibi, Nasser and Perez, Alejandro J and Arnold, Wyatt and Schwarz, Andrew and Maendly, Romain and Steinschneider, Scott},
   journal={Climate Services},
   volume={34},
-  pages={100489},
+  pages={1--18},
   year={2024},
   publisher={Elsevier}
 }
 ```
 
 5. Najibi, N., Perez, A.J., Arnold, W., Schwarz, A., Maendly, R., & Steinschneider, S. (2024). A statewide, weather-regime based stochastic weather generator for process-based bottom-up climate risk assessments in California – Part II: Thermodynamic and dynamic climate change scenarios. *[Climate Services](https://doi.org/10.1016/j.cliser.2024.100485)*, 34, 1-16.
+
 ```bibtex
 @article{najibi2024statewide2,
   title={A statewide, weather-regime based stochastic weather generator for process-based bottom-up climate risk assessments in California -- Part II: Thermodynamic and dynamic climate change scenarios},
