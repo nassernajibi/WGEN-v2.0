@@ -50,7 +50,7 @@ The programming language/platform (i.e., [R](https://www.r-project.org/)) and da
 All code is posted on this repository.
 
 <div align="center">
-<img src="Figures/ReadMe-SWG-over-time.png" alt="sdasds" width="65%" style="display: block; margin: auto;" />
+<img src="Figures/ReadMe-SWG-over-time.png" alt="sdasds" width="80%" style="display: block; margin: auto;" />
 </div>
 
 The following sections outline the steps you can take to run the WGEN.
