@@ -38,8 +38,9 @@ A permanent and archived version of this repository is available on Zenodo [![DO
 
 This weather regime-based stochastic weather generator (WR-SWG) is a tool to simulate possible future weather conditions by capturing the statistical patterns and variability observed in historical weather data. This method groups similar weather patterns, known as regimes, which represent distinct atmospheric conditions. By analyzing these regimes, the generator creates synthetic weather sequences that mimic the variability and statistics of real-world weather. This technology is essential for public applications such as risk assessment, scenario development, infrastructure design, and assessing system vulnerability. It enables decision-makers to explore a range of potential weather outcomes, aiding in designing structures that can withstand various conditions, assessing the risks associated with extreme weather events, and developing strategies to enhance the resilience of communities and systems in the face of changing climate patterns.
 
+<div align="center">
 <img src="Figures/fig1_overview_bottom_up_vulnerability_assessment.png" alt="sdasds" width="65%" style="display: block; margin: auto;" />
-
+</div>
 
 ### Researchers
 
