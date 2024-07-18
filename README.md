@@ -191,7 +191,7 @@ or its results/methods, please cite the references below.
 ```
 
 <div align="center">
-<img src="Figures/ReadMe_CA-DWR_logo.png" alt="sdasds" width="100%" style="display: block; margin: auto;" />
+<img src="Figures/ReadMe_CA-DWR_logo.png" alt="sdasds" width="60%" style="display: block; margin: auto;" />
 </div>
 
 ### Issues
