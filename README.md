@@ -190,6 +190,10 @@ or its results/methods, please cite the references below.
 }
 ```
 
+<div align="center">
+<img src="Figures/ReadMe_CA-DWR_logo.png" alt="sdasds" width="100%" style="display: block; margin: auto;" />
+</div>
+
 ### Issues
 
 - If you have issues related to the software/packages, please raise an issue in the Issues tab.
