@@ -120,7 +120,7 @@ Finally, you can run the `create.delimited.outputs` function in the script `Prog
 If you use the WGEN scripts (as a whole, or partially, and/or as a template for your work), 
 or its results/methods, please cite the references below.
 
-1. Najibi, N., Steinschneider, S. (2023). Stochastic Weather Generator v2.0. *[Zenodo](https://doi.org/10.5281/zenodo.7311768)*, Software, MIT License, Creative Commons Attribution 3.0 United States.
+1. Najibi, N., Steinschneider, S. (2023). Stochastic Weather Generator v2.0. *[Zenodo](https://doi.org/10.5281/zenodo.7311768)*, Software, GNU General Public License United States.
 
 ```bibtex
 @software{SWGEN_v2.0_2023,
