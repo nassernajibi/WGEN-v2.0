@@ -19,13 +19,13 @@ create.delimited.outputs <- function(scenario = selected_scenario){
     simulated.file.run.model.saved <- paste0(".tmax.",cur.tc.max,".tmin.",cur.tc.min,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_num.year.",number.years.long,"_with.",num.iter)
     
     load(paste0(dir.to.sim.files,"/","prcp.site.sim",simulated.file.run.model.saved,".RData"))
-    prcp.site.data.sim <- prcp.site.sim[[scenario]] # because there was only one iteration
+    prcp.site.data.sim <- prcp.site.sim[[1]] # because there was only one iteration
     
     load(paste0(dir.to.sim.files,"/","tmin.site.sim",simulated.file.run.model.saved,".RData"))
-    tmin.site.data.sim <- tmin.site.sim[[scenario]]
+    tmin.site.data.sim <- tmin.site.sim[[1]]
     
     load(paste0(dir.to.sim.files,"/","tmax.site.sim",simulated.file.run.model.saved,".RData"))
-    tmax.site.data.sim <- tmax.site.sim[[scenario]]
+    tmax.site.data.sim <- tmax.site.sim[[1]]
     
     #dates.sim
     load(paste0(dir.to.sim.files,"/","dates.sim",simulated.file.run.model.saved,".RData"))
