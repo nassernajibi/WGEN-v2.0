@@ -24,7 +24,14 @@ CC.scale <- function(emission.fits.site,months,dates.sim,n.sites,perc.mu,perc.q,
   
   # monthly-only #
   #find the mean and upper quantile of the different distributions, and concatenate them with the parameters into a single array
-  q.old <- apply(emission.old1,c(2,3),function(x) {qgamma(.99999999999999,shape=x[1],rate=x[2])})
+  
+  #q.max.prcp = the quantile for corresponding max prcp (month and site) under old gamma fits
+  q.max.prcp <- emission.fits.site[[3]]
+  
+  q.old <- sapply(1:n.sites,function(x,z,m) {
+    qgamma(q.max.prcp[m,x],shape=z[1,m,x],rate=z[2,m,x])
+  }, z=emission.old1,m=months
+  )
   mu.old <- apply(emission.old1,c(2,3),function(x) {x[1]/x[2]})
   
   #GPD means
@@ -32,16 +39,18 @@ CC.scale <- function(emission.fits.site,months,dates.sim,n.sites,perc.mu,perc.q,
   gpd_mu.mat <- matrix(rep(gpd_mu,12),nrow=12,byrow=T)
   perc.mu.gamma <- (perc.mu*qq.month*mu.old - (perc.q-perc.mu)*(1-qq.month)*gpd_mu.mat)/(qq.month*mu.old)
   
-  q.mu.old <- abind(q.old,mu.old,emission.old1,perc.mu.gamma,along=1)
+  q.mu.old <- abind(q.old,mu.old,emission.old1,perc.mu.gamma,q.max.prcp,along=1)
   
   #adjust distribution for new mean, upper quantile
   emission.new1 <- apply(q.mu.old,c(2,3), function(x) {
     start.par <- 1
     lowerb <- 0.0001
     upperb <- 10
-    opt <- optim(par=start.par,CC.scale.obj.fun,q.old=x[1],mu.old=x[2],
+    opt <- optim(par=start.par,CC.scale.obj.fun,
+                 q.old=x[1],mu.old=x[2],
                  param.old=x[3:4],
                  perc.q=perc.q,perc.mu.gamma=x[5],
+                 q.max.prcp=x[6],
                  method="L-BFGS-B",lower=lowerb,upper=upperb)
     shape.new <- x[3]*x[5]*opt$par
     rate.new <- x[4]*opt$par

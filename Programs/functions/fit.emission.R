@@ -20,10 +20,20 @@ fit.emission <- function(prcp.site,months,months.weather,n.sites,thshd.prcp) {
   #1: gamma
   prcp.site11 <- prcp.site*idx1 # tagging those ones for fitting gamma (0 or values below threshold)
   emission.fit.site1 <- apply(prcp.site11,2,function(x,m,mm) {
-    sapply(m,function(m) {fitdistr(as.numeric(x[x!=0 & mm==m & !is.na(x)]),'gamma')$estimate})
+    sapply(m,function(m) {MASS::fitdistr(as.numeric(x[x!=0 & mm==m & !is.na(x)]),'gamma')$estimate})
   },m=months, mm=months.weather)
   
   dim(emission.fit.site1) <- c(2,length(months),n.sites)   #reformat dimensions so that shape/rate down each row, months in each column, 3rd dimension indexes the sites
+  
+  # calculate quantiles of precip max under gamma fits to each site and month
+  max_prcp.emission.fit.site1 <- apply(prcp.site11,2,function(x,m,mm) {
+    sapply(m,function(m) {max(as.numeric(x[x!=0 & mm==m & !is.na(x)]))})
+  },m=months, mm=months.weather)
+  
+  q.max.prcp <- sapply(1:n.sites,function(x,z,m) {
+    pgamma(max_prcp.emission.fit.site1[m,x],shape=z[1,m,x],rate=z[2,m,x])
+  }, z=emission.fit.site1,m=months
+  )
   
   #2: gpd
   prcp.site22 <- prcp.site*idx2 # tagging those ones for fitting gpd (0 or values above threshold)
@@ -34,6 +44,7 @@ fit.emission <- function(prcp.site,months,months.weather,n.sites,thshd.prcp) {
     })
   
   emission.fits.site <- list("Gamma"=emission.fit.site1,
-                             "GPD"=emission.fit.site2)
+                             "GPD"=emission.fit.site2,
+                             "QmaxGamma"=q.max.prcp)
   return(emission.fits.site)
 }
