@@ -290,7 +290,6 @@ execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
   
   ##################################################################################################
   print(paste0("--- done.  state= ", num.states, " --- ensemble member:", num.iter))
-  gc()
   print(paste0("------------------------------------------------------"))
   print(paste0("-->> simulated files were saved at= ", dir.to.sim.files))
 }
