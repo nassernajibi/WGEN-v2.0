@@ -1,7 +1,9 @@
 execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
   
   ######### Precipitation/Temperature Inputs #########
-  # location of obs weather data (RData format): weather data (e.g., precip and temp) as matrices (time x lat|lon: t-by-number of grids); dates vector for time; basin average precip (see the example meteohydro file)
+  # location of obs weather data (RData format): 
+  # weather data (e.g., precip and temp) as matrices (time x lat|lon: t-by-number of grids); 
+  # dates vector for time; basin average precip (see the example meteohydro file)
   load(path.to.processed.data.meteohydro) # load in weather data
   n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
 
@@ -51,8 +53,7 @@ execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
   thshd.prcp <- apply(prcp.site, 2, function(x) {
     quantile(x[x != 0], qq, na.rm = T)
   })
-  # The spearman correlation between the precipitation sites, used in the copula-based jitters
-  Sbasin <- cor(prcp.site, method = "spearman")
+
 
 
   ######### Gamma-GPD Distribution Parameters #########
@@ -123,8 +124,8 @@ execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
     # The spearman correlation between the precipitation sites, used in the copula-based jitters
     Sbasin <- cor(prcp.site, method = "spearman")
     std.S.cond <- diag(rep(0.4, n.sites)) # lambda == 0.1,...,0.9 etc here (0.4)
-    SIGMA <- std.S.cond %*% Sbasin %*% t(std.S.cond)
-    S.cond <- SIGMA
+    # no need for an additional var (`SIGMA`) here 
+    S.cond <- std.S.cond %*% Sbasin %*% t(std.S.cond)
     
     jitter.samp <- vector("list", num.iter)
     samp.cf <- vector("list", num.iter)
@@ -133,6 +134,12 @@ execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
       jitter.samp[[k]] <- rmvnorm(n, rep(0, n.sites), S.cond)
       samp.cf[[k]] <- rnorm(n, 0, 1)
     }
+    
+  } else {
+    
+    cat("\n - NO jittering applied\n")
+    jitter.samp <- NULL
+    samp.cf     <- NULL
     
   }
   
@@ -161,12 +168,12 @@ execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
     future_lapply(seq_len(nrow(change.list)), function(change) {
       cur.tc.max <- change.list$tc.max[change]
       cur.tc.min <- change.list$tc.min[change]
-      cur.pccc <- change.list$pccc[change]
-      cur.pmuc <- change.list$pmuc[change]
-      cur.tc <- mean(cur.tc.max, cur.tc.min)
+      cur.pccc   <- change.list$pccc[change]
+      cur.pmuc   <- change.list$pmuc[change]
+      cur.tc     <- mean(cur.tc.max, cur.tc.min)
       
       # precipitation scaling (temperature change dependent)
-      perc.q <- (1 + cur.pccc)^cur.tc # scaling in the upper tail for each month of non-zero prcp
+      perc.q  <- (1 + cur.pccc)^cur.tc # scaling in the upper tail for each month of non-zero prcp
       perc.mu <- (1 + cur.pmuc) # scaling in the mean for each month of non-zero prcp
       
       # set the jitter
@@ -224,13 +231,12 @@ execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
       start_time <- Sys.time()
       cur.tc.max <- change.list$tc.max[change]
       cur.tc.min <- change.list$tc.min[change]
-      cur.pccc <- change.list$pccc[change]
-      cur.pmuc <- change.list$pmuc[change]
-      
-      cur.tc <- mean(cur.tc.max, cur.tc.min)
+      cur.pccc   <- change.list$pccc[change]
+      cur.pmuc   <- change.list$pmuc[change]
+      cur.tc     <- mean(cur.tc.max, cur.tc.min)
       
       # precipitation scaling (temperature change dependent)
-      perc.q <- (1 + cur.pccc)^cur.tc # scaling in the upper tail for each month of non-zero prcp
+      perc.q  <- (1 + cur.pccc)^cur.tc # scaling in the upper tail for each month of non-zero prcp
       perc.mu <- (1 + cur.pmuc) # scaling in the mean for each month of non-zero prcp
       
       # set the jitter
@@ -288,7 +294,7 @@ execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
   rm(resampled.date.sim, resampled.date.loc.sim, markov.chain.sim, mc.sim)
   invisible(gc())
   
-  ##################################################################################################
+  ###################################################################################
   print(paste0("--- done.  state= ", num.states, " --- ensemble member:", num.iter))
   print(paste0("------------------------------------------------------"))
   print(paste0("-->> simulated files were saved at= ", dir.to.sim.files))
