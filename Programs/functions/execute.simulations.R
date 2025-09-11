@@ -121,11 +121,14 @@ execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
     cat("\n - Calculating jittering for perturbing the non-exceedance probabilities\n")
     set.seed(jitter_seed) # this ensures the copula-based jitters are always performed in the same way for each climate change
     
-    # The spearman correlation between the precipitation sites, used in the copula-based jitters
+    ### The spearman correlation between the precipitation sites, used in the copula-based jitters
     Sbasin <- cor(prcp.site, method = "spearman")
-    std.S.cond <- diag(rep(0.4, n.sites)) # lambda == 0.1,...,0.9 etc here (0.4)
-    # no need for an additional var (`SIGMA`) here 
-    S.cond <- std.S.cond %*% Sbasin %*% t(std.S.cond)
+    # std.S.cond <- diag(rep(0.4, n.sites)) # lambda == 0.1,..., 0.9 etc here (0.4)
+    # # no need for an additional var (`SIGMA`) here 
+    # S.cond <- std.S.cond %*% Sbasin %*% t(std.S.cond)
+    ### Because std.S.cond is a scalar diagonal matrix, we can simplify the calculation further
+    ### D.A.D^T = λI.A.λI = λ^2.A
+    S.cond <- 0.4^2 * Sbasin
     
     jitter.samp <- vector("list", num.iter)
     samp.cf <- vector("list", num.iter)

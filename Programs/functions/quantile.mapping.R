@@ -48,10 +48,10 @@ quantile.mapping <- function(prcp.site, Sbasin, thshd.prcp, perc.q,
   }, z = emission.old1, m = months.sim, mm = months)
   
   # replace any probability==1 (to avoid getting 'inf' instances in next 'sapply') with a very close value to 1.
-  check.probs.one <- sapply(1:n.sites, function(x) {
+  check.probs.one.u1 <- sapply(1:n.sites, function(x) {
     sum(prcp.site.u1[[x]] == 1) > 0
   })
-  if (sum(check.probs.one == 1) > 0) {
+  if (sum(check.probs.one.u1 == 1) > 0) {
     idx.ones <- lapply(prcp.site.u1, function(x) {
       which(x == 1)
     })
@@ -64,10 +64,10 @@ quantile.mapping <- function(prcp.site, Sbasin, thshd.prcp, perc.q,
   prcp.site.new1 <- sapply(1:n.sites, function(x, z, m, mm) {
     qgamma(prcp.site.u1[[x]], "shape" = z[1, match(m[[x]], mm), x], "rate" = z[2, match(m[[x]], mm), x])
   }, z = emission.new1, m = months.sim.1, mm = months)
-  # round to limit memory size
-  prcp.site.new1 <- sapply(1:n.sites, function(x) {
-    round(prcp.site.new1[[x]], 2)
-  })
+  # # round to limit memory size
+  # prcp.site.new1 <- sapply(1:n.sites, function(x) {
+  #   round(prcp.site.new1[[x]], 2)
+  # })
   
   
   # //(2) gpd:
@@ -76,7 +76,7 @@ quantile.mapping <- function(prcp.site, Sbasin, thshd.prcp, perc.q,
     evmix::pgpd(prcp.site[idx2[[x]], x], "xi" = z[2, x], "sigmau" = z[1, x], "u" = thshd.prcp[x])
   }, z = emission.old2)
   
-  prcp.site.u2.new <- prcp.site.u2
+  
   if (cur.jitter) { # if we want to perturb U's, jump into Z space to do the jittering :)
     
     # then get Zs
@@ -125,37 +125,42 @@ quantile.mapping <- function(prcp.site, Sbasin, thshd.prcp, perc.q,
       
       return(final)
     }, x = prcp.site.u2.proposed, y = prcp.site.u2, cf = coin.flip)
+  } else {
+    prcp.site.u2.new <- prcp.site.u2
   }
   
   # replace any probability==1 (to avoid getting 'inf' instances in next 'sapply') with a very close value to 1.
-  check.probs.one <- sapply(1:n.sites, function(x) {
+  check.probs.one.u2 <- sapply(1:n.sites, function(x) {
     sum(prcp.site.u2.new[[x]] == 1) > 0
   })
-  if (sum(check.probs.one == 1) > 0) {
+  if (sum(check.probs.one.u2 == 1) > 0) {
     idx.ones <- lapply(prcp.site.u2.new, function(x) {
       which(x == 1)
     })
-    prcp.site.u0.new <- sapply(1:n.sites, function(x) {
+    prcp.site.u2.new <- sapply(1:n.sites, function(x) {
       replace(prcp.site.u2.new[[x]], idx.ones[[x]], 1 - .Machine$double.eps)
     })
-    prcp.site.u2.new <- prcp.site.u0.new
+    # prcp.site.u2.new <- prcp.site.u0.new
   }
   
   # transform new U's to new precipitation using old emission distributions then multiply the values by (1.07)^d.T
   prcp.site.new2 <- sapply(1:n.sites, function(x, z) {
     perc.q * evmix::qgpd(prcp.site.u2.new[[x]], "xi" = z[2, x], "sigmau" = z[1, x], "u" = thshd.prcp[x])
   }, z = emission.old2)
-  # round to limit memory size
-  prcp.site.new2 <- sapply(1:n.sites, function(x) {
-    round(prcp.site.new2[[x]], 2)
-  })
+  # # round to limit memory size
+  # prcp.site.new2 <- sapply(1:n.sites, function(x) {
+  #   round(prcp.site.new2[[x]], 2)
+  # })
   
-  # // place the estimated precip back to the original time-series based on their indexes
-  prcp.site.new <- prcp.site
+  # // place the estimated precip back to the original time-series based on their indicies
+  # prcp.site.new <- prcp.site
+  prcp.site.new <- matrix(0, nrow = nrow(prcp.site), ncol = ncol(prcp.site))
   for (i in 1:n.sites) {
     prcp.site.new[idx1[[i]], i] <- prcp.site.new1[[i]]
     prcp.site.new[idx2[[i]], i] <- prcp.site.new2[[i]]
   }
+  # Round only once 
+  prcp.site.new <- round(prcp.site.new, 2)
   
   return(prcp.site.new)
 }

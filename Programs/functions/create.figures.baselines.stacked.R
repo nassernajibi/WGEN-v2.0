@@ -1,4 +1,4 @@
-create.figures.baselines.stacked <- function(scenario = selected_scenario) {
+create.figures.baselines.stacked <- function(scenario) {
   # stacked version #
 
   # scenario = the row in ClimateChangeScenarios.csv for which to plot results
@@ -45,15 +45,25 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
   cur.pccc <- change.list$pccc[scenario]
   cur.pmuc <- change.list$pmuc[scenario]
 
-  cur.jitter <- to.jitter
-
+  cat("\nScenario: ", scenario, "|", 
+      "dTmax = ", cur.tc.max, "(deg C),",
+      "dTmin = ", cur.tc.min, "(deg C),",
+      "dPrec_avg (%) = ", 100*cur.pmuc, "(%),",
+      "dPrec_extreme/dT = ", 100*cur.pccc, "(% per deg)",
+      "\n\n")
+  
   ## // sim files ---##
   {
-    simulated.file.run.model.saved <- paste0(".tmax.", cur.tc.max, ".tmin.", cur.tc.min, "_p.CC.scale.", cur.pccc, "_p.mu.scale.", cur.pmuc, "_num.year.", number.years.long, "_with.", num.iter)
+    simulated.file.run.model.saved <- paste0(".tmax.", cur.tc.max, 
+                                             ".tmin.", cur.tc.min, 
+                                             "_p.CC.scale.", cur.pccc, 
+                                             "_p.mu.scale.", cur.pmuc, 
+                                             "_num.year.", number.years.long, 
+                                             "_with.", num.iter)
 
     prcp.site.sim_sfx <- "prcp.site.sim"
     load(paste0(dir.to.sim.files, "/", prcp.site.sim_sfx, simulated.file.run.model.saved, ".RData"))
-    prcp.site.data.sim <- prcp.site.sim[[1]] # becase there was only one iteration
+    prcp.site.data.sim <- prcp.site.sim[[1]] # because there was only one iteration
 
     prcp.site.sim_sfx <- "tmin.site.sim"
     load(paste0(dir.to.sim.files, "/", prcp.site.sim_sfx, simulated.file.run.model.saved, ".RData"))
@@ -83,15 +93,7 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
   {
     # generating synthetic dates/years #
     a <- rle(years.sim)
-    a.freq <- a$lengths
-    a.val <- a$values
-    yr <- 1
-    yr.vec <- c()
-    for (k in 1:length(a.freq)) {
-      yr.vec <- append(yr.vec, rep(yr, a.freq[k]))
-      yr <- yr + 1
-    }
-    long.years.vec <- yr.vec
+    long.years.vec <- rep(seq_along(a$lengths), times = a$lengths)
     long.months.vec <- months.sim
     total.num.yrs <- max(long.years.vec)
 
@@ -101,54 +103,40 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
     wateryears.sim <- (long.years.vec + 1) * (long.months.vec >= 10) + (long.years.vec) * (long.months.vec < 10)
 
     # water years precipitation total #
-    wy.data.obs <- apply(prcp.site.data, 2, function(x) {
-      aggregate(x, FUN = sum, by = list(wateryears.obs), na.rm = T)[, 2]
-    })
-    wy.data.obs <- apply(wy.data.obs, 2, function(x) {
-      return(x[2:(length(x) - 1)])
-    }) # drop first and last to only keep full water years
-
-    wy.data.sim <- apply(prcp.site.data.sim, 2, function(x) {
-      aggregate(x, FUN = sum, by = list(wateryears.sim), na.rm = T)[, 2]
-    })
-    wy.data.sim <- apply(wy.data.sim, 2, function(x) {
-      return(x[2:(length(x) - 1)])
-    }) # drop first and last to only keep full water years
+    wy.data.obs <- wy_avg_calculation(prcp.site.data, 
+                                      wateryears.obs,
+                                      "precip")
+    wy.data.sim <- wy_avg_calculation(prcp.site.data.sim, 
+                                      wateryears.sim,
+                                      "precip")
 
     # water years temperature average #
-    wy.tmean.data.obs <- apply(tmean.site.data, 2, function(x) {
-      aggregate(x, FUN = mean, by = list(wateryears.obs), na.rm = T)[, 2]
-    })
-    wy.tmean.data.obs <- apply(wy.tmean.data.obs, 2, function(x) {
-      return(x[2:(length(x) - 1)])
-    }) # drop first and last to only keep full water years
-
-    wy.tmean.data.sim <- apply(tmean.site.data.sim, 2, function(x) {
-      aggregate(x, FUN = mean, by = list(wateryears.sim), na.rm = T)[, 2]
-    })
-    wy.tmean.data.sim <- apply(wy.tmean.data.sim, 2, function(x) {
-      return(x[2:(length(x) - 1)])
-    }) # drop first and last to only keep full water years
+    wy.tmean.data.obs <- wy_avg_calculation(tmean.site.data, 
+                                            wateryears.obs,
+                                            "temperature")
+    wy.tmean.data.sim <- wy_avg_calculation(tmean.site.data.sim, 
+                                            wateryears.sim,
+                                            "temperature")
   }
 
 
   # average precipitation & temperature at-basin #
   {
     # average precipitation #
-    mean.prcp.site <- as.matrix(apply(prcp.site.data, 1, mean))
-    mean.prcp.site.sim <- as.matrix(apply(prcp.site.data.sim, 1, mean))
-
+    mean.prcp.site        <- row_mean_matrix(prcp.site.data)
+    mean.prcp.site.sim    <- row_mean_matrix(prcp.site.data.sim)
+    
     # average temperature #
-    mean.tmean.site <- as.matrix(apply(tmean.site.data, 1, mean))
-    mean.tmean.site.sim <- as.matrix(apply(tmean.site.data.sim, 1, mean))
+    mean.tmean.site       <- row_mean_matrix(tmean.site.data)
+    mean.tmean.site.sim   <- row_mean_matrix(tmean.site.data.sim)
 
     # average wy precipitation #
-    mean.wy.prcp.site <- as.matrix(apply(wy.data.obs, 1, mean))
-    mean.wy.prcp.site.sim <- as.matrix(apply(wy.data.sim, 1, mean))
-
+    mean.wy.prcp.site     <- row_mean_matrix(wy.data.obs)
+    mean.wy.prcp.site.sim <- row_mean_matrix(wy.data.sim)
+    
     # average wy temperature #
-    mean.wy.tmean.site <- as.matrix(apply(wy.tmean.data.obs, 1, mean))
-    mean.wy.tmean.site.sim <- as.matrix(apply(wy.tmean.data.sim, 1, mean))
+    mean.wy.tmean.site    <- row_mean_matrix(wy.tmean.data.obs)
+    mean.wy.tmean.site.sim<- row_mean_matrix(wy.tmean.data.sim)
   }
 
   #### Figure 1: ---------------------------------------------------------------
@@ -161,8 +149,8 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
     label12 <- "Obs [GPD]"
 
     file.name.fig <- paste0(
-      "lines_prcp.GEV.GPD.NEP_dur.maxima_wet.spells_", n.sites, ".files_s",
-      num.states, "_with_", num.iter, "_ens.png"
+      "Fig1_lines_prcp.GEV.GPD.NEP_dur.maxima_wet.spells_", n.sites, ".files_s",
+      num.states, "_with_", num.iter, "_Scenario_", scenario, "_ens.png"
     )
     fname.fig <- paste0(dir.to.figures, "/", file.name.fig)
     ww.mom <- 14
@@ -504,8 +492,8 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
   cat("\nScenario: ", scenario, "| 2) precipitation cdf, mean, standard variation (yearly, year-to-year)\n\n")
   {
     file.name.fig <- paste0(
-      "lines_prcp.mean_cdf_sd_", n.sites, ".files_s",
-      num.states, "_with_", num.iter, "_ens.png"
+      "Fig2_lines_prcp.mean_cdf_sd_", n.sites, ".files_s",
+      num.states, "_with_", num.iter, "_Scenario_", scenario, "_ens.png"
     )
     fname.fig <- paste0(dir.to.figures, "/", file.name.fig)
     ww.mom <- 14
@@ -538,12 +526,15 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
     EP.hat <- (1:length(y.hat)) / (length(y.hat) + 1)
     y <- annual.prcp.sim
     EP <- (1:length(y)) / (length(y) + 1)
+    ylim_prcp <- c(0.9*min(boot.05, annual.prcp.sim), 
+                   1.1*max(boot.95, annual.prcp.sim))
     plot(EP.hat, sort(y.hat),
-      log = "y", type = "l", frame = F,
-      col = "red", lwd = 5, xlab = "Exceedance Probability", ylab = "Precipitation [WY]",
-      cex.axis = 2, cex.main = 4, cex.lab = 2, font.main = 1
+         log = "y", type = "l", frame = F,
+         ylim = ylim_prcp,
+         col = "red", lwd = 5, xlab = "Exceedance Probability", ylab = "Precipitation [WY]",
+         cex.axis = 2, cex.main = 4, cex.lab = 2, font.main = 1
     )
-    lines(EP, sort(y), lty = 1, col = "gray50", lwd = 6)
+    lines(EP, sort(y), lty = 2, col = "gray50", lwd = 5)
     polygon(
       x = c(EP.hat, rev(EP.hat)), y = c(boot.05, rev(boot.95)),
       col = alpha("red", 0.15), border = NA
@@ -596,15 +587,12 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
     ## -- whiskers of long trace metrics -- ##
     #--------------------------------------- #
     labs.metrics <- c("mean", "stdev")
-    lst.annual.obs <- lst.annual.sim <- vector("list", length(labs.metrics))
-    lst.annual.obs[[1]] <- aggregate(prcp.site.data, FUN = mean, by = list(wateryears.obs))[, -1]
-    lst.annual.sim[[1]] <- aggregate(prcp.site.data.sim, FUN = mean, by = list(wateryears.sim))[, -1]
-    lst.annual.obs[[2]] <- aggregate(prcp.site.data, FUN = sd, by = list(wateryears.obs))[, -1]
-    lst.annual.sim[[2]] <- aggregate(prcp.site.data.sim, FUN = sd, by = list(wateryears.sim))[, -1]
-
+    lst.annual.prcp.obs <- annual_metrics(prcp.site.data, wateryears.obs, labs.metrics)
+    lst.annual.prcp.sim <- annual_metrics(prcp.site.data.sim, wateryears.sim, labs.metrics)
+    
     for (k in 1:length(labs.metrics)) {
-      annual.obs <- lst.annual.obs[[k]]
-      annual.sim <- lst.annual.sim[[k]]
+      annual.obs <- lst.annual.prcp.obs[[k]]
+      annual.sim <- lst.annual.prcp.sim[[k]]
       my.sim.y <- annual.sim
       my.obs.y <- annual.obs
 
@@ -658,8 +646,8 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
     # label2 <- 'Sim (WGEN: baseline)'
 
     file.name.fig <- paste0(
-      "lines_prcp.cumulative_seasonality_", n.sites, ".files_s",
-      num.states, "_with_", num.iter, "_ens.png"
+      "Fig3_lines_prcp.cumulative_seasonality_", n.sites, ".files_s",
+      num.states, "_with_", num.iter, "_Scenario_", scenario, "_ens.png"
     )
     fname.fig <- paste0(dir.to.figures, "/", file.name.fig)
     ww.mom <- 15
@@ -858,8 +846,8 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
   cat("\nScenario: ", scenario, "| 4) temperature cdf, mean, standard variation (yearly, year-to-year)\n\n")
   {
     file.name.fig <- paste0(
-      "lines_tmean_mean_cdf_sd_", n.sites, ".files_s",
-      num.states, "_with_", num.iter, "_ens.png"
+      "Fig4_lines_tmean_mean_cdf_sd_", n.sites, ".files_s",
+      num.states, "_with_", num.iter, "_Scenario_", scenario, "_ens.png"
     )
     fname.fig <- paste0(dir.to.figures, "/", file.name.fig)
     ww.mom <- 14
@@ -892,13 +880,18 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
     EP.hat <- (1:length(y.hat)) / (length(y.hat) + 1)
     y <- annual.tmean.sim
     EP <- (1:length(y)) / (length(y) + 1)
-    plot(EP.hat, sort(y.hat),
-      log = "y", type = "l", frame = F,
-      col = "red", lwd = 5,
-      xlab = "Exceedance Probability", ylab = "Temperature [WY]",
-      cex.axis = 2, cex.main = 4, cex.lab = 2, font.main = 1
+    ylim_tmean <- c(
+      min(0.9*c(boot.05, annual.tmean.sim)),
+      max(1.1*c(boot.95, annual.tmean.sim))
     )
-    lines(EP, sort(y), lty = 1, col = "gray50", lwd = 6)
+    plot(EP.hat, sort(y.hat),
+         log = "y", type = "l", frame = F,
+         ylim = ylim_tmean,
+         col = "red", lwd = 5,
+         xlab = "Exceedance Probability", ylab = "Temperature [WY]",
+         cex.axis = 2, cex.main = 4, cex.lab = 2, font.main = 1
+    )
+    lines(EP, sort(y), lty = 2, col = "gray60", lwd = 5)
     polygon(
       x = c(EP.hat, rev(EP.hat)), y = c(boot.05, rev(boot.95)),
       col = alpha("red", 0.15), border = NA
@@ -949,17 +942,12 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
     #--------------------------------------- #
     ## -- whiskers of long trace metrics -- ##
     #--------------------------------------- #
-    lst.annual.obs <- lst.annual.sim <- vector("list", length(labs.metrics))
-    lst.annual.obs[[1]] <- aggregate(tmean.site.data, FUN = mean, by = list(wateryears.obs))[, -1]
-    lst.annual.sim[[1]] <- aggregate(tmean.site.data.sim, FUN = mean, by = list(wateryears.sim))[, -1]
-    lst.annual.obs[[2]] <- aggregate(tmean.site.data, FUN = sd, by = list(wateryears.obs))[, -1]
-    lst.annual.sim[[2]] <- aggregate(tmean.site.data.sim, FUN = sd, by = list(wateryears.sim))[, -1]
-
-    # labs.metrics <- c("mean", "stdev")
-
+    lst.annual.tmean.obs <- annual_metrics(tmean.site.data, wateryears.obs, labs.metrics)
+    lst.annual.tmean.sim <- annual_metrics(tmean.site.data.sim, wateryears.sim, labs.metrics)
+    
     for (k in 1:length(labs.metrics)) {
-      annual.obs <- lst.annual.obs[[k]]
-      annual.sim <- lst.annual.sim[[k]]
+      annual.obs <- lst.annual.tmean.obs[[k]]
+      annual.sim <- lst.annual.tmean.sim[[k]]
       my.sim.y <- annual.sim
       my.obs.y <- annual.obs
 
@@ -1232,8 +1220,8 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
     )
 
     file.name.fig <- paste0(
-      "scatters_tmax_tmin_heat.cold.specific_", n.sites, ".files_s",
-      num.states, "_with_", num.iter, "_ens.png"
+      "Fig5_scatters_tmax_tmin_heat.cold.specific_", n.sites, ".files_s",
+      num.states, "_with_", num.iter, "_Scenario_", scenario, "_ens.png"
     )
     fname.fig <- paste0(dir.to.figures, "/", file.name.fig)
     ww.mom <- 18
@@ -1282,8 +1270,8 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
   cat("\nScenario: ", scenario, "| 6) precipitation minima, dry-spells, drought stats\n\n")
   {
     file.name.fig <- paste0(
-      "hist_prcp.n.year.droughts_minima_dry.spells_", n.sites, ".files_s",
-      num.states, "_with_", num.iter, "_ens.png"
+      "Fig6_hist_prcp.n.year.droughts_minima_dry.spells_", n.sites, ".files_s",
+      num.states, "_with_", num.iter, "_Scenario_", scenario, "_ens.png"
     )
     fname.fig <- paste0(dir.to.figures, "/", file.name.fig)
     ww.mom <- 26
@@ -1525,4 +1513,103 @@ create.figures.baselines.stacked <- function(scenario = selected_scenario) {
 
   # The end #
 }
+
+
+
+
+wy_avg_calculation <- function(input_data, 
+                               daily_wy_vect,
+                               var_name) {
+  
+  p_load(data.table)
+  
+  dt <- as.data.table(input_data)
+  
+  # Add water year column
+  dt[, wateryear := daily_wy_vect]
+  
+  # Melt the data.table to long format 
+  dt_long <- melt(dt, 
+                  id.vars = "wateryear", 
+                  variable.name = "site", 
+                  value.name = var_name)
+  
+  if (grepl("precip", var_name)) {
+    
+    # Sum precipitation by water year and site
+    wy_data <- dt_long[, .(total_precip = sum(get(var_name), na.rm = TRUE)), 
+                       by = .(wateryear, site)]
+    
+    # Drop first and last water years
+    valid_years <- sort(unique(wy_data$wateryear))
+    wy_data <- wy_data[wateryear %in% valid_years[2:(length(valid_years) - 1)]]
+    
+    # Convert back to wide format
+    wy_data_wide <- dcast(wy_data, wateryear ~ site, value.var = "total_precip")
+    
+    # Remove the wateryear column and convert to matrix
+    wy_data_matrix <- as.matrix(wy_data_wide[, -1])
+    # str(wy_data_matrix)
+    
+  } else {
+    
+    # Average temperature by water year and site
+    wy_data <- dt_long[, .(avg_temperature = mean(get(var_name), na.rm = TRUE)), 
+                       by = .(wateryear, site)]
+    
+    # Drop first and last water years
+    valid_years <- sort(unique(wy_data$wateryear))
+    wy_data <- wy_data[wateryear %in% valid_years[2:(length(valid_years) - 1)]]
+    wy_data
+    
+    wy_data_wide <- dcast(wy_data, wateryear ~ site, value.var = "avg_temperature")
+    wy_data_matrix <- as.matrix(wy_data_wide[, -1])
+    
+  }
+  
+  return(wy_data_matrix)
+  
+}
+
+
+
+row_mean_matrix <- function(input_data) {
+  
+  p_load(data.table)
+  
+  dt <- as.data.table(input_data)
+  # Compute row-wise mean, ignoring NA
+  mean_matrix <- as.matrix(rowMeans(dt, na.rm = TRUE))
+  
+  return(mean_matrix)
+}
+
+
+
+annual_metrics <- function(input_data, wateryears, metrics = c("mean", "stdev")) {
+  
+  p_load(data.table)
+  
+  dt <- as.data.table(input_data)
+  dt[, wateryear := wateryears]
+  
+  results <- vector("list", length(metrics))
+  names(results) <- metrics
+  
+  # Loop through each metric
+  for (i in seq_along(metrics)) {
+    metric <- metrics[i]
+    
+    # Apply metric by wateryear
+    results[[i]] <- dt[, lapply(.SD, function(x) {
+      if (metric == "mean") mean(x, na.rm = TRUE)
+      else if (metric == "stdev") sd(x, na.rm = TRUE)
+      else stop("Unsupported metric")
+    }), by = wateryear][, -1] |> as.data.frame()
+  }
+  
+  return(results)
+}
+
+
 

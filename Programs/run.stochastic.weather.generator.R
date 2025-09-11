@@ -95,7 +95,10 @@ start_time3 <- Sys.time()
 create.delimited.outputs(scenario = selected_scenario)
 Sys.time() - start_time3
 
-end_time0 <- Sys.time() - start_time0
-end_time0
+end_time0 <- Sys.time()
+time_taken0 <- end_time0 - start_time0
 
-print(paste("Total runtime:", round(end_time0, 2)))
+print(paste("Starting time: ", start_time0))
+print(paste("Ending time: ", end_time0))
+print(paste("Total runtime: "))
+time_taken0
