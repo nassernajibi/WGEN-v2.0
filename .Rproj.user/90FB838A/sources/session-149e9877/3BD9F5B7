@@ -1,0 +1,24 @@
+{
+    "id": "3BD9F5B7",
+    "path": "~/GitHub/WGEN-v2.0/Programs/config.simulations.R",
+    "project_path": "Programs/config.simulations.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1774389676392.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1754070221,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1754070221,
+    "read_only": false,
+    "read_only_alternatives": []
+}
