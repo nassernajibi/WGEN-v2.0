@@ -1,165 +1,306 @@
-execute.simulations <- function(){
+execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
   
-  #########Precipitation/Temperature Inputs #########
-  
-  #location of obs weather data (RData format): weather data (e.g., precip and temp) as matrices (time x lat|lon: t-by-number of grids); dates vector for time; basin average precip (see the example meteohydro file)
-  load(path.to.processed.data.meteohydro) #load in weather data
+  ######### Precipitation/Temperature Inputs #########
+  # location of obs weather data (RData format): 
+  # weather data (e.g., precip and temp) as matrices (time x lat|lon: t-by-number of grids); 
+  # dates vector for time; basin average precip (see the example meteohydro file)
+  load(path.to.processed.data.meteohydro) # load in weather data
   n.sites <- dim(prcp.site)[2] # Number of gridded points for precipitation
-  
-  identical.dates.idx <- dates.weather%in%dates.synoptics
+
+  identical.dates.idx <- dates.weather %in% dates.synoptics
   dates.weather <- dates.weather[identical.dates.idx]
-  months.weather <- as.numeric(format(dates.weather,'%m'))
-  prcp.site <- prcp.site[identical.dates.idx,]
-  tmax.site <- tmax.site[identical.dates.idx,]
-  tmin.site <- tmin.site[identical.dates.idx,]
+  months.weather <- month(dates.weather)
+  prcp.site <- prcp.site[identical.dates.idx, ]
+  tmax.site <- tmax.site[identical.dates.idx, ]
+  tmin.site <- tmin.site[identical.dates.idx, ]
   prcp.basin <- prcp.basin[identical.dates.idx]
-  
-  identical.dates.idx <- dates.synoptics%in%dates.weather
+
+  identical.dates.idx <- dates.synoptics %in% dates.weather
   weather.state.assignments <- weather.state.assignments[identical.dates.idx]
-  
+
   # sanitary check if all days for that specific month and grid is zero === causing problems in gamma fit
   # this will be zero after implementing the quantile mapping, so there is no effect whatsoever
   {
-    indicators.month.sites <- array(NA,c(length(months),n.sites))
-    indicators.month.unit <- array(NA,length(months))
-    for (mo in months){
-      for (r in 1:n.sites){
-        indicators.month.sites[mo,r] <- sum(prcp.site[months.weather==mo,r]==0)/sum(months.weather==mo)
+    indicators.month.sites <- array(NA, c(length(months), n.sites))
+    indicators.month.unit <- array(NA, length(months))
+    for (mo in months) {
+      for (r in 1:n.sites) {
+        indicators.month.sites[mo, r] <- sum(prcp.site[months.weather == mo, r] == 0) / sum(months.weather == mo)
       }
-      indicators.month.unit[mo] <- sum(months.weather==mo)
+      indicators.month.unit[mo] <- sum(months.weather == mo)
     }
     required.daily.vals <- 2
-    low.sample.size <- min(1-required.daily.vals/indicators.month.unit)
-    if (sum(indicators.month.sites>=low.sample.size)>0){
-      mo.site <- which(indicators.month.sites>=low.sample.size,arr.ind = T)
-      for (mi in 1:dim(mo.site)[1]){
+    low.sample.size <- min(1 - required.daily.vals / indicators.month.unit)
+    if (sum(indicators.month.sites >= low.sample.size) > 0) {
+      mo.site <- which(indicators.month.sites >= low.sample.size, arr.ind = T)
+      for (mi in 1:dim(mo.site)[1]) {
         set.seed(100)
-        escaping.value <- runif(sum(months.weather==mo.site[mi,1]),min=0,max=0.01) # giving random small values in mm
-        prcp.site[months.weather==mo.site[mi,1],mo.site[mi,2]] <- escaping.value
+        escaping.value <- runif(sum(months.weather == mo.site[mi, 1]), min = 0, max = 0.01) # giving random small values in mm
+        prcp.site[months.weather == mo.site[mi, 1], mo.site[mi, 2]] <- escaping.value
       }
     }
-    
+
     # check if all days for that specific month and grid is negative === causing problems in gamma fittings
-    indicators.sites <- which(prcp.site<0,arr.ind=T)
-    if (dim(indicators.sites)[1]>0){
+    indicators.sites <- which(prcp.site < 0, arr.ind = T)
+    if (dim(indicators.sites)[1] > 0) {
       set.seed(1000)
-      escaping.value <- runif(dim(indicators.sites)[1],min=0,max=0.001) # giving random values between 0 and 0.001 mm
-      prcp.site[indicators.sites] <- round(escaping.value,4)
+      escaping.value <- runif(dim(indicators.sites)[1], min = 0, max = 0.001) # giving random values between 0 and 0.001 mm
+      prcp.site[indicators.sites] <- round(escaping.value, 4)
     }
   }
 
-  #extreme threshold (Gamma-GPD cutoff) for each site
-  thshd.prcp <- apply(prcp.site,2,function(x) {quantile(x[x!=0],qq,na.rm=T)})
-  #The spearman correlation between the precipitation sites, used in the copula-based jitters
-  Sbasin <- cor(prcp.site,method="spearman")
-  
-  
-  ######### Gamma-GPD Distribution Parameters #########
-  
-  #fit emission distributions to each site by month. sites along the columns, parameters for month down the rows
-  emission.fits.site <- fit.emission(prcp.site=prcp.site,
-                                     months=months,
-                                     months.weather=months.weather,
-                                     n.sites=n.sites,
-                                     thshd.prcp=thshd.prcp)
-  
-  
-  #how often is prcp under threshold by month and site
-  qq.month <- sapply(1:n.sites,function(i,x=prcp.site,m,mm) {
-    sapply(m,function(m) {
-      length(which(as.numeric(x[x[,i]!=0 & mm==m & !is.na(x[,i]),i])<=thshd.prcp[i]))/length(as.numeric(x[x[,i]!=0 & mm==m & !is.na(x[,i]),i]))
-    })},
-    m=months, mm=months.weather)
-  
-  #################################################
-  
-  ##########################Simulate model with perturbations#######################################
+  # extreme threshold (Gamma-GPD cutoff) for each site
+  thshd.prcp <- apply(prcp.site, 2, function(x) {
+    quantile(x[x != 0], qq, na.rm = T)
+  })
 
-  #run the daily weather generate num.iter times using the num.iter Markov chains
-  mc.sim <- resampled.date.sim <- resampled.date.loc.sim <- prcp.site.sim <- tmin.site.sim <- tmax.site.sim <-  list()
+
+
+  ######### Gamma-GPD Distribution Parameters #########
+
+  # fit emission distributions to each site by month. sites along the columns, parameters for month down the rows
+  emission.fits.site <- fit.emission(
+    prcp.site = prcp.site,
+    months = months,
+    months.weather = months.weather,
+    n.sites = n.sites,
+    thshd.prcp = thshd.prcp
+  )
+
+  # how often is prcp under threshold by month and site
+  qq.month <- sapply(1:n.sites, function(i, x = prcp.site, m, mm) {
+    sapply(m, function(m) {
+      length(which(as.numeric(x[x[, i] != 0 & mm == m & !is.na(x[, i]), i]) <= thshd.prcp[i])) / length(as.numeric(x[x[, i] != 0 & mm == m & !is.na(x[, i]), i]))
+    })
+  },
+  m = months, mm = months.weather
+  )
+
+  
+
+  ########################## Simulate model with perturbations#######################################
+
+  # run the daily weather generate num.iter times using the num.iter Markov chains
+  # mc.sim <- resampled.date.sim <- resampled.date.loc.sim <- prcp.site.sim <- tmin.site.sim <- tmax.site.sim <- list()
+  ### Set the size of the outputs
+  mc.sim <- vector("list", num.iter)
+  resampled.date.sim <- vector("list", num.iter)
+  resampled.date.loc.sim <- vector("list", num.iter)
+  prcp.site.sim <- tmax.site.sim <- tmin.site.sim <- vector("list", num.iter)
   start_time <- Sys.time()
   for (k in 1:num.iter) {
     my.itertime <- Sys.time()
-    my.sim <- wgen.simulator(weather.state.assignments=weather.state.assignments,mc.sim=markov.chain.sim[[k]],
-                             prcp.basin=prcp.basin,dates.weather=dates.weather,
-                             first.month=first.month,last.month=last.month,dates.sim=dates.sim,
-                             months=months,window.size=window.size,min.thresh=pr.trace)
-    print(paste(k,":", Sys.time()-my.itertime))
-    
-    #each of these is a list of length iter
+    my.sim <- wgen.simulator(
+      weather.state.assignments = weather.state.assignments, mc.sim = markov.chain.sim[[k]],
+      prcp.basin = prcp.basin, dates.weather = dates.weather,
+      first.month = first.month, last.month = last.month, dates.sim = dates.sim,
+      months = months, window.size = window.size, min.thresh = pr.trace
+    )
+    print(paste(k, ":", Sys.time() - my.itertime))
+
+    # each of these is a list of length iter
     mc.sim[[k]] <- my.sim[[1]]
     resampled.date.sim[[k]] <- my.sim[[2]]
     resampled.date.loc.sim[[k]] <- my.sim[[3]]
-    prcp.site.sim[[k]] <- prcp.site[resampled.date.loc.sim[[k]],]
-    tmin.site.sim[[k]] <- tmin.site[resampled.date.loc.sim[[k]],]
-    tmax.site.sim[[k]] <- tmax.site[resampled.date.loc.sim[[k]],]
+    prcp.site.sim[[k]] <- prcp.site[resampled.date.loc.sim[[k]], ]
+    tmin.site.sim[[k]] <- tmin.site[resampled.date.loc.sim[[k]], ]
+    tmax.site.sim[[k]] <- tmax.site[resampled.date.loc.sim[[k]], ]
   }
-  end_time <- Sys.time(); run.time.sim <- end_time - start_time
-  print(paste("SIMULATION started at:",start_time,", ended at:",end_time)); print(round(run.time.sim,2))
-  #remove for memory
+  end_time <- Sys.time()
+  run.time.sim <- end_time - start_time
+  print(paste("SIMULATION started at:", start_time, ", ended at:", end_time))
+  print(round(run.time.sim, 2))
+  # remove for memory
   rm(my.sim)
+  invisible(gc())
+
   
   
-  #once the simulations are created, we now apply post-process climate changes (and jitters)
-  for (change in 1:nrow(change.list)) {
-    start_time <- Sys.time()
-    cur.tc.max <- change.list$tc.max[change]
-    cur.tc.min <- change.list$tc.min[change]
-    cur.pccc <- change.list$pccc[change]
-    cur.pmuc <- change.list$pmuc[change]
+  jitter_seed <- 1L
+  if (to.jitter) {
+    cat("\n - Calculating jittering for perturbing the non-exceedance probabilities\n")
+    set.seed(jitter_seed) # this ensures the copula-based jitters are always performed in the same way for each climate change
     
-    cur.tc <- mean(cur.tc.max,cur.tc.min)
+    ### The spearman correlation between the precipitation sites, used in the copula-based jitters
+    Sbasin <- cor(prcp.site, method = "spearman")
+    # std.S.cond <- diag(rep(0.4, n.sites)) # lambda == 0.1,..., 0.9 etc here (0.4)
+    # # no need for an additional var (`SIGMA`) here 
+    # S.cond <- std.S.cond %*% Sbasin %*% t(std.S.cond)
+    ### Because std.S.cond is a scalar diagonal matrix, we can simplify the calculation further
+    ### D.A.D^T = λI.A.λI = λ^2.A
+    S.cond <- 0.4^2 * Sbasin
     
-    #precipitation scaling (temperature change dependent)
-    perc.q <- (1 + cur.pccc)^cur.tc    #scaling in the upper tail for each month of non-zero prcp
-    perc.mu <- (1 + cur.pmuc)          #scaling in the mean for each month of non-zero prcp
+    jitter.samp <- vector("list", num.iter)
+    samp.cf <- vector("list", num.iter)
+    for (k in seq_len(num.iter)) {
+      n <- nrow(prcp.site.sim[[k]])
+      jitter.samp[[k]] <- rmvnorm(n, rep(0, n.sites), S.cond)
+      samp.cf[[k]] <- rnorm(n, 0, 1)
+    }
     
-    #set the jitter
-    cur.jitter <- to.jitter
+  } else {
     
-    #perturb the climate from the simulations above (the longest procedure in this function is saving the output files)
-    set.seed(1)   #this ensures the copula-based jitterrs are always performed in the same way for each climate change
-    perturbed.sim <-  perturb.climate(prcp.site.sim=prcp.site.sim,
-                                      tmin.site.sim=tmin.site.sim,
-                                      tmax.site.sim=tmax.site.sim,
-                                      emission.fits.site=emission.fits.site,
-                                      months=months,dates.sim=dates.sim,n.sites=n.sites,
-                                      qq=qq,perc.mu=perc.mu,perc.q=perc.q,Sbasin=Sbasin,cur.jitter=cur.jitter,
-                                      cur.tc.min=cur.tc.min,cur.tc.max=cur.tc.max,
-                                      num.iter=num.iter,thshd.prcp=thshd.prcp,qq.month=qq.month)
-    set.seed(NULL)
-    prcp.site.sim.perturbed <- perturbed.sim[[1]]
-    tmin.site.sim.perturbed <- perturbed.sim[[2]]
-    tmax.site.sim.perturbed <- perturbed.sim[[3]]
-    
-    #remove for memory
-    rm(perturbed.sim)
-    end_time <- Sys.time(); run.time.qmap <- end_time - start_time
-    print(paste("QMAPPING started at:",start_time,", ended at:",end_time)); print(round(run.time.qmap,2))
-    
-    #how to name each file name to track perturbations in each set of simulations
-    file.suffix <- paste0(".tmax.",cur.tc.max,".tmin.",cur.tc.min,"_p.CC.scale.",cur.pccc,"_p.mu.scale.",cur.pmuc,"_num.year.",number.years.long,"_with.",num.iter)
-    
-    print(paste("|---start saving---|"))
-    write.output.large(dir.to.sim.files,
-                       prcp.site.sim=prcp.site.sim.perturbed,
-                       tmin.site.sim=tmin.site.sim.perturbed,
-                       tmax.site.sim=tmax.site.sim.perturbed,
-                       mc.sim=mc.sim,resampled.date.sim=resampled.date.sim,
-                       dates.sim=dates.sim,file.suffix=file.suffix)
-    print(paste("|---finished saving---|"))
+    cat("\n - NO jittering applied\n")
+    jitter.samp <- NULL
+    samp.cf     <- NULL
     
   }
   
-  #remove for memory
-  rm(resampled.date.sim,resampled.date.loc.sim,markov.chain.sim,mc.sim)
-  ##################################################################################################
-  print(paste0("--- done.  state= ", num.states," --- ensemble member:",num.iter))
-  gc()
+  # calculate month sequence for the simulation period to use in subsequent functions
+  months.sim <- month(dates.sim)
+  n.sim <- length(dates.sim) # length of the simulation period
+  
+  # once the simulations are created, we now apply post-process climate changes (and jitters)
+  if (parallel) { # Parallelize the change.list loop
+    
+    cat("\n - Running climate perturbation in parallel mode\n")
+    
+    p_load(future.apply)
+    options(future.globals.maxSize = 3.0 * 16e9) # 16e9 = 1.0 GB; adjust if needed
+    # set number of parallel cores
+    if (number_of_cores) {
+      num_cores <- number_of_cores
+    } else {
+      num_cores <- 2
+    }
+    if (num_cores < 1) num_cores <- 1
+    if (num_cores > nrow(change.list)) num_cores <- nrow(change.list)
+    plan(multisession, workers = num_cores)
+    
+    start_time <- Sys.time()
+    future_lapply(seq_len(nrow(change.list)), function(change) {
+      cur.tc.max <- change.list$tc.max[change]
+      cur.tc.min <- change.list$tc.min[change]
+      cur.pccc   <- change.list$pccc[change]
+      cur.pmuc   <- change.list$pmuc[change]
+      cur.tc     <- mean(cur.tc.max, cur.tc.min)
+      
+      # precipitation scaling (temperature change dependent)
+      perc.q  <- (1 + cur.pccc)^cur.tc # scaling in the upper tail for each month of non-zero prcp
+      perc.mu <- (1 + cur.pmuc) # scaling in the mean for each month of non-zero prcp
+      
+      # set the jitter
+      cur.jitter <- to.jitter
+      
+      # No need to set.seed here; future_lapply with future.seed handles it
+      perturbed.sim <- perturb.climate(
+        prcp.site.sim = prcp.site.sim,
+        tmin.site.sim = tmin.site.sim,
+        tmax.site.sim = tmax.site.sim,
+        emission.fits.site = emission.fits.site,
+        months = months, months.sim = months.sim, n.sim = n.sim, n.sites = n.sites,
+        qq = qq, perc.mu = perc.mu, perc.q = perc.q, Sbasin = Sbasin,
+        cur.jitter = cur.jitter, cur.tc.min = cur.tc.min, cur.tc.max = cur.tc.max,
+        num.iter = num.iter, thshd.prcp = thshd.prcp, qq.month = qq.month,
+        jitter.samp = jitter.samp, samp.cf = samp.cf
+      )
+      
+      prcp.site.sim.perturbed <- perturbed.sim[[1]]
+      tmin.site.sim.perturbed <- perturbed.sim[[2]]
+      tmax.site.sim.perturbed <- perturbed.sim[[3]]
+      
+      # memory clean-up
+      rm(perturbed.sim)
+      invisible(gc())
+      
+      file.suffix <- paste0(
+        ".tmax.", cur.tc.max, ".tmin.", cur.tc.min,
+        "_p.CC.scale.", cur.pccc, "_p.mu.scale.", cur.pmuc,
+        "_num.year.", number.years.long, "_with.", num.iter
+      )
+      
+      write.output.large(
+        dir.to.sim.files,
+        prcp.site.sim = prcp.site.sim.perturbed,
+        tmin.site.sim = tmin.site.sim.perturbed,
+        tmax.site.sim = tmax.site.sim.perturbed,
+        mc.sim = mc.sim, resampled.date.sim = resampled.date.sim,
+        dates.sim = dates.sim, file.suffix = file.suffix
+      )
+      
+    }, future.seed = jitter_seed)
+    
+    end_time <- Sys.time()
+    run.time.qmap <- end_time - start_time
+    print(paste("Quantile Mapping & Saving started at:", start_time, ", ended at:", end_time))
+    print(round(run.time.qmap, 2))
+    
+    set.seed(NULL)
+    plan(sequential)
+    
+  } else {
+    
+    for (change in 1:nrow(change.list)) {
+      start_time <- Sys.time()
+      cur.tc.max <- change.list$tc.max[change]
+      cur.tc.min <- change.list$tc.min[change]
+      cur.pccc   <- change.list$pccc[change]
+      cur.pmuc   <- change.list$pmuc[change]
+      cur.tc     <- mean(cur.tc.max, cur.tc.min)
+      
+      # precipitation scaling (temperature change dependent)
+      perc.q  <- (1 + cur.pccc)^cur.tc # scaling in the upper tail for each month of non-zero prcp
+      perc.mu <- (1 + cur.pmuc) # scaling in the mean for each month of non-zero prcp
+      
+      # set the jitter
+      cur.jitter <- to.jitter
+      
+      # perturb the climate from the simulations above (the longest procedure in this function is saving the output files)
+      set.seed(1) # this ensures the copula-based jitterrs are always performed in the same way for each climate change
+      perturbed.sim <- perturb.climate(
+        prcp.site.sim = prcp.site.sim,
+        tmin.site.sim = tmin.site.sim,
+        tmax.site.sim = tmax.site.sim,
+        emission.fits.site = emission.fits.site,
+        months = months, months.sim = months.sim, n.sim = n.sim, n.sites = n.sites,
+        qq = qq, perc.mu = perc.mu, perc.q = perc.q, Sbasin = Sbasin,
+        cur.jitter = cur.jitter, cur.tc.min = cur.tc.min, cur.tc.max = cur.tc.max,
+        num.iter = num.iter, thshd.prcp = thshd.prcp, qq.month = qq.month,
+        jitter.samp = jitter.samp, samp.cf = samp.cf
+      )
+      set.seed(NULL)
+      
+      prcp.site.sim.perturbed <- perturbed.sim[[1]]
+      tmin.site.sim.perturbed <- perturbed.sim[[2]]
+      tmax.site.sim.perturbed <- perturbed.sim[[3]]
+      
+      # remove for memory
+      rm(perturbed.sim)
+      invisible(gc())
+      end_time <- Sys.time()
+      run.time.qmap <- end_time - start_time
+      print(paste("QMAPPING started at:", start_time, ", ended at:", end_time))
+      print(round(run.time.qmap, 2))
+      
+      # how to name each file name to track perturbations in each set of simulations
+      file.suffix <- paste0(".tmax.", cur.tc.max, 
+                            ".tmin.", cur.tc.min, 
+                            "_p.CC.scale.", cur.pccc, 
+                            "_p.mu.scale.", cur.pmuc, 
+                            "_num.year.", number.years.long, 
+                            "_with.", num.iter)
+      
+      print(paste("|---start saving---|"))
+      write.output.large(dir.to.sim.files,
+                         prcp.site.sim = prcp.site.sim.perturbed,
+                         tmin.site.sim = tmin.site.sim.perturbed,
+                         tmax.site.sim = tmax.site.sim.perturbed,
+                         mc.sim = mc.sim, resampled.date.sim = resampled.date.sim,
+                         dates.sim = dates.sim, file.suffix = file.suffix
+      )
+      print(paste("|---finished saving---|"))
+    }
+    
+  }
+
+  # remove for memory
+  rm(resampled.date.sim, resampled.date.loc.sim, markov.chain.sim, mc.sim)
+  invisible(gc())
+  
+  ###################################################################################
+  print(paste0("--- done.  state= ", num.states, " --- ensemble member:", num.iter))
   print(paste0("------------------------------------------------------"))
   print(paste0("-->> simulated files were saved at= ", dir.to.sim.files))
-  
-
 }
 # The End
 #####################################################################################
