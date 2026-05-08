@@ -41,7 +41,7 @@ for (i in 1:length(lst)) {assign(names(lst[i]), lst[[i]]) }; rm(lst)
 
 # Weather Regimes Module --------------------------------------------------
 
-#use provided WRs
+# use provided WRs
 if (use.provided.WRs){
   final.NHMM.output <- readRDS('./Data/simulated.data.files/WRs.out/final.NHMM.non_param.output.rds')
   weather.state.assignments <- final.NHMM.output$WR.historical # this is the historical WRs 
@@ -49,7 +49,7 @@ if (use.provided.WRs){
   dates.sim <- final.NHMM.output$dates.sim
   markov.chain.sim <- final.NHMM.output$WR.simulation
   dates.synoptics <- final.NHMM.output$dates.historical
-#simulate your own WRs
+# simulate your own WRs
 } else{
   final.NHMM.output <- execute.WRs.non_param.NHMM()
   weather.state.assignments <- final.NHMM.output$WR.historical # this is the historical WRs 

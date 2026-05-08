@@ -6,9 +6,8 @@ fit.NHMM <- function(my.nstates,
                      n.eofs) {
   
   #'  ---------- # s-NHMM for Annual WRs Simulations -------------------------------
-  #'  Fits a non-homogeneous HMM with Seasonality  using 
-  #'  depmixs4 package and simulates 
-  #'  markov chains and response models with Seasonality 
+  #'  Fits a non-homogeneous HMM with Seasonality using depmixs4 package and 
+  #'  simulates markov chains and response models with Seasonality 
   #'  
   #'  Arguments: 
   #' 
@@ -18,78 +17,91 @@ fit.NHMM <- function(my.nstates,
   #'  fo : the formula for the multinomial regression of the NHMM
   #'  n.eofs : number of PCs of geopotential height used (i.e., # of response variables) in the NHMM
 
-
-  
-  # #initialize NHMM based on HMM
-  # hhpars <- c(unlist(getpars(fit.mod.HMM)))
-  # hhconMat <- fit.mod.HMM@conMat
-  # init.pars <- list()
-  # init.pars[['transition']] <- lapply(fit.mod.HMM@transition,
-  #                                     function(x) x@parameters$coefficients)
-  # init.pars[['prior']]  <- fit.mod.HMM@prior@parameters$coefficients #  prob.kmeans.list[[p]]  #
-  # init.pars[['response']] <- lapply(fit.mod.HMM@response,
-  #                                   function(x) lapply(x, function(y) unlist(y@parameters)))
-  # init.pars[['conMat']] <- hhconMat
-
-  
-  #A list of transition models, each created by a call to transInit. The length
-  #of this list should be the number of states of the model.
-  transition <- list() 
+  # A list of transition models, each created by a call to transInit. The length
+  # of this list should be the number of states of the model.
+  # PRE-ALLOCATE: Create transition models with `my.nstates` size
+  transition <- vector("list", length = my.nstates) 
   for(i in 1:my.nstates){
     transition[[i]] <- transInit(formula = fo, 
                                  data = my.covar.trans, 
                                  nstates = my.nstates)
   }  
   
-  my.prior <- transInit(~1,ns = my.nstates,data=data.frame(1),
-                        ps = runif(my.nstates))
+  my.prior <- transInit(~1,
+                        ns = my.nstates,
+                        data=data.frame(1),
+                        ps = runif(my.nstates)
+                        )
   
-  my.response.models <- list() 
+  my.response.models <- vector("list", length = my.nstates)
     for(i in 1:my.nstates){
       my.response.models[[i]] <- list()
       for (eof in 1:n.eofs) {
-        fo.eof <- as.formula(paste("PC",eof,"~1",sep=""))
-        my.response.models[[i]][[eof]] <- GLMresponse(formula = fo.eof,data = data.frame(my.synoptic.pcs ),family = gaussian())
+        fo.eof <- as.formula(paste0("PC",eof, "~1"))
+        my.response.models[[i]][[eof]] <- GLMresponse(formula = fo.eof,
+                                                      data = data.frame(my.synoptic.pcs ),
+                                                      family = gaussian())
       }
     }  
 
 
-  #create the model
-  mod <- makeDepmix(response=my.response.models,
-                    transition=transition,
-                    prior=my.prior,
-                    ntimes= nrow(my.synoptic.pcs),
-                    homogeneous=FALSE)  
+  # create the model
+  mod <- makeDepmix(
+    response = my.response.models,
+    transition = transition,
+    prior = my.prior,
+    ntimes = nrow(my.synoptic.pcs),
+    homogeneous = FALSE
+  )
   
   
   
-  ########---------model fitting-------##############
+  ########-------- Model fitting ------##############
   
-  #fit model 10 times, pick the best one
-  tmp.mod.list <- list()
-  for(j in 1:10){ 
-    tmp.mod.list[[j]] <- fit(mod,emc = em.control(random = TRUE),verbose = F)
+  # fit model n.attempts times, pick the best one
+  n.attempts <- 10
+  tmp.mod.list <- vector("list", length = n.attempts)
+  for(j in 1:n.attempts){ 
+    cat('\n NHMM fitting attempt #: ', j, '\n')
+    tmp.mod.list[[j]] <- fit(mod,emc = em.control(random = TRUE),
+                             verbose = F)
   }
   
   
-  #check for convergence  
-  all.msgs <- sapply(tmp.mod.list, function(x){
-    if(class(x) == "depmix.fitted"){return(x@message)} else {return(c())}
+  # check for convergence  
+  all.msgs <- sapply(tmp.mod.list, function(x) {
+    if (class(x) == "depmix.fitted") {
+      return(x@message)
+    } else {
+      return(c())
+    }
   })
-  #identify which ones converged
-  index.converged <- stringr::str_match(all.msgs, "Log likelihood converged") 
-  #find log likelihood for all models, and set to 99999 for those that down converge
-  logLike.list <- as.numeric(unlist(lapply(tmp.mod.list,logLik)))
-  logLike.list[which(is.na(index.converged))] <- 99999
-  #find the best model (i.e., the smallest negative log likelihood)
-  mod.num <- which.min(logLike.list) 
+  
+  # identify which ones converged, use `grepl` instead of `stringr::str_match`
+  index.converged <- grepl( "Log likelihood converged", all.msgs)
+  
+  # find log likelihood for all models, and set to -Inf for those that didn't converge
+  logLike.list <- as.numeric(unlist(lapply(tmp.mod.list, logLik)))
+  logLike.list[!index.converged] <- -Inf
+  
+  # find the best model (i.e., the smallest NEGATIVE log likelihood)
+  # that's why `which.max()` is used instead of `which.min()`
+  mod.num <- which.max(logLike.list) 
+  cat("Selected model", mod.num, "with log-likelihood:", logLike.list[mod.num], "\n")
+  
   fmod.depmix <- tmp.mod.list[[mod.num]]
 
-  #get historical state sequence
+  # get historical state sequence
   state.seq <- posterior(fmod.depmix)$state
-  #############################################
-  
+
+  invisible(gc())
+    
   return(list(fitted.model = fmod.depmix,
               viterbi.seq = state.seq))
   
 }
+
+
+
+
+
