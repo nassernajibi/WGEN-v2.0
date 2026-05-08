@@ -173,7 +173,7 @@ execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
       cur.tc.min <- change.list$tc.min[change]
       cur.pccc   <- change.list$pccc[change]
       cur.pmuc   <- change.list$pmuc[change]
-      cur.tc     <- mean(cur.tc.max, cur.tc.min)
+      cur.tc     <- mean(c(cur.tc.max, cur.tc.min)) # mean(x, trim = 0, na.rm = FALSE, ...)
       
       # precipitation scaling (temperature change dependent)
       perc.q  <- (1 + cur.pccc)^cur.tc # scaling in the upper tail for each month of non-zero prcp
@@ -236,7 +236,7 @@ execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
       cur.tc.min <- change.list$tc.min[change]
       cur.pccc   <- change.list$pccc[change]
       cur.pmuc   <- change.list$pmuc[change]
-      cur.tc     <- mean(cur.tc.max, cur.tc.min)
+      cur.tc     <- mean(c(cur.tc.max, cur.tc.min))
       
       # precipitation scaling (temperature change dependent)
       perc.q  <- (1 + cur.pccc)^cur.tc # scaling in the upper tail for each month of non-zero prcp
@@ -280,7 +280,7 @@ execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
                             "_num.year.", number.years.long, 
                             "_with.", num.iter)
       
-      print(paste("|---start saving---|"))
+      cat("\n|--- Start saving ---|")
       write.output.large(dir.to.sim.files,
                          prcp.site.sim = prcp.site.sim.perturbed,
                          tmin.site.sim = tmin.site.sim.perturbed,
@@ -288,19 +288,18 @@ execute.simulations <- function(parallel = FALSE, number_of_cores = NULL) {
                          mc.sim = mc.sim, resampled.date.sim = resampled.date.sim,
                          dates.sim = dates.sim, file.suffix = file.suffix
       )
-      print(paste("|---finished saving---|"))
+      cat("|--- Finished saving ---|\n")
     }
     
   }
 
-  # remove for memory
+  # Clean up
   rm(resampled.date.sim, resampled.date.loc.sim, markov.chain.sim, mc.sim)
   invisible(gc())
   
-  ###################################################################################
-  print(paste0("--- done.  state= ", num.states, " --- ensemble member:", num.iter))
+  print(paste0("--- Done.  state= ", num.states, " --- ensemble member:", num.iter))
   print(paste0("------------------------------------------------------"))
-  print(paste0("-->> simulated files were saved at= ", dir.to.sim.files))
+  print(paste0("-->> Simulated files were saved at = ", dir.to.sim.files))
 }
+
 # The End
-#####################################################################################

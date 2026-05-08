@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Renviron
+*.log
+logs/
+*_cache/
+.DS_Store
+Thumbs.db
+api_keys.R
