@@ -153,8 +153,7 @@ quantile.mapping <- function(prcp.site, Sbasin, thshd.prcp, perc.q,
   # })
   
   # // place the estimated precip back to the original time-series based on their indicies
-  # prcp.site.new <- prcp.site
-  prcp.site.new <- matrix(0, nrow = nrow(prcp.site), ncol = ncol(prcp.site))
+  prcp.site.new <- prcp.site
   for (i in 1:n.sites) {
     prcp.site.new[idx1[[i]], i] <- prcp.site.new1[[i]]
     prcp.site.new[idx2[[i]], i] <- prcp.site.new2[[i]]
